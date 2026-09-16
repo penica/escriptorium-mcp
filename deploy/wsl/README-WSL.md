@@ -7,6 +7,33 @@ Transfer `escriptorium-mcp-0.18.0-wsl.tar.gz` to the Windows computer, then extr
 Run as the Linux user who owns the existing installation, without sudo:
 
 ```bash
+curl -fsSL https://raw.githubusercontent.com/penica/escriptorium-mcp/main/update.sh | sh
+```
+
+This updates an existing WSL/Linux HTTP user service to the latest stable GitHub
+release. It verifies the archive and bundled files before stopping the service,
+keeps the saved URL, API key, HTTP token and archive settings, and retains the
+existing service unit and overrides (including bind address and port). The
+installer backs up configuration and restarts the service. No prompts are needed.
+An already-current installation is left unchanged; reconnect MCP clients after
+an upgrade to refresh their tool list.
+
+For a specific release, append `-s -- 0.18.0` after `sh`. Downgrades are refused.
+For a nondefault installation directory, use
+`curl -fsSL https://raw.githubusercontent.com/penica/escriptorium-mcp/main/update.sh | ESCRIPTORIUM_INSTALL_DIR='/absolute/install/path' sh`.
+The updater requires an existing per-user service and saved credentials; use the
+interactive installer for a first installation or a STDIO setup.
+
+If installation fails after stopping the service, the updater reports failure
+and keeps a recovery marker. Resolve the reported error and rerun the command;
+it can finish an interrupted update even if the package version already changed.
+There is no automatic package rollback. A concurrent update is refused while
+`.update-lock` exists in the installation directory. After a machine crash, remove
+that empty lock directory only once you have confirmed no updater is running.
+
+### Manual download alternative
+
+```bash
 mkdir -p ~/mcp-updates/0.18.0
 cd ~/mcp-updates/0.18.0
 curl -fL -O https://github.com/penica/escriptorium-mcp/releases/download/v0.18.0/escriptorium-mcp-0.18.0-wsl.tar.gz

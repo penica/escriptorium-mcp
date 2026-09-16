@@ -1,5 +1,15 @@
 # Changelog
 
+## Deployment tooling — 2026-09-16
+
+Added the standalone `update.sh` GitHub entry point for one-command updates of
+existing WSL/Linux HTTP user services. It finds the latest stable release (or an
+explicit version), verifies outer and inner checksums before stopping the service,
+reuses the release installer with existing configuration and service settings,
+and verifies the installed version and active service. Concurrent updates and
+downgrades are refused; interrupted installation can be resumed. This script is
+distributed directly from the repository and does not change the 0.18.0 package.
+
 ## 0.18.0 — 2026-09-16
 
 ### Module 13: Fonts and presentation settings

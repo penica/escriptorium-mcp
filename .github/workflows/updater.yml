@@ -1,0 +1,24 @@
+name: WSL updater
+
+on:
+  push:
+    paths: [update.sh, scripts/test_update.sh, .github/workflows/updater.yml]
+  pull_request:
+    paths: [update.sh, scripts/test_update.sh, .github/workflows/updater.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  updater:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: astral-sh/setup-uv@v10.1.0
+      - run: uv sync --frozen --python 3.11
+      - run: sh -n update.sh && bash -n scripts/test_update.sh
+      - run: bash scripts/test_update.sh

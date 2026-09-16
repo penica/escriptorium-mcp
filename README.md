@@ -2,6 +2,17 @@
 
 Version 0.18.0 exposes **175 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
 
+To update an existing WSL/Linux HTTP user service, run as its owning Linux user
+(without sudo):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/penica/escriptorium-mcp/main/update.sh | sh
+```
+
+This installs the latest stable release, preserves configuration and service
+settings, and restarts the service. See the [WSL upgrade guide](deploy/wsl/README-WSL.md)
+for requirements, a specific-version option and first-install instructions.
+
 ## Capabilities
 
 | Area | Available operations |

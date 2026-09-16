@@ -260,3 +260,10 @@ All 13 roadmap modules are implemented and published as releases 0.6.0 through 0
 - This completion record is a documentation-only follow-up. Published packages retain the source and validation evidence from their immutable release commits.
 
 - Final installation guidance inspection found stale 0.13.0 labels in the bundled WSL README. The source guide and public 0.18.0 release notes now provide correct GitHub upgrade instructions and disclose those labels; the bundled installer and wheel are 0.18.0. Published artifact bytes were retained.
+
+### Standalone WSL/Linux updater — 2026-09-16
+
+- Added root `update.sh` for `curl -fsSL https://raw.githubusercontent.com/penica/escriptorium-mcp/main/update.sh | sh`. It requires an existing HTTP user service and saved credentials, finds the latest stable release or accepts an explicit version, verifies release and internal checksums before service shutdown, and feeds the existing installer the configuration-preserving answers. It verifies the final installed version and service state, refuses downgrades/concurrent updates, and retains a recovery marker on an incomplete installation. Published 0.18.0 package bytes are unchanged.
+- ShellCheck and shell syntax checks passed. Nine isolated lifecycle scenarios passed: piped latest update, already-current no-op, checksum rejection, download failure, missing service, downgrade rejection, lock contention, failed installation and resumption after the package version changed.
+- A real original 0.5.0 installation was upgraded by piping this script into `sh`; release discovery, download and checksums used public GitHub and the actual 0.18.0 release installer/wheel. Paths contained spaces. Configuration and the existing service file were byte-for-byte preserved, isolated installed Python reported 0.18.0, launcher help worked, and a second invocation was a no-op. Service control was simulated on macOS; no real WSL/systemd service or live eScriptorium data was changed.
+- The dedicated WSL updater workflow runs the shell lifecycle scenarios on Linux and macOS independently of the unchanged MCP runtime test suite.
