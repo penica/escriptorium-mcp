@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.0 — 2026-09-16
+
+First stable release of the 175-tool interface, covering all 13 expansion modules.
+No existing tool is removed or renamed. The new stability policy separates the
+MCP contract from server-version-dependent native payloads; a checked-in machine
+baseline guards existing tool schemas and safety annotations.
+
+The transfer bundle now includes the installation guide, stability policy,
+contract baseline, service updater and Windows/macOS/Linux skill installers.
+Current package, server and WSL installer versions and instructions are synchronized.
+Python 3.11 remains the minimum; STDIO and authenticated Streamable HTTP remain
+supported. This release does not change or restart an existing service automatically.
+
 ## Deployment tooling — 2026-09-16
 
 Added `install.sh` for a piped first-time WSL/Linux installation, with terminal

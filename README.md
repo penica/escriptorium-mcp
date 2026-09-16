@@ -1,6 +1,6 @@
 # eScriptorium MCP server
 
-Version 0.18.0 exposes **175 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
+Version 1.0.0 exposes **175 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
 
 For a first installation on WSL/Linux, run without sudo:
 
@@ -69,7 +69,7 @@ For a standalone installation, from this directory:
 uv tool install --python 3.11 .
 ```
 
-Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.18.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
+Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-1.0.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
 
 ## Credentials and paths
 
@@ -370,6 +370,13 @@ Exports never overwrite existing files and stay outside the NAS Books tree. Expo
 
 For example, `ExampleParish/02751_Baptisms_1838-1879/`. Scans are written directly to the configured archive. A new destination is required; existing folders are refused. Partial files and incremental manifests also stay on NAS. The manifest preserves original filenames, source/viewer/image URLs, byte counts and SHA-256 checksums, and distinguishes available scans from unknown historical missing pages. Acquisition does not mark visual inspection or transcription complete. Interrupted folders are retained and are not automatically resumed or overwritten.
 
+## Stable 1.x interface
+
+The 175 existing tools follow the [stability policy](docs/STABILITY.md).
+Existing documented calls and MCP-owned result meanings stay compatible within
+1.x; upstream capabilities and native response fields still depend on the
+eScriptorium server. A reviewed machine baseline guards the advertised contract.
+
 ## Implementation and verification
 
 The connector requires Pydantic 1 and the MCP SDK uses Pydantic 2, so each runs in a separate locked environment. Each MCP call creates a worker. Page responses use a compatibility adapter because this server omits the old connector's required `bw_image` field. Additional actions use the connector's authenticated HTTP session. Error messages expose status codes and safe file errors without raw private response bodies.
@@ -384,6 +391,6 @@ uv build
 
 Tests drive real MCP STDIO processes and Streamable HTTP and the real connector against isolated HTTP fixtures. They cover mutation paths/payloads, multipart uploads/imports, task requests, input validation, bodyless deletes, pagination, direct exports, overwrite refusal, and NAS acquisition success/partial failure. Modern adapter and test code is type-checked; legacy worker code is exercised through integration tests. The repository CI matrix runs Python 3.11 and 3.13 on macOS, Windows and Linux. Release 0.18.0 passed all six matrix jobs with 1433 tests per job; see the exact-commit evidence in IMPLEMENTATION-STATUS.md.
 
-Live checks use reads and local downloads/exports only. Mutation paths are tested with isolated fixtures; no live processing/training jobs are started for release verification. Actual OCR accuracy and training outcomes depend on installed server workers, models and training data. See [IMPLEMENTATION-STATUS.md](IMPLEMENTATION-STATUS.md) for the validation completed for each release.
+For 1.0.0, authorized live checks also created a disposable synthetic project and page, edited segmentation and Unicode text, completed a server PAGE XML export/import roundtrip, verified task completion and removed the recorded test data. Other mutation paths remain fixture-tested; no live OCR/training jobs were started. Actual OCR accuracy and training outcomes depend on installed server workers, models and training data. See [IMPLEMENTATION-STATUS.md](IMPLEMENTATION-STATUS.md) for the validation completed for each release.
 
 API contracts are grounded in the live API and official [views](https://gitlab.com/scripta/escriptorium/-/blob/develop/app/apps/api/views.py), [serializers](https://gitlab.com/scripta/escriptorium/-/blob/develop/app/apps/api/serializers.py), and [import/export forms](https://gitlab.com/scripta/escriptorium/-/blob/develop/app/apps/imports/forms.py).

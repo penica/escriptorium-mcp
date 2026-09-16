@@ -1,6 +1,6 @@
 # eScriptorium MCP tools
 
-Version 0.18.0: 175 tools.
+Version 1.0.0: 175 tools.
 
 | Tool | Description |
 |---|---|

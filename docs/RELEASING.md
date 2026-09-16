@@ -1,7 +1,9 @@
-# Publishing a module release
+# Publishing a release
 
-Release one roadmap module at a time. Additive public tools increment the minor
-version; corrections without a new feature use a patch release. Record the exact
+For 1.x, follow [the stability policy](STABILITY.md). Additive public tools increment
+the minor version; corrections without a new feature use a patch release.
+Breaking public-contract changes require a major release. Review the frozen
+contract baseline before changing existing tool schemas. Record the exact
 scope, compatibility limits and validation in `CHANGELOG.md` and
 `IMPLEMENTATION-STATUS.md`.
 

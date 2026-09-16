@@ -8,7 +8,7 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 - Corrections without new features increment the patch version.
 - Document changed arguments or behavior explicitly; preserve existing calls where possible.
 - Each release updates package/server version, generated tool catalogue/schema, installer references, changelog and this record.
-- Validate unit/integration tests, both MCP transports where relevant, lint/types, distribution build, and actual MCP client behavior. Live deployment checks are read-only; mutation tests use isolated fixtures.
+- Validate unit/integration tests, both MCP transports where relevant, lint/types, distribution build, and actual MCP client behavior. Module-release live checks were read-only. The separately authorized 1.0.0 verification used disposable synthetic records; other mutation coverage uses isolated fixtures.
 - Commit and push only the relevant module and release material. Confirm remote commit and CI status.
 
 ## Current work
@@ -25,6 +25,17 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 11. **Released and verified:** Alignment and textual witnesses (0.16.0), eight new tools; 160 tools total.
 12. **Released and verified:** Sharing, users and groups (0.17.0), 13 new tools; 173 tools total.
 13. **Released and verified:** Fonts and presentation settings (0.18.0), two new tools and four expanded record operations; 175 tools total.
+
+## 1.0.0 stable-release verification
+
+- The maintainer confirmed the existing WSL service, authentication and client connection before release preparation. This is user-confirmed deployment evidence, separate from the automated checks below.
+- Authorized live MCP calls created one synthetic project/document/page, a region and line, and a Unicode transcription. Geometry edits and bulk text updates were read back exactly.
+- Direct text export matched the source. A server PAGE XML export finished successfully; its downloaded archive preserved the text, baseline and image filename. Reimport into a separate transcription layer finished successfully and read back the same text and geometry.
+- Task monitoring reported finished export/import jobs with no crashes. Candidate import-group attribution remained explicitly unconfirmed; final verification also used the scoped reports and imported records.
+- Removed the generated download, synthetic document and project using the recorded identifiers. Existing research records and the running MCP service were not changed. No live OCR/training was run; this check does not establish OCR accuracy or training quality.
+- Reviewed all 175 advertised contracts and added the 1.x policy, independent machine baseline and regression guard. Native result fields remain server-dependent.
+- Ruff and strict type checks passed. The isolated 0.18.0-to-1.0.0 package upgrade preserved all settings, private backups and launcher in paths containing spaces; actual installed STDIO discovery advertised 175 tools and fixture-backed reads passed.
+- The release publication gate requires the exact release commit to pass the six-job Windows/macOS/Linux × Python 3.11/3.13 compatibility matrix. Final CI links and artifact digests are recorded on the GitHub release after this gate passes.
 
 ## Baseline evidence
 - Initial public commit: 73f08eb (MCP 0.5.0, 89 tools).

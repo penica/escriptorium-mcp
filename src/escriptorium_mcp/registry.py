@@ -60,7 +60,7 @@ def create_server() -> MCPServer:
     """Build tools without making network calls or requiring credentials."""
     server = MCPServer(
         "eScriptorium",
-        version="0.18.0",
+        version="1.0.0",
         tools=(
             build_account_tools()
             + build_group_tools()
