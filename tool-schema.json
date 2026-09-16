@@ -6207,13 +6207,26 @@
   {
     "name": "get_import_status",
     "title": null,
-    "description": "Read visible import task history, messages and report state counts.\n\n        Includes old imports; inspect timestamps to identify the relevant job.\n        No visible reports does not prove no import exists. Native import record\n        status, processed/total counts and progress percentages are not exposed.\n        ",
+    "description": "Read visible import task history, messages and report state counts.\n\n        Filter by group to narrow reports; without it old imports are included.\n        Inspect timestamps and messages, including skipped-file warnings. A finished\n        import report does not prove separately queued image conversion is finished.\n        No visible reports does not prove no import exists. Native import record\n        status, processed/total counts and progress percentages are not exposed.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
           "exclusiveMinimum": 0,
           "title": "Document Id",
           "type": "integer"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Id"
         }
       },
       "required": [
@@ -6295,7 +6308,7 @@
   {
     "name": "cancel_document_import",
     "title": null,
-    "description": "Cancel the latest document import through its dedicated server action.\n\n        This cannot select an arbitrary historical import. Already stopped imports\n        return an upstream error; some versions return HTTP 500 when none exists.\n        Task history alone cannot reliably prove that a cancelable import exists.\n        ",
+    "description": "Cancel the latest document import through its dedicated server action.\n\n        This cannot select an arbitrary historical import. Already stopped imports\n        return an upstream error; some versions return HTTP 500 when none exists.\n        Task history alone cannot reliably prove that a cancelable import exists.\n        Latest is selected when the action runs, so concurrent imports can change\n        its target. Cancellation before report attachment may not stop a queued\n        task; existing image/text changes are not rolled back.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -6808,7 +6821,7 @@
   {
     "name": "import_document_file",
     "title": null,
-    "description": "Queue import of PDF, ZIP, ALTO or PAGE XML into an existing document.\n\n        override=true can replace segmentation and text. Poll task reports afterward.\n        ",
+    "description": "Queue PDF, ZIP, ALTO or PAGE XML through the legacy plural import form.\n\n        Use submit_document_import for explicit modes, IIIF/METS and layer IDs.\n        Local paths refer to the MCP host. Even override=false may replace text or\n        matching images. override=true deletes segmentation and attached text/history\n        across layers. Submission is not completion; inspect task reports for errors\n        and skipped files. No automatic retry or resume is performed by this tool.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -6873,6 +6886,301 @@
         "JsonValue": {}
       },
       "title": "import_document_fileOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "submit_document_import",
+    "title": null,
+    "description": "Submit PDF, XML/ZIP, IIIF or METS through the modern document import API.\n\n        Local file_path must exist on the MCP host. URLs are fetched by eScriptorium\n        under its network policy; MCP does not download them or forward API tokens.\n        IIIF supports Presentation 2 image-service manifests, all canvases; PDF and\n        IIIF import images only. No Presentation 3 or JSON archive restore is offered.\n\n        XML transcription_id selects a visible document layer by its name;\n        name selects/creates a layer. METS name or prefix_transcription_id supplies\n        a prefix for separate source layers, not an exact destination layer. Use\n        absolute references in local METS XML or a self-contained METS ZIP.\n\n        XML matches pages by original_filename; unmatched pages produce warnings.\n        Even override=false can replace text/images. override=true deletes page\n        lines/regions and their text/history across ALL layers. Image replacement\n        does not promise geometry reprojection. Multi-page imports are not atomic.\n\n        Success means accepted, not complete. Inspect reports for skipped-file\n        warnings and separate image-conversion jobs. track=true returns uncertain\n        new group candidates, never confirmed attribution. Native processed/total\n        counters are unavailable; monitoring failure never warrants resubmission.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "source": {
+          "discriminator": {
+            "mapping": {
+              "iiif_url": "#/$defs/IiifUrl",
+              "mets_file": "#/$defs/MetsFile",
+              "mets_url": "#/$defs/MetsUrl",
+              "pdf_file": "#/$defs/PdfFile",
+              "xml_file": "#/$defs/XmlFile"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/PdfFile"
+            },
+            {
+              "$ref": "#/$defs/XmlFile"
+            },
+            {
+              "$ref": "#/$defs/IiifUrl"
+            },
+            {
+              "$ref": "#/$defs/MetsFile"
+            },
+            {
+              "$ref": "#/$defs/MetsUrl"
+            }
+          ],
+          "title": "Source"
+        },
+        "track": {
+          "default": false,
+          "title": "Track",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "document_id",
+        "source"
+      ],
+      "type": "object",
+      "$defs": {
+        "IiifUrl": {
+          "additionalProperties": false,
+          "description": "Presentation 2 manifest fetched by eScriptorium, importing all canvases.",
+          "properties": {
+            "kind": {
+              "const": "iiif_url",
+              "title": "Kind",
+              "type": "string"
+            },
+            "url": {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "title": "Url",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "url"
+          ],
+          "title": "IiifUrl",
+          "type": "object"
+        },
+        "MetsFile": {
+          "additionalProperties": false,
+          "description": "METS descriptor with absolute references, or a self-contained METS ZIP.",
+          "properties": {
+            "file_path": {
+              "format": "file-path",
+              "title": "File Path",
+              "type": "string"
+            },
+            "name": {
+              "anyOf": [
+                {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Name"
+            },
+            "override": {
+              "default": false,
+              "title": "Override",
+              "type": "boolean"
+            },
+            "prefix_transcription_id": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Prefix Transcription Id"
+            },
+            "kind": {
+              "const": "mets_file",
+              "title": "Kind",
+              "type": "string"
+            }
+          },
+          "required": [
+            "file_path",
+            "kind"
+          ],
+          "title": "MetsFile",
+          "type": "object"
+        },
+        "MetsUrl": {
+          "additionalProperties": false,
+          "description": "METS descriptor fetched by eScriptorium; relative references use its URL.",
+          "properties": {
+            "name": {
+              "anyOf": [
+                {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Name"
+            },
+            "override": {
+              "default": false,
+              "title": "Override",
+              "type": "boolean"
+            },
+            "prefix_transcription_id": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Prefix Transcription Id"
+            },
+            "kind": {
+              "const": "mets_url",
+              "title": "Kind",
+              "type": "string"
+            },
+            "url": {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "title": "Url",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "url"
+          ],
+          "title": "MetsUrl",
+          "type": "object"
+        },
+        "PdfFile": {
+          "additionalProperties": false,
+          "description": "A PDF on the MCP host; the server imports page images only.",
+          "properties": {
+            "kind": {
+              "const": "pdf_file",
+              "title": "Kind",
+              "type": "string"
+            },
+            "file_path": {
+              "format": "file-path",
+              "title": "File Path",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "file_path"
+          ],
+          "title": "PdfFile",
+          "type": "object"
+        },
+        "XmlFile": {
+          "additionalProperties": false,
+          "description": "ALTO/PAGE XML or ordinary ZIP, optionally targeting a document layer.",
+          "properties": {
+            "file_path": {
+              "format": "file-path",
+              "title": "File Path",
+              "type": "string"
+            },
+            "name": {
+              "anyOf": [
+                {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Name"
+            },
+            "override": {
+              "default": false,
+              "title": "Override",
+              "type": "boolean"
+            },
+            "kind": {
+              "const": "xml_file",
+              "title": "Kind",
+              "type": "string"
+            },
+            "transcription_id": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Transcription Id"
+            }
+          },
+          "required": [
+            "file_path",
+            "kind"
+          ],
+          "title": "XmlFile",
+          "type": "object"
+        }
+      },
+      "title": "submit_document_importArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "submit_document_importOutput"
     },
     "icons": null,
     "annotations": {

@@ -1,5 +1,35 @@
 # Changelog
 
+## 0.12.0 — 2026-09-16
+
+### Module 7: Imports
+
+Added `submit_document_import`, bringing the catalogue to 125 tools. A typed source
+selects PDF, XML/ordinary ZIP, IIIF URL, local METS XML/ZIP or remote METS URL. The
+tool maps each source to the modern singular import endpoint, using multipart
+uploads or JSON URLs without fetching remote sources on the MCP host.
+
+XML can select a document layer by ID or name. METS exposes layer-name prefixes,
+including a prefix selected from an existing layer, without claiming an exact
+target layer. Scoped preflight validates returned identities and import-name
+limits. Contradictory sources/targets, missing files, wrong extensions, unsupported
+URL schemes and explicit null names/IDs are rejected before writing.
+
+Optional tracking returns unconfirmed task-group candidates while preserving raw
+acceptance by default. Failed optional monitoring never erases acceptance or
+resubmits. `get_import_status` gains a caller-selected group filter. The shared
+group reader is reused by training without changing its submission contract.
+
+The legacy file-import tool keeps its original endpoint and arguments. Updated
+descriptions explain latest-import cancellation races, replacement with override
+off, all-layer geometry/text deletion with XML override, IIIF Presentation 2 and
+METS prefix/reference limits. No native progress counters, archive restore or
+automatic resume are invented. No live imports or service deployment are performed.
+
+Package/server versions, installer, generated tool catalogue/schema, bundled skill
+and [import contract](docs/IMPORTS-API.md) are updated together.
+
+
 ## 0.11.0 — 2026-09-16
 
 ### Module 6: Pages and image operations

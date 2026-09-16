@@ -1,6 +1,6 @@
 # eScriptorium MCP server
 
-Version 0.11.0 exposes **124 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
+Version 0.12.0 exposes **125 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
 
 ## Capabilities
 
@@ -48,7 +48,7 @@ For a standalone installation, from this directory:
 uv tool install --python 3.11 .
 ```
 
-Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.11.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
+Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.12.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
 
 ## Credentials and paths
 
@@ -82,7 +82,7 @@ The supplied key remains in the ignored checkout `.env`; package and client exam
 
 ## Transport choice (checked 16 September 2026)
 
-**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 124 tools in either transport.
+**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 125 tools in either transport.
 
 STDIO is the default and needs no listening port. To run HTTP, first generate a separate service token:
 
@@ -159,6 +159,28 @@ Bulk clear only blanks content. It retains rows, graphs, confidence and existing
 
 `get_transcription_statistics` returns nonempty-line count and stored-character frequencies. Sum frequencies for the stored-character total; stored markup is included, and server results can be cached for one hour. `find_transcription_pages_by_character` locates pages by one Unicode code point on newer servers. Permission failures remain errors; an absent or hidden endpoint is not interpreted as an empty result. See [docs/TRANSCRIPTION-API.md](docs/TRANSCRIPTION-API.md).
 
+## Imports (0.12.0)
+
+`submit_document_import` accepts a `source` with one of five `kind` values:
+`pdf_file`, `xml_file`, `iiif_url`, `mets_file` or `mets_url`. Files must exist on
+the MCP host; eScriptorium fetches remote URLs under its own network policy.
+PDF/IIIF import images. XML/ZIP can select a layer by `transcription_id` or `name`.
+METS `name` or `prefix_transcription_id` supplies a prefix for separate source
+layers, rather than one exact destination layer. IIIF support is Presentation 2.
+
+Imports may replace images/text even with `override=false`. XML override deletes
+existing geometry and attached text/history across layers. Standalone XML matches
+existing original filenames; unmatched pages produce warnings. Inspect reports
+before declaring completion, including separate image-conversion work.
+
+Optional `track=true` returns unconfirmed new group candidates and preserves
+accepted status if monitoring fails. `get_import_status` optionally filters by
+`group_id`; it has no native page-progress counters. Cancellation still targets
+the latest import and does not roll back changes. The existing
+`import_document_file` remains available on its original endpoint. See
+[docs/IMPORTS-API.md](docs/IMPORTS-API.md) for source fields, layer visibility and
+format limits.
+
 ## Pages and images (0.11.0)
 
 `list_pages` accepts optional name and ordering filters. Name searches both page names and original filenames. `get_page_by_order` uses a zero-based position and safely follows the native page-detail redirect; page order and page ID are different values. Native extra page/region fields remain available.
@@ -208,8 +230,8 @@ Native file paths belong to the MCP server host, and transfers are limited to 16
 1. `list_projects` to find the project **slug**.
 2. `list_scripts` to find a script **name**, such as `Latin`.
 3. `create_document` with `data.name`, `data.project` (slug), and `data.main_script` (name).
-4. `upload_page` with an existing image path, or `import_document_file` with a PDF, image ZIP, ALTO or PAGE XML file.
-5. For imports/conversion, check `list_tasks` and page workflow before processing further.
+4. `upload_page` with an existing image path, or `submit_document_import` with the appropriate PDF/XML/ZIP/IIIF/METS source. The legacy `import_document_file` remains available.
+5. For imports/conversion, check `get_import_status`, task messages and page workflow before processing further. A finished import may contain skipped-file warnings.
 
 A page is a document part. IDs are positive primary keys, not page numbers. `move_page.position.index` is a **zero-based** position within the same document. Moving an entire document to another project uses `update_document.changes.project` with the destination slug.
 

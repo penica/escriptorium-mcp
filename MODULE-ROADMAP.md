@@ -11,8 +11,8 @@ Implementation authorized on 2026-09-16. Ontology is complete for the audited AP
 | 3 | Released (0.8.0) | Training and evaluation | Expose remaining server-supported training options, connect submissions to task groups, and provide consistent checkpoint/result reporting. |
 | 4 | Released (0.9.0) | Transcriptions | Bulk create/update/clear line text, transcription statistics and character counts, character-to-page lookup and layer settings. |
 | 5 | Released (0.10.0) | Segmentation | Bulk line operations, line merging, individual region/line retrieval, mask regeneration and automatic reading-order recalculation. Region locking requires newer support. |
-| 6 | Implemented (0.11.0), release validation | Pages and image operations | Rotation, cropping, lookup by page order, bulk page moves and server-side filtering. Basic upload/edit/delete/reorder already exist. |
-| 7 | Pending | Imports | IIIF manifests, METS files/URLs, explicit import modes and target transcription layers, plus status and cancellation. |
+| 6 | Released (0.11.0) | Pages and image operations | Rotation, cropping, lookup by page order, bulk page moves and server-side filtering. Basic upload/edit/delete/reorder already exist. |
+| 7 | Implemented (0.12.0), release validation | Imports | IIIF manifests, METS files/URLs, explicit import modes and target transcription layers, plus status and cancellation. |
 | 8 | Pending | Exports and downloads | More export options, full-document JSON archives, and listing/retrieving/deleting generated downloads. The downloads API requires the newer release. |
 | 9 | Pending | Projects, documents and metadata | Search/filter/sort, document statistics, page-ID lookup, document/page metadata CRUD, project/document tags and remaining editable settings. |
 | 10 | Pending | Virtual collections | Collection CRUD, membership management and training from collections spanning multiple documents. Currently absent. |

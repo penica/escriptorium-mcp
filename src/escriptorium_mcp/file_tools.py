@@ -62,9 +62,13 @@ def register_files(server: MCPServer) -> None:
     async def import_document_file(
         document_id: Identifier, upload: DocumentImport
     ) -> JsonValue:
-        """Queue import of PDF, ZIP, ALTO or PAGE XML into an existing document.
+        """Queue PDF, ZIP, ALTO or PAGE XML through the legacy plural import form.
 
-        override=true can replace segmentation and text. Poll task reports afterward.
+        Use submit_document_import for explicit modes, IIIF/METS and layer IDs.
+        Local paths refer to the MCP host. Even override=false may replace text or
+        matching images. override=true deletes segmentation and attached text/history
+        across layers. Submission is not completion; inspect task reports for errors
+        and skipped files. No automatic retry or resume is performed by this tool.
         """
         metadata = ImportMetadata(name=upload.name, override=upload.override)
         return await call(

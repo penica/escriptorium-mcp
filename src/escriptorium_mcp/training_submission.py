@@ -1,14 +1,18 @@
 """Training guards and best-effort task-group attribution after one submission."""
 
-from typing import ClassVar, assert_never
+from typing import assert_never
 
 from mcp.server.mcpserver.exceptions import ToolError
-from pydantic import BaseModel, ConfigDict, JsonValue, TypeAdapter, ValidationError
+from pydantic import JsonValue
 
-from escriptorium_mcp.api import ApiRequest, invoke
-from escriptorium_mcp.bridge import Identifier, call
+from escriptorium_mcp.api import invoke
+from escriptorium_mcp.bridge import Identifier
 from escriptorium_mcp.job_models import Training
 from escriptorium_mcp.model_models import JobLabel, ModelJob, ModelRecord, job_label
+from escriptorium_mcp.submission_tracking import (
+    SubmissionGroup,
+    read_submission_groups,
+)
 
 
 class TrainingModelRecord(ModelRecord):
@@ -17,51 +21,6 @@ class TrainingModelRecord(ModelRecord):
     job: ModelJob | JobLabel
     name: str | None = None
     accuracy_percent: float | None = None
-
-
-class TrainingGroup(BaseModel):
-    """Keep unknown group fields; a missing method cannot establish attribution."""
-
-    model_config: ClassVar[ConfigDict] = ConfigDict(frozen=True, extra="allow")
-    pk: Identifier
-    method: str | None = None
-
-    def as_json(self) -> JsonValue:
-        """Retain the server's group fields without adding absent optional fields."""
-        return TypeAdapter[JsonValue](JsonValue).validate_json(
-            self.model_dump_json(exclude_unset=True)
-        )
-
-
-class TrainingGroupPage(BaseModel):
-    """Parse the paginated response after the adapter has followed next links."""
-
-    model_config: ClassVar[ConfigDict] = ConfigDict(frozen=True)
-    results: list[TrainingGroup]
-
-
-async def read_training_groups(document_id: Identifier) -> list[TrainingGroup] | None:
-    """Keep optional monitoring failures from turning accepted writes into retries."""
-    try:
-        raw = await call(
-            ApiRequest(
-                method="GET",
-                route=f"documents/{document_id}/task_groups/",
-                paginate=True,
-            )
-        )
-        parsed = TypeAdapter[list[TrainingGroup] | TrainingGroupPage](
-            list[TrainingGroup] | TrainingGroupPage
-        ).validate_python(raw)
-    except (ToolError, ValidationError):
-        return None
-    match parsed:
-        case TrainingGroupPage(results=groups):
-            return groups
-        case list():
-            return parsed
-        case _:
-            assert_never(parsed)
 
 
 async def submit_training(
@@ -78,7 +37,7 @@ async def submit_training(
         if job.override and (model.rights != "owner" or model.training is not False):
             message = "Overwriting requires an owned model with stopped training."
             raise ToolError(message)
-    before = await read_training_groups(document_id) if track else None
+    before = await read_submission_groups(document_id) if track else None
     match kind:
         case 1:
             action = "segtrain"
@@ -89,8 +48,8 @@ async def submit_training(
     submission = await invoke("POST", f"documents/{document_id}/{action}/", job)
     if not track:
         return submission
-    after = await read_training_groups(document_id)
-    candidates: list[TrainingGroup] = []
+    after = await read_submission_groups(document_id)
+    candidates: list[SubmissionGroup] = []
     status = "unavailable"
     if before is not None and after is not None:
         previous_ids = {group.pk for group in before}

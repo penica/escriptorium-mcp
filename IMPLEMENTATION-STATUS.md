@@ -17,7 +17,8 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 3. **Released and verified:** Training and evaluation (0.8.0), optional tracked submissions and the new `get_training_report`; 103 tools total. API limits are recorded in docs/TRAINING-API.md.
 4. **Released and verified:** Transcriptions (0.9.0), eight new tools; 111 total.
 5. **Released and verified:** Segmentation (0.10.0), eight new tools; 119 total.
-6. **Locally verified, GitHub regression pending:** Pages and image operations (0.11.0), five new tools; 124 total. Modules 7–13 remain pending in roadmap order.
+6. **Released and verified:** Pages and image operations (0.11.0), five new tools; 124 total.
+7. **Release validation:** Imports (0.12.0), one new source-aware tool and grouped status; 125 tools total. Modules 8–13 remain pending in roadmap order.
 
 ## Baseline evidence
 - Initial public commit: 73f08eb (MCP 0.5.0, 89 tools).
@@ -104,7 +105,7 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 - [Compatibility run 35095940176](https://github.com/penica/escriptorium-mcp/actions/runs/35095940176) passed all six Windows/macOS/Linux and Python 3.11/3.13 jobs with zero annotations.
 - [GitHub release v0.10.0](https://github.com/penica/escriptorium-mcp/releases/tag/v0.10.0) published all four artifacts. Uploaded SHA-256 digests and sizes matched verified local files.
 
-### 0.11.0 — Pages and image operations (release validation)
+### 0.11.0 — Pages and image operations
 
 - Added five tools for zero-based page-order lookup, rotation, cropping, bulk moves and explicit image replacement; 124 tools total. Page listing gains name/original-filename substring filtering and supported ordering. Metadata gains original filename and stored confidence summary with native limits/null semantics and document type checks.
 - Read-only endpoint and field audit completed; public source pinned to `5f17889fe571d8fa25feb5deebec4221d9485d32`. The exact deployed commit remains unverified.
@@ -117,3 +118,20 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 - Packages passed 21 inner checksums, the outer checksum, normalized ownership, private-file exclusion and bundled worker byte equivalence. Final packages are rebuilt after this ledger update; the wheel must match the installer-tested hash. No systemd service was touched; actual WSL/service execution remains deployment verification.
 
 - Ruff lint/format, strict Basedpyright for source/tests/scripts, shell syntax and skill validation passed. Changed production/worker/release files passed the programming-rule audit. Local scope deliberately avoids duplicating the full cross-platform CI regression before its exact-commit run.
+
+- Public commit: `f78ff9d30f327b0c89ba95e0fb0e05772d016546`.
+- [Compatibility run 35099080011](https://github.com/penica/escriptorium-mcp/actions/runs/35099080011) passed all six Windows/macOS/Linux and Python 3.11/3.13 jobs, each with 486 tests and zero annotations.
+- [GitHub release v0.11.0](https://github.com/penica/escriptorium-mcp/releases/tag/v0.11.0) published all four artifacts. Uploaded sizes/digests matched final local files and the release tag resolves to the verified commit.
+
+### 0.12.0 — Imports (release validation)
+
+- Added one modern submission tool with five coherent source variants: local PDF, XML/ordinary ZIP, IIIF URL, local METS XML/ZIP and METS URL. The catalogue contains 125 tools. Existing legacy file imports retain their endpoint/arguments.
+- Scoped document/layer preflight verifies returned identities and stored-name limits. XML exposes an exact layer selection by name/ID; METS exposes prefixes instead of claiming a single destination layer. Local extensions match native case-sensitive dispatch, and contradictory/unknown fields and explicit null options are rejected.
+- Modern submission sends one native POST, retains raw 201 acceptance by default and optionally reports unconfirmed group candidates. Failed monitoring cannot erase acceptance or resubmit. Group-filtered import status remains report-based; native page-progress counters are unavailable. Cancellation limitations and override/replacement effects are documented in the tool schema, skill and pinned-source import guide.
+- Initial actual-STDIO regression failed with unknown `submit_document_import`. All 67 new cases subsequently passed in 75.15 seconds, including actual STDIO/authenticated HTTP, five source types, multipart bytes/false values, scoped targets, ambiguous/missing monitoring, legacy compatibility and lost-response uncertainty with exactly one POST.
+- The shared group-reader extraction preserves training behavior. Before extraction, 21 baseline training cases passed; after extraction, 42 training/task regression cases passed in 72.43 seconds. The complete suite collects 553 tests and runs on all six GitHub platform/Python jobs before publication.
+- Read-only live STDIO verified version 0.12.0, 125 tools, two visible historical import reports and one report in a caller-selected group. No live imports were submitted or canceled, and no research images/text were changed.
+- Ruff lint/format, strict Basedpyright for source/tests/scripts, installer shell syntax and skill validation passed. Changed production/release files and all six new test files passed the programming-rule audit. Native parser behavior is source-backed and tested with isolated fixtures; the exact deployed source commit is unverified.
+- Nine existing HTTP/STDIO transport tests passed in 5.79 seconds. Fresh 0.12 installation and real 0.11-to-0.12 upgrade passed in temporary paths with spaces, preserving URL/key/token/Books settings, 0600 configuration/backup permissions and linked launcher/help.
+- The isolated installed interpreter (`-I`) advertised 125 tools and resolved all five source schemas. It exercised exact multipart file bytes and false values, all source modes, scoped layer preflight, raw acceptance, accepted submission after monitoring failure with one POST, group-filtered history, legacy file import and invalid-source rejection.
+- Artifacts passed 22 inner checksums, the outer checksum, normalized ownership, private-file exclusion and bundled worker byte equivalence. Final documentation-only rebuilds must retain the installer-tested wheel hash. No service was installed or changed; actual WSL/systemd deployment remains separate verification.

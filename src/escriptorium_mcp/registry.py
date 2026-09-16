@@ -10,6 +10,7 @@ from escriptorium_mcp.annotation_tools import register_annotations
 from escriptorium_mcp.api import ApiRequest, invoke
 from escriptorium_mcp.bridge import Identifier, Name, Request, call
 from escriptorium_mcp.file_tools import register_files
+from escriptorium_mcp.import_tools import register_imports
 from escriptorium_mcp.instance_tools import register_instances
 from escriptorium_mcp.job_tools import register_jobs
 from escriptorium_mcp.model_tools import register_models
@@ -40,7 +41,7 @@ def create_server() -> MCPServer:
     """Build tools without making network calls or requiring credentials."""
     server = MCPServer(
         "eScriptorium",
-        version="0.11.0",
+        version="0.12.0",
         instructions=(
             "Use server primary keys, not page numbers. "
             "Write and processing tools change the remote instance. "
@@ -159,6 +160,7 @@ def create_server() -> MCPServer:
     register_task_monitoring(server)
     register_training(server)
     register_files(server)
+    register_imports(server)
     register_ontology(server)
     register_annotations(server)
     register_instances(server)

@@ -78,15 +78,21 @@ def register_task_monitoring(server: MCPServer) -> None:
         return await job_status(TaskFilters(document_id=document_id, group_id=group_id))
 
     @server.tool(annotations=READ)
-    async def get_import_status(document_id: Identifier) -> JsonValue:
+    async def get_import_status(
+        document_id: Identifier, group_id: Identifier | None = None
+    ) -> JsonValue:
         """Read visible import task history, messages and report state counts.
 
-        Includes old imports; inspect timestamps to identify the relevant job.
+        Filter by group to narrow reports; without it old imports are included.
+        Inspect timestamps and messages, including skipped-file warnings. A finished
+        import report does not prove separately queued image conversion is finished.
         No visible reports does not prove no import exists. Native import record
         status, processed/total counts and progress percentages are not exposed.
         """
         return await job_status(
-            TaskFilters(document_id=document_id, method=IMPORT_METHOD)
+            TaskFilters(
+                document_id=document_id, group_id=group_id, method=IMPORT_METHOD
+            )
         )
 
     @server.tool(annotations=CHANGE)
@@ -105,5 +111,8 @@ def register_task_monitoring(server: MCPServer) -> None:
         This cannot select an arbitrary historical import. Already stopped imports
         return an upstream error; some versions return HTTP 500 when none exists.
         Task history alone cannot reliably prove that a cancelable import exists.
+        Latest is selected when the action runs, so concurrent imports can change
+        its target. Cancellation before report attachment may not stop a queued
+        task; existing image/text changes are not rolled back.
         """
         return await invoke("POST", f"documents/{document_id}/cancel_import/")
