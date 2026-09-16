@@ -1,12 +1,12 @@
 # eScriptorium MCP server
 
-Version 0.13.0 exposes **129 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
+Version 0.14.0 exposes **144 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
 
 ## Capabilities
 
 | Area | Available operations |
 |---|---|
-| Projects and documents | Browse; create; rename; move a document between project slugs; delete |
+| Projects and documents | Search/filter/sort; create/edit; move between project slugs; statistics/page lookup; scoped metadata and tags; delete |
 | Pages | Filter/read/order lookup; upload/replace images; rotate/crop; metadata; single/bulk moves; delete |
 | Transcriptions | Create/rename/delete layers; write/correct/delete line text |
 | Segmentation | Read/edit lines and regions; bulk line operations and merging; masks and reading order; supported region locking |
@@ -14,7 +14,7 @@ Version 0.13.0 exposes **129 tools** for eScriptorium. It uses the published [es
 | OCR and models | Filter/read/upload models; update owned models; replace/delete idle owned models; download weights/checkpoints; inspect document associations; run OCR/HTR and training |
 | Training reports | Optionally track submission candidates; combine model metrics/checkpoints with caller-selected training reports |
 | Jobs | List/read task reports; cancel a task, page processing or model training |
-| Exports | Direct UTF-8 text/JSON export; native ALTO/PAGE XML/text export jobs; download a completed export link |
+| Exports | Direct text/JSON; native ALTO/PAGE XML/text/JSON archives and optional formats; generated-download management |
 | Scan acquisition | Download an entire available register directly to NAS with a checksum manifest |
 
 Release validation: [IMPLEMENTATION-STATUS.md](IMPLEMENTATION-STATUS.md).
@@ -48,7 +48,7 @@ For a standalone installation, from this directory:
 uv tool install --python 3.11 .
 ```
 
-Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.13.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
+Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.14.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
 
 ## Credentials and paths
 
@@ -82,7 +82,7 @@ The supplied key remains in the ignored checkout `.env`; package and client exam
 
 ## Transport choice (checked 16 September 2026)
 
-**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 129 tools in either transport.
+**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 144 tools in either transport.
 
 STDIO is the default and needs no listening port. To run HTTP, first generate a separate service token:
 
@@ -128,6 +128,22 @@ The HTTP endpoint uses stateless requests; queued eScriptorium work remains moni
 **Cancellation scope:** the existing `cancel_task` endpoint has document-wide cleanup side effects: even with one task ID, upstream also marks all document training models and imports canceled. Prefer the dedicated model or import cancellation action for those jobs. Owner/staff permissions apply. Cancellation is not transactional; re-read status after errors or timeouts before retrying.
 
 See [CHANGELOG.md](CHANGELOG.md) for releases and [MODULE-ROADMAP.md](MODULE-ROADMAP.md) for the remaining modules.
+
+## Projects, documents and metadata (0.14.0)
+
+Project/document lists support name, tag and ordering filters; document filtering
+uses a project ID while creation/movement uses its slug. Raw reads preserve newer
+fields and populated sharing/tag objects. Create/edit supports 512-character
+record names, project guidelines, confidence visualization and scoped tag arrays.
+Assignments replace the whole array; `[]` clears it.
+
+Use `get_document_statistics`, `list_document_page_ids` and `find_pages_by_type`
+for geometry/annotation counts and lightweight page lookup. Document/page metadata
+CRUD and personal/project tag CRUD use explicit scoped targets. Ordinary metadata
+updates edit a value; `update_shared_metadata_key` edits a global definition that
+may affect other documents/pages. Deleting a project deletes its documents and
+cascading content. See [docs/RECORDS-API.md](docs/RECORDS-API.md) for the contracts,
+assignment rules, compatibility changes and limits.
 
 ## Model management (0.7.0)
 

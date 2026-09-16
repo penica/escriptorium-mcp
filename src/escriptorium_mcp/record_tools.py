@@ -4,8 +4,9 @@ from mcp.server import MCPServer
 from pydantic import JsonValue
 
 from escriptorium_mcp.api import CHANGE, CREATE, DELETE, JOB, READ, ApiRequest, invoke
-from escriptorium_mcp.bridge import Identifier, Name, call
+from escriptorium_mcp.bridge import Identifier, call
 from escriptorium_mcp.page_scope import require_part_type
+from escriptorium_mcp.project_models import RecordName
 from escriptorium_mcp.record_models import (
     DocumentCreate,
     DocumentPatch,
@@ -14,6 +15,7 @@ from escriptorium_mcp.record_models import (
     PageUpload,
     Rename,
 )
+from escriptorium_mcp.record_scope import require_document_tags
 from escriptorium_mcp.text_scope import require_page
 
 
@@ -28,17 +30,26 @@ def register_records(server: MCPServer) -> None:
     @server.tool(annotations=CREATE)
     async def create_document(data: DocumentCreate) -> JsonValue:
         """Create an empty document; project is a slug, main_script a script name."""
+        if "tags" in data.model_fields_set:
+            await require_document_tags(data.tags, data.project)
         return await invoke("POST", "documents/", data)
 
     @server.tool(annotations=CHANGE)
     async def update_document(
         document_id: Identifier, changes: DocumentPatch
     ) -> JsonValue:
-        """Rename a document, move it to another project slug, or change metadata."""
+        """Change settings or move a document to another project slug.
+
+        Tags replace all assignments; [] clears them. A move with tags omitted
+        retains existing assignments, even from the old project. Scope preflight
+        checks supplied tags against the target project, without locking edits.
+        """
+        if changes.tags is not None:
+            await require_document_tags(changes.tags, changes.project, document_id)
         return await invoke("PATCH", f"documents/{document_id}/", changes)
 
     @server.tool(annotations=CHANGE)
-    async def rename_project(project_id: Identifier, name: Name) -> JsonValue:
+    async def rename_project(project_id: Identifier, name: RecordName) -> JsonValue:
         """Rename a project while preserving its sharing settings."""
         return await invoke("PATCH", f"projects/{project_id}/", Rename(name=name))
 
@@ -84,7 +95,7 @@ def register_records(server: MCPServer) -> None:
 
     @server.tool(annotations=DELETE)
     async def delete_project(project_id: Identifier) -> JsonValue:
-        """Delete a project; its documents may also be removed by the server."""
+        """Permanently delete a project, its documents and cascading page content."""
         return await invoke("DELETE", f"projects/{project_id}/")
 
     @server.tool(annotations=DELETE)

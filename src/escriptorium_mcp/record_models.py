@@ -6,17 +6,20 @@ from pydantic import Field, FilePath, FiniteFloat, model_validator
 
 from escriptorium_mcp.api import Input
 from escriptorium_mcp.bridge import Identifier, Name
+from escriptorium_mcp.project_models import RecordName, TagIds
 from escriptorium_mcp.text_models import CharacterGraph, Score, TextChanges
 
 
 class DocumentCreate(Input):
     """Create a document in a project identified by slug."""
 
-    name: Name
+    name: RecordName
     project: Name
     main_script: Name
     read_direction: Literal["ltr", "rtl"] = "ltr"
     line_offset: Literal[0, 1, 2] = 0
+    show_confidence_viz: bool = False
+    tags: TagIds = Field(default_factory=list)
 
 
 class Patch(Input):
@@ -34,11 +37,30 @@ class Patch(Input):
 class DocumentPatch(Patch):
     """Rename, move project, or change document reading conventions."""
 
-    name: Name | None = None
+    name: RecordName | None = None
     project: Name | None = None
     main_script: Name | None = None
     read_direction: Literal["ltr", "rtl"] | None = None
     line_offset: Literal[0, 1, 2] | None = None
+    show_confidence_viz: bool | None = None
+    tags: TagIds | None = None
+
+    @model_validator(mode="after")
+    def require_nonnull_changes(self) -> Self:
+        """Omission preserves settings; no editable document field accepts null."""
+        values = {
+            "name": self.name,
+            "project": self.project,
+            "main_script": self.main_script,
+            "read_direction": self.read_direction,
+            "line_offset": self.line_offset,
+            "show_confidence_viz": self.show_confidence_viz,
+            "tags": self.tags,
+        }
+        if any(values[field] is None for field in self.model_fields_set):
+            msg = "Document changes cannot be null; omit fields to preserve them."
+            raise ValueError(msg)
+        return self
 
 
 class PagePatch(Patch):
@@ -83,9 +105,9 @@ class PageMetadata(Input):
 
 
 class Rename(Input):
-    """A new display name."""
+    """A new project display name."""
 
-    name: Name
+    name: RecordName
 
 
 class LineText(Input):

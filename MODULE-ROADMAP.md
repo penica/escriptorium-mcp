@@ -13,8 +13,8 @@ Implementation authorized on 2026-09-16. Ontology is complete for the audited AP
 | 5 | Released (0.10.0) | Segmentation | Bulk line operations, line merging, individual region/line retrieval, mask regeneration and automatic reading-order recalculation. Region locking requires newer support. |
 | 6 | Released (0.11.0) | Pages and image operations | Rotation, cropping, lookup by page order, bulk page moves and server-side filtering. Basic upload/edit/delete/reorder already exist. |
 | 7 | Released (0.12.0) | Imports | IIIF manifests, METS files/URLs, explicit import modes and target transcription layers, plus status and cancellation. |
-| 8 | Implemented (0.13.0), release validation | Exports and downloads | More export options, full-document JSON archives, and listing/retrieving/deleting generated downloads. The downloads API requires the newer release. |
-| 9 | Pending | Projects, documents and metadata | Search/filter/sort, document statistics, page-ID lookup, document/page metadata CRUD, project/document tags and remaining editable settings. |
+| 8 | Released (0.13.0) | Exports and downloads | More export options, full-document JSON archives, and listing/retrieving/deleting generated downloads. The downloads API requires the newer release. |
+| 9 | Implemented (0.14.0), release validation | Projects, documents and metadata | Search/filter/sort, document statistics, page-ID lookup, document/page metadata CRUD, project/document tags and remaining editable settings. |
 | 10 | Pending | Virtual collections | Collection CRUD, membership management and training from collections spanning multiple documents. Currently absent. |
 | 11 | Pending | Alignment and textual witnesses | Manage reference texts; expose alignment and forced-alignment actions. Currently absent. |
 | 12 | Pending | Sharing, users and groups | Project/document sharing, user/group discovery and permitted account/group operations. Currently absent. |

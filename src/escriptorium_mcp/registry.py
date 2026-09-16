@@ -14,6 +14,7 @@ from escriptorium_mcp.file_tools import register_files
 from escriptorium_mcp.import_tools import register_imports
 from escriptorium_mcp.instance_tools import register_instances
 from escriptorium_mcp.job_tools import register_jobs
+from escriptorium_mcp.metadata_tools import register_metadata
 from escriptorium_mcp.model_tools import register_models
 from escriptorium_mcp.ontology_native import register_native
 from escriptorium_mcp.ontology_repair import register_repairs
@@ -21,9 +22,18 @@ from escriptorium_mcp.ontology_restore import register_snapshots
 from escriptorium_mcp.ontology_tools import register_ontology
 from escriptorium_mcp.page_models import PageFilters
 from escriptorium_mcp.page_tools import list_filtered_pages, register_page_operations
+from escriptorium_mcp.project_models import ProjectCreateSettings, RecordName
+from escriptorium_mcp.record_operations import (
+    create_project_record,
+    list_document_records,
+    list_project_records,
+    register_record_expansion,
+)
+from escriptorium_mcp.record_query_models import DocumentFilters, ProjectFilters
 from escriptorium_mcp.record_tools import register_records
 from escriptorium_mcp.segmentation import register_segmentation
 from escriptorium_mcp.segmentation_bulk import register_segmentation_expansion
+from escriptorium_mcp.tag_tools import register_tags
 from escriptorium_mcp.task_tools import register_task_monitoring
 from escriptorium_mcp.taxonomy_edit import register_taxonomy_edits
 from escriptorium_mcp.taxonomy_merge import register_taxonomy_merges
@@ -42,7 +52,7 @@ def create_server() -> MCPServer:
     """Build tools without making network calls or requiring credentials."""
     server = MCPServer(
         "eScriptorium",
-        version="0.13.0",
+        version="0.14.0",
         instructions=(
             "Use server primary keys, not page numbers. "
             "Write and processing tools change the remote instance. "
@@ -52,24 +62,32 @@ def create_server() -> MCPServer:
     )
 
     @server.tool(annotations=READ)
-    async def list_projects() -> JsonValue:
-        """List all accessible projects; follows the connector's pagination."""
-        return await call(Request(operation="list_projects"))
+    async def list_projects(filters: ProjectFilters | None = None) -> JsonValue:
+        """List accessible projects with native name/tag filters and ordering.
+
+        Follows pagination and preserves expanded sharing, tags and new fields.
+        Native OR tag queries can return duplicate rows; counts are not rewritten.
+        """
+        return await list_project_records(filters)
 
     @server.tool(annotations=READ)
     async def get_project(project_id: Identifier) -> JsonValue:
         """Read project metadata by primary key."""
-        return await call(Request(operation="get_project", project_id=project_id))
+        return await invoke("GET", f"projects/{project_id}/")
 
     @server.tool(annotations=READ)
-    async def list_documents() -> JsonValue:
-        """List all accessible documents; follows the connector's pagination."""
-        return await call(Request(operation="list_documents"))
+    async def list_documents(filters: DocumentFilters | None = None) -> JsonValue:
+        """List accessible documents, preserving all native fields and pagination.
+
+        Optional project filter is a numeric ID; document create/move uses a slug.
+        Supports name/tag filters and ordering without deduplicating native rows.
+        """
+        return await list_document_records(filters)
 
     @server.tool(annotations=READ)
     async def get_document(document_id: Identifier) -> JsonValue:
         """Read document metadata and its available transcription layers."""
-        return await call(Request(operation="get_document", document_id=document_id))
+        return await invoke("GET", f"documents/{document_id}/")
 
     @server.tool(annotations=READ)
     async def list_pages(
@@ -136,9 +154,15 @@ def create_server() -> MCPServer:
         )
 
     @server.tool(annotations=WRITE)
-    async def create_project(name: Name) -> JsonValue:
-        """Create a remote project. Repeating this call may create duplicates."""
-        return await call(Request(operation="create_project", name=name))
+    async def create_project(
+        name: RecordName, settings: ProjectCreateSettings | None = None
+    ) -> JsonValue:
+        """Create a project with optional guidelines and personal tag IDs.
+
+        Existing name-only calls remain valid. Repetition may create duplicates.
+        Omitted settings retain native defaults; supplied tag arrays are complete.
+        """
+        return await create_project_record(name, settings)
 
     @server.tool(annotations=WRITE)
     async def create_transcription(document_id: Identifier, name: Name) -> JsonValue:
@@ -156,6 +180,9 @@ def create_server() -> MCPServer:
 def _register_extensions(server: MCPServer) -> None:
     for register in (
         register_records,
+        register_record_expansion,
+        register_metadata,
+        register_tags,
         register_page_operations,
         register_text,
         register_text_bulk,

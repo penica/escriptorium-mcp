@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.14.0 — 2026-09-16
+
+### Module 9: Projects, documents and metadata
+
+Added 15 tools for project settings, native document statistics/page lookup,
+document/page metadata associations and personal/project tag definitions;
+144 tools total. Existing project/document tools gain typed search/filter/sort,
+512-character names, guidelines, confidence visualization and scoped complete
+tag assignments. Empty arrays clear assignments; omitted fields stay omitted.
+
+Project/document reads now preserve native extra fields, expanded sharing/tag
+objects, nulls, zeroes and timestamp strings. This fixes older connector DTOs
+discarding new fields or rejecting populated modern objects. Existing argument
+names and collection/detail shapes remain; synthetic DTO defaults are no longer
+added and fully followed pagination ends with next=null.
+
+Metadata value edits are separate from the explicitly named global shared-key
+operation. Association deletion preserves shared keys and other records; tag
+definition deletion unassigns that definition throughout its scope. Document
+tag assignments are checked against the effective target project, including
+project moves, before mutation. Project deletion documentation states its native
+document/content cascade. Preflight is not a lock or a transaction guarantee.
+
+The record guide, bundled skill, version, installer and generated catalogue/schema
+are updated together. Release verification uses isolated mutation fixtures and
+read-only live probes; no running service or live research records are changed.
+
 ## 0.13.0 — 2026-09-16
 
 ### Module 8: Exports and downloads

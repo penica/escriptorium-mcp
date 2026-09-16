@@ -14,6 +14,14 @@ Use the connected `escriptorium` MCP tools. Read their current input schemas ins
 - Creating or moving a document uses a project **slug**; choosing its writing system uses a script **name** from `list_scripts`.
 - `move_page` uses a **zero-based index**. Line ordering is separate from page ordering.
 
+## Record settings, metadata and tags
+
+Use project/document filters for name, native tag expressions and supported ordering; document filtering takes a numeric project ID, while creation/movement takes a slug. Raw record reads preserve newer fields, including expanded tags/sharing. `list_document_page_ids` returns ordered IDs; `find_pages_by_type` returns page frequencies for geometry or annotation types. `get_document_statistics` counts geometry/annotations, not characters or job progress; refresh recomputes and, without ordering, rewrites the default cache.
+
+Tag assignments on projects/documents replace the complete array, and `[]` clears it. Document tags must match the effective project. Moving with tags omitted retains existing assignments; explicitly replace or clear them when intended. Definition edits through `update_tag` affect every assignment in that scope. `delete_tag` unassigns the definition everywhere; edit one record's array to remove only one assignment. Deleting a project also deletes its documents and cascading content.
+
+Metadata targets distinguish a document from one of its pages. `update_metadata` edits the association's value; `delete_metadata` removes only the association. Creation is not an upsert and can produce duplicate rows. `update_shared_metadata_key` edits a global key name/CIDOC definition and can affect other documents/pages. Use it only when that wider effect is within the user's request; a single-row correction does not imply a global rename. The API cannot enumerate every affected reference. Do not combine a value correction with key editing or retry an uncertain mutation automatically.
+
 ## Pages and images
 
 Use `list_pages` filters for name/original-filename substring search and supported sort fields. `get_page_by_order` takes a zero-based position and returns a page record; use its primary key for subsequent edits. Page-order lookup errors do not mean an empty document.

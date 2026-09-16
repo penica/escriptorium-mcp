@@ -1,12 +1,12 @@
 # eScriptorium MCP tools
 
-Version 0.13.0: 129 tools.
+Version 0.14.0: 144 tools.
 
 | Tool | Description |
 |---|---|
-| `list_projects` | List all accessible projects; follows the connector's pagination. |
+| `list_projects` | List accessible projects with native name/tag filters and ordering. Follows pagination and preserves expanded sharing, tags and new fields. Native OR tag queries can return duplicate rows; counts are not rewritten. |
 | `get_project` | Read project metadata by primary key. |
-| `list_documents` | List all accessible documents; follows the connector's pagination. |
+| `list_documents` | List accessible documents, preserving all native fields and pagination. Optional project filter is a numeric ID; document create/move uses a slug. Supports name/tag filters and ordering without deduplicating native rows. |
 | `get_document` | Read document metadata and its available transcription layers. |
 | `list_pages` | List pages, optionally filtering names/filenames and sorting server-side. |
 | `get_page` | Read a page's metadata, image references and processing state. |
@@ -14,17 +14,32 @@ Version 0.13.0: 129 tools.
 | `list_regions` | Read segmented regions for a page. |
 | `list_transcriptions` | List transcription layers and their primary keys. |
 | `get_page_transcriptions` | Read page text/confidence/history, optionally filtered to one layer. |
-| `create_project` | Create a remote project. Repeating this call may create duplicates. |
+| `create_project` | Create a project with optional guidelines and personal tag IDs. Existing name-only calls remain valid. Repetition may create duplicates. Omitted settings retain native defaults; supplied tag arrays are complete. |
 | `create_transcription` | Create an empty transcription layer in an existing document. |
 | `list_scripts` | List writing systems; use their name in create_document.main_script. |
 | `create_document` | Create an empty document; project is a slug, main_script a script name. |
-| `update_document` | Rename a document, move it to another project slug, or change metadata. |
+| `update_document` | Change settings or move a document to another project slug. Tags replace all assignments; [] clears them. A move with tags omitted retains existing assignments, even from the old project. Scope preflight checks supplied tags against the target project, without locking edits. |
 | `rename_project` | Rename a project while preserving its sharing settings. |
 | `upload_page` | Upload an image; a matching original filename can replace an existing page. Generates a card thumbnail and queues conversion. Use a unique filename when a new page is required; do not assume every upload creates a page. |
 | `update_page` | Edit page metadata, including document-enabled typology. original_filename changes stored metadata, not the image path. max_avg_confidence is a stored summary, not a confidence computation. Image replacement and ordering use their separate tools. |
 | `delete_document` | Permanently delete a document, its pages and transcriptions. |
-| `delete_project` | Delete a project; its documents may also be removed by the server. |
+| `delete_project` | Permanently delete a project, its documents and cascading page content. |
 | `delete_page` | Delete a page and its segmentation and transcriptions. |
+| `update_project` | Update project name, guidelines or complete personal-tag assignments. Tags replace all assignments; [] clears them. Guidelines accept null or blank to clear. Preflight reads do not lock records against other edits. |
+| `get_document_statistics` | Get native geometry/annotation counts, including untyped entries. Defaults may be cached for an hour. refresh=true recomputes; without ordering it also updates the default cache. These counts are not transcription characters or job progress. Ordering by typology applies to geometry, taxonomy to annotations; the other category retains native frequency ordering. |
+| `list_document_page_ids` | Return a raw list of all page IDs in native page order, possibly empty. |
+| `find_pages_by_type` | Get per-page counts for one region/line type or annotation taxonomy. type_id='none' selects untyped elements. Geometry results use document_part_id; annotation results use part_id. Preserve native keys. |
+| `list_metadata` | List every metadata association for one document or page. Follow all pagination and preserve duplicate rows and native fields. This lists associations, not all global key definitions or references. |
+| `get_metadata` | Read one metadata association within the specified document or page. |
+| `create_metadata` | Create a metadata association with a nested shared key name and value. Repeated creation can create duplicate association rows. A key name already used with a different CIDOC identifier can fail rather than merge. Omit cidoc_id to leave it unspecified; explicit null or blank are native values. This is not an upsert and no automatic retry is performed. |
+| `update_metadata` | Replace only this association's value; its shared key is unchanged. |
+| `update_shared_metadata_key` | Edit the GLOBAL shared key used by this metadata association. Renaming or changing CIDOC affects every document/page using that key, including unrelated records. The API cannot enumerate all references. This is not local relabeling or rebinding. Native updates are not atomic; uniqueness failures can occur. This tool sends only nested key changes, never a value change in the same request, and never automatically retries. |
+| `delete_metadata` | Delete only this document/page metadata association. The global key, other associations and document/page content remain. Native bodyless 204 success is returned without a follow-up read. |
+| `list_tags` | List every tag definition in one scope, preserving native pagination data. personal_projects selects the current user's tags for projects. project_documents selects tags for documents in the specified project. These are definitions, not a list of assignments to individual records. |
+| `get_tag` | Read one tag definition within its personal or project scope. |
+| `create_tag` | Create a tag definition for personal projects or one project's documents. Omit color for the server default. Color is nonblank and at most seven characters; server validation remains authoritative. Creation does not assign the tag to any record. Conflicting names remain native errors. |
+| `update_tag` | Rename or recolor a definition everywhere it is assigned in its scope. Omit unchanged fields; null and empty patches are unsupported. This does not relabel a single project's or document's assignment independently. Preflight reads do not lock the row; native permission errors propagate. |
+| `delete_tag` | Delete a definition and unassign it from every record in that scope. Projects, documents and their content remain. To unassign only one record, replace that record's tag array instead. Native 204 means success; this operation is not automatically retried or followed by a speculative read. |
 | `get_page_by_order` | Read a page by zero-based order, distinct from its page ID. Follows only one same-origin redirect to this document's page detail. Missing/out-of-bounds order and unexpected redirect targets are errors. |
 | `rotate_page` | Rotate clockwise by a nonzero integer from -359 through 359 degrees. Expands the canvas and transforms lines, regions and image annotations; transcription character graphs stay unchanged. Returns synchronous done, not a job ID; remaining thumbnails may still be queued. Files/rows can change partially on failure: inspect before retrying. Never auto-retries. |
 | `crop_page` | Destructively crop within current image bounds using integer corners. Overwrites the image and translates line/region geometry without clipping outside coordinates. Image annotations and character graphs are unchanged. Does not refresh thumbnails, file size or reading order. Returns native done, without a job ID. Failures can leave partial changes; inspect before retrying. No automatic retry or recovery of discarded pixels is provided. |

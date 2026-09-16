@@ -15,7 +15,7 @@ class ApiRequest(BaseModel):
     operation: Literal["api"]
     method: Literal["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
     route: str = Field(
-        regex=r"^(documents|projects|models|scripts|tasks|types)/[a-z0-9_/]*$"
+        regex=r"^(documents|projects|models|scripts|tasks|types|tags)/[a-z0-9_/]*$"
     )
     body_json: str = "{}"
     file_path: Path | None = None

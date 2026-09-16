@@ -2,10 +2,87 @@
   {
     "name": "list_projects",
     "title": null,
-    "description": "List all accessible projects; follows the connector's pagination.",
+    "description": "List accessible projects with native name/tag filters and ordering.\n\n        Follows pagination and preserves expanded sharing, tags and new fields.\n        Native OR tag queries can return duplicate rows; counts are not rewritten.\n        ",
     "inputSchema": {
-      "properties": {},
+      "properties": {
+        "filters": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProjectFilters"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
       "type": "object",
+      "$defs": {
+        "ProjectFilters": {
+          "additionalProperties": false,
+          "description": "Project ordering whitelist; omitted ordering uses the server default.",
+          "properties": {
+            "name": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Name"
+            },
+            "tags": {
+              "anyOf": [
+                {
+                  "pattern": "^(?:none|[1-9][0-9]*(?:,[1-9][0-9]*)*|(?:none|[1-9][0-9]*)(?:\\|(?:none|[1-9][0-9]*))+)$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Tags"
+            },
+            "ordering": {
+              "anyOf": [
+                {
+                  "items": {
+                    "enum": [
+                      "created_at",
+                      "-created_at",
+                      "documents_count",
+                      "-documents_count",
+                      "id",
+                      "-id",
+                      "name",
+                      "-name",
+                      "owner",
+                      "-owner",
+                      "updated_at",
+                      "-updated_at"
+                    ],
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Ordering"
+            }
+          },
+          "title": "ProjectFilters",
+          "type": "object"
+        }
+      },
       "title": "list_projectsArguments"
     },
     "execution": null,
@@ -81,10 +158,94 @@
   {
     "name": "list_documents",
     "title": null,
-    "description": "List all accessible documents; follows the connector's pagination.",
+    "description": "List accessible documents, preserving all native fields and pagination.\n\n        Optional project filter is a numeric ID; document create/move uses a slug.\n        Supports name/tag filters and ordering without deduplicating native rows.\n        ",
     "inputSchema": {
-      "properties": {},
+      "properties": {
+        "filters": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DocumentFilters"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
       "type": "object",
+      "$defs": {
+        "DocumentFilters": {
+          "additionalProperties": false,
+          "description": "Filter by numeric project ID; document writes instead use project slugs.",
+          "properties": {
+            "name": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Name"
+            },
+            "tags": {
+              "anyOf": [
+                {
+                  "pattern": "^(?:none|[1-9][0-9]*(?:,[1-9][0-9]*)*|(?:none|[1-9][0-9]*)(?:\\|(?:none|[1-9][0-9]*))+)$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Tags"
+            },
+            "project": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Project"
+            },
+            "ordering": {
+              "anyOf": [
+                {
+                  "items": {
+                    "enum": [
+                      "name",
+                      "-name",
+                      "parts_count",
+                      "-parts_count",
+                      "updated_at",
+                      "-updated_at"
+                    ],
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Ordering"
+            }
+          },
+          "title": "DocumentFilters",
+          "type": "object"
+        }
+      },
       "title": "list_documentsArguments"
     },
     "execution": null,
@@ -520,21 +681,71 @@
   {
     "name": "create_project",
     "title": null,
-    "description": "Create a remote project. Repeating this call may create duplicates.",
+    "description": "Create a project with optional guidelines and personal tag IDs.\n\n        Existing name-only calls remain valid. Repetition may create duplicates.\n        Omitted settings retain native defaults; supplied tag arrays are complete.\n        ",
     "inputSchema": {
       "properties": {
         "name": {
-          "maxLength": 255,
+          "maxLength": 512,
           "minLength": 1,
           "pattern": "\\S",
           "title": "Name",
           "type": "string"
+        },
+        "settings": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProjectCreateSettings"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
         "name"
       ],
       "type": "object",
+      "$defs": {
+        "ProjectCreateSettings": {
+          "additionalProperties": false,
+          "description": "Optional native guidelines and complete personal-tag assignment.",
+          "properties": {
+            "guidelines": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Guidelines"
+            },
+            "tags": {
+              "anyOf": [
+                {
+                  "items": {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Tags"
+            }
+          },
+          "title": "ProjectCreateSettings",
+          "type": "object"
+        }
+      },
       "title": "create_projectArguments"
     },
     "execution": null,
@@ -670,7 +881,7 @@
           "description": "Create a document in a project identified by slug.",
           "properties": {
             "name": {
-              "maxLength": 255,
+              "maxLength": 512,
               "minLength": 1,
               "pattern": "\\S",
               "title": "Name",
@@ -708,6 +919,19 @@
               ],
               "title": "Line Offset",
               "type": "integer"
+            },
+            "show_confidence_viz": {
+              "default": false,
+              "title": "Show Confidence Viz",
+              "type": "boolean"
+            },
+            "tags": {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "title": "Tags",
+              "type": "array"
             }
           },
           "required": [
@@ -750,7 +974,7 @@
   {
     "name": "update_document",
     "title": null,
-    "description": "Rename a document, move it to another project slug, or change metadata.",
+    "description": "Change settings or move a document to another project slug.\n\n        Tags replace all assignments; [] clears them. A move with tags omitted\n        retains existing assignments, even from the old project. Scope preflight\n        checks supplied tags against the target project, without locking edits.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -775,7 +999,7 @@
             "name": {
               "anyOf": [
                 {
-                  "maxLength": 255,
+                  "maxLength": 512,
                   "minLength": 1,
                   "pattern": "\\S",
                   "type": "string"
@@ -849,6 +1073,34 @@
               ],
               "default": null,
               "title": "Line Offset"
+            },
+            "show_confidence_viz": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Show Confidence Viz"
+            },
+            "tags": {
+              "anyOf": [
+                {
+                  "items": {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Tags"
             }
           },
           "title": "DocumentPatch",
@@ -895,7 +1147,7 @@
           "type": "integer"
         },
         "name": {
-          "maxLength": 255,
+          "maxLength": 512,
           "minLength": 1,
           "pattern": "\\S",
           "title": "Name",
@@ -1200,7 +1452,7 @@
   {
     "name": "delete_project",
     "title": null,
-    "description": "Delete a project; its documents may also be removed by the server.",
+    "description": "Permanently delete a project, its documents and cascading page content.",
     "inputSchema": {
       "properties": {
         "project_id": {
@@ -1280,6 +1532,1706 @@
         "JsonValue": {}
       },
       "title": "delete_pageOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_project",
+    "title": null,
+    "description": "Update project name, guidelines or complete personal-tag assignments.\n\n        Tags replace all assignments; [] clears them. Guidelines accept null or\n        blank to clear. Preflight reads do not lock records against other edits.\n        ",
+    "inputSchema": {
+      "properties": {
+        "project_id": {
+          "exclusiveMinimum": 0,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "changes": {
+          "$ref": "#/$defs/ProjectPatch"
+        }
+      },
+      "required": [
+        "project_id",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "ProjectPatch": {
+          "additionalProperties": false,
+          "description": "Change project fields; tags replace all personal-tag assignments.",
+          "properties": {
+            "guidelines": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Guidelines"
+            },
+            "tags": {
+              "anyOf": [
+                {
+                  "items": {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Tags"
+            },
+            "name": {
+              "anyOf": [
+                {
+                  "maxLength": 512,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Name"
+            }
+          },
+          "title": "ProjectPatch",
+          "type": "object"
+        }
+      },
+      "title": "update_projectArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_projectOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_document_statistics",
+    "title": null,
+    "description": "Get native geometry/annotation counts, including untyped entries.\n\n        Defaults may be cached for an hour. refresh=true recomputes; without\n        ordering it also updates the default cache. These counts are not\n        transcription characters or job progress.\n        Ordering by typology applies to geometry, taxonomy to annotations;\n        the other category retains native frequency ordering.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StatisticsOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "type": "object",
+      "$defs": {
+        "StatisticsOptions": {
+          "additionalProperties": false,
+          "description": "Default statistics can be cached for one hour; refresh updates that cache.",
+          "properties": {
+            "ordering": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "frequency",
+                    "-frequency",
+                    "typology",
+                    "-typology",
+                    "taxonomy",
+                    "-taxonomy"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Ordering"
+            },
+            "refresh": {
+              "default": false,
+              "title": "Refresh",
+              "type": "boolean"
+            }
+          },
+          "title": "StatisticsOptions",
+          "type": "object"
+        }
+      },
+      "title": "get_document_statisticsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_document_statisticsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_document_page_ids",
+    "title": null,
+    "description": "Return a raw list of all page IDs in native page order, possibly empty.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "type": "object",
+      "title": "list_document_page_idsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_document_page_idsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "find_pages_by_type",
+    "title": null,
+    "description": "Get per-page counts for one region/line type or annotation taxonomy.\n\n        type_id='none' selects untyped elements. Geometry results use\n        document_part_id; annotation results use part_id. Preserve native keys.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "query": {
+          "$ref": "#/$defs/ElementQuery"
+        }
+      },
+      "required": [
+        "document_id",
+        "query"
+      ],
+      "type": "object",
+      "$defs": {
+        "ElementQuery": {
+          "additionalProperties": false,
+          "description": "Find pages containing a type, or none for untyped elements.",
+          "properties": {
+            "category": {
+              "enum": [
+                "regions",
+                "lines",
+                "text",
+                "image"
+              ],
+              "title": "Category",
+              "type": "string"
+            },
+            "type_id": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "const": "none",
+                  "type": "string"
+                }
+              ],
+              "title": "Type Id"
+            }
+          },
+          "required": [
+            "category",
+            "type_id"
+          ],
+          "title": "ElementQuery",
+          "type": "object"
+        }
+      },
+      "title": "find_pages_by_typeArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "find_pages_by_typeOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_metadata",
+    "title": null,
+    "description": "List every metadata association for one document or page.\n\n        Follow all pagination and preserve duplicate rows and native fields.\n        This lists associations, not all global key definitions or references.\n        ",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "discriminator": {
+            "mapping": {
+              "document": "#/$defs/DocumentMetadataTarget",
+              "page": "#/$defs/PageMetadataTarget"
+            },
+            "propertyName": "scope"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/DocumentMetadataTarget"
+            },
+            {
+              "$ref": "#/$defs/PageMetadataTarget"
+            }
+          ],
+          "title": "Target"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "type": "object",
+      "$defs": {
+        "DocumentMetadataTarget": {
+          "additionalProperties": false,
+          "description": "Metadata associations belonging to one readable document.",
+          "properties": {
+            "scope": {
+              "const": "document",
+              "title": "Scope",
+              "type": "string"
+            },
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "scope",
+            "document_id"
+          ],
+          "title": "DocumentMetadataTarget",
+          "type": "object"
+        },
+        "PageMetadataTarget": {
+          "additionalProperties": false,
+          "description": "Metadata associations for a page checked within its parent document.",
+          "properties": {
+            "scope": {
+              "const": "page",
+              "title": "Scope",
+              "type": "string"
+            },
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "scope",
+            "document_id",
+            "page_id"
+          ],
+          "title": "PageMetadataTarget",
+          "type": "object"
+        }
+      },
+      "title": "list_metadataArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_metadataOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_metadata",
+    "title": null,
+    "description": "Read one metadata association within the specified document or page.",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "discriminator": {
+            "mapping": {
+              "document": "#/$defs/DocumentMetadataTarget",
+              "page": "#/$defs/PageMetadataTarget"
+            },
+            "propertyName": "scope"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/DocumentMetadataTarget"
+            },
+            {
+              "$ref": "#/$defs/PageMetadataTarget"
+            }
+          ],
+          "title": "Target"
+        },
+        "metadata_id": {
+          "exclusiveMinimum": 0,
+          "title": "Metadata Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "target",
+        "metadata_id"
+      ],
+      "type": "object",
+      "$defs": {
+        "DocumentMetadataTarget": {
+          "additionalProperties": false,
+          "description": "Metadata associations belonging to one readable document.",
+          "properties": {
+            "scope": {
+              "const": "document",
+              "title": "Scope",
+              "type": "string"
+            },
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "scope",
+            "document_id"
+          ],
+          "title": "DocumentMetadataTarget",
+          "type": "object"
+        },
+        "PageMetadataTarget": {
+          "additionalProperties": false,
+          "description": "Metadata associations for a page checked within its parent document.",
+          "properties": {
+            "scope": {
+              "const": "page",
+              "title": "Scope",
+              "type": "string"
+            },
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "scope",
+            "document_id",
+            "page_id"
+          ],
+          "title": "PageMetadataTarget",
+          "type": "object"
+        }
+      },
+      "title": "get_metadataArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_metadataOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "create_metadata",
+    "title": null,
+    "description": "Create a metadata association with a nested shared key name and value.\n\n        Repeated creation can create duplicate association rows. A key name already\n        used with a different CIDOC identifier can fail rather than merge. Omit\n        cidoc_id to leave it unspecified; explicit null or blank are native values.\n        This is not an upsert and no automatic retry is performed.\n        ",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "discriminator": {
+            "mapping": {
+              "document": "#/$defs/DocumentMetadataTarget",
+              "page": "#/$defs/PageMetadataTarget"
+            },
+            "propertyName": "scope"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/DocumentMetadataTarget"
+            },
+            {
+              "$ref": "#/$defs/PageMetadataTarget"
+            }
+          ],
+          "title": "Target"
+        },
+        "data": {
+          "$ref": "#/$defs/MetadataCreate"
+        }
+      },
+      "required": [
+        "target",
+        "data"
+      ],
+      "type": "object",
+      "$defs": {
+        "DocumentMetadataTarget": {
+          "additionalProperties": false,
+          "description": "Metadata associations belonging to one readable document.",
+          "properties": {
+            "scope": {
+              "const": "document",
+              "title": "Scope",
+              "type": "string"
+            },
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "scope",
+            "document_id"
+          ],
+          "title": "DocumentMetadataTarget",
+          "type": "object"
+        },
+        "MetadataCreate": {
+          "additionalProperties": false,
+          "description": "Create an association, allowing native duplicate rows without upserting.",
+          "properties": {
+            "key": {
+              "$ref": "#/$defs/MetadataKey"
+            },
+            "value": {
+              "maxLength": 512,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Value",
+              "type": "string"
+            }
+          },
+          "required": [
+            "key",
+            "value"
+          ],
+          "title": "MetadataCreate",
+          "type": "object"
+        },
+        "MetadataKey": {
+          "additionalProperties": false,
+          "description": "Native shared key selection; omitted CIDOC differs from explicit null.",
+          "properties": {
+            "name": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Name",
+              "type": "string"
+            },
+            "cidoc_id": {
+              "anyOf": [
+                {
+                  "maxLength": 8,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Cidoc Id"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "title": "MetadataKey",
+          "type": "object"
+        },
+        "PageMetadataTarget": {
+          "additionalProperties": false,
+          "description": "Metadata associations for a page checked within its parent document.",
+          "properties": {
+            "scope": {
+              "const": "page",
+              "title": "Scope",
+              "type": "string"
+            },
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "scope",
+            "document_id",
+            "page_id"
+          ],
+          "title": "PageMetadataTarget",
+          "type": "object"
+        }
+      },
+      "title": "create_metadataArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "create_metadataOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_metadata",
+    "title": null,
+    "description": "Replace only this association's value; its shared key is unchanged.",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "discriminator": {
+            "mapping": {
+              "document": "#/$defs/DocumentMetadataTarget",
+              "page": "#/$defs/PageMetadataTarget"
+            },
+            "propertyName": "scope"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/DocumentMetadataTarget"
+            },
+            {
+              "$ref": "#/$defs/PageMetadataTarget"
+            }
+          ],
+          "title": "Target"
+        },
+        "metadata_id": {
+          "exclusiveMinimum": 0,
+          "title": "Metadata Id",
+          "type": "integer"
+        },
+        "changes": {
+          "$ref": "#/$defs/MetadataValuePatch"
+        }
+      },
+      "required": [
+        "target",
+        "metadata_id",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "DocumentMetadataTarget": {
+          "additionalProperties": false,
+          "description": "Metadata associations belonging to one readable document.",
+          "properties": {
+            "scope": {
+              "const": "document",
+              "title": "Scope",
+              "type": "string"
+            },
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "scope",
+            "document_id"
+          ],
+          "title": "DocumentMetadataTarget",
+          "type": "object"
+        },
+        "MetadataValuePatch": {
+          "additionalProperties": false,
+          "description": "Change only this association's value, without editing its global key.",
+          "properties": {
+            "value": {
+              "maxLength": 512,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Value",
+              "type": "string"
+            }
+          },
+          "required": [
+            "value"
+          ],
+          "title": "MetadataValuePatch",
+          "type": "object"
+        },
+        "PageMetadataTarget": {
+          "additionalProperties": false,
+          "description": "Metadata associations for a page checked within its parent document.",
+          "properties": {
+            "scope": {
+              "const": "page",
+              "title": "Scope",
+              "type": "string"
+            },
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "scope",
+            "document_id",
+            "page_id"
+          ],
+          "title": "PageMetadataTarget",
+          "type": "object"
+        }
+      },
+      "title": "update_metadataArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_metadataOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_shared_metadata_key",
+    "title": null,
+    "description": "Edit the GLOBAL shared key used by this metadata association.\n\n        Renaming or changing CIDOC affects every document/page using that key,\n        including unrelated records. The API cannot enumerate all references.\n        This is not local relabeling or rebinding. Native updates are not atomic;\n        uniqueness failures can occur. This tool sends only nested key changes,\n        never a value change in the same request, and never automatically retries.\n        ",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "discriminator": {
+            "mapping": {
+              "document": "#/$defs/DocumentMetadataTarget",
+              "page": "#/$defs/PageMetadataTarget"
+            },
+            "propertyName": "scope"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/DocumentMetadataTarget"
+            },
+            {
+              "$ref": "#/$defs/PageMetadataTarget"
+            }
+          ],
+          "title": "Target"
+        },
+        "metadata_id": {
+          "exclusiveMinimum": 0,
+          "title": "Metadata Id",
+          "type": "integer"
+        },
+        "changes": {
+          "$ref": "#/$defs/SharedMetadataKeyPatch"
+        }
+      },
+      "required": [
+        "target",
+        "metadata_id",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "DocumentMetadataTarget": {
+          "additionalProperties": false,
+          "description": "Metadata associations belonging to one readable document.",
+          "properties": {
+            "scope": {
+              "const": "document",
+              "title": "Scope",
+              "type": "string"
+            },
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "scope",
+            "document_id"
+          ],
+          "title": "DocumentMetadataTarget",
+          "type": "object"
+        },
+        "PageMetadataTarget": {
+          "additionalProperties": false,
+          "description": "Metadata associations for a page checked within its parent document.",
+          "properties": {
+            "scope": {
+              "const": "page",
+              "title": "Scope",
+              "type": "string"
+            },
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "scope",
+            "document_id",
+            "page_id"
+          ],
+          "title": "PageMetadataTarget",
+          "type": "object"
+        },
+        "SharedMetadataKeyPatch": {
+          "additionalProperties": false,
+          "description": "Changes to a global definition, affecting every association using it.",
+          "properties": {
+            "name": {
+              "anyOf": [
+                {
+                  "maxLength": 128,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Name"
+            },
+            "cidoc_id": {
+              "anyOf": [
+                {
+                  "maxLength": 8,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Cidoc Id"
+            }
+          },
+          "title": "SharedMetadataKeyPatch",
+          "type": "object"
+        }
+      },
+      "title": "update_shared_metadata_keyArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_shared_metadata_keyOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "delete_metadata",
+    "title": null,
+    "description": "Delete only this document/page metadata association.\n\n        The global key, other associations and document/page content remain.\n        Native bodyless 204 success is returned without a follow-up read.\n        ",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "discriminator": {
+            "mapping": {
+              "document": "#/$defs/DocumentMetadataTarget",
+              "page": "#/$defs/PageMetadataTarget"
+            },
+            "propertyName": "scope"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/DocumentMetadataTarget"
+            },
+            {
+              "$ref": "#/$defs/PageMetadataTarget"
+            }
+          ],
+          "title": "Target"
+        },
+        "metadata_id": {
+          "exclusiveMinimum": 0,
+          "title": "Metadata Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "target",
+        "metadata_id"
+      ],
+      "type": "object",
+      "$defs": {
+        "DocumentMetadataTarget": {
+          "additionalProperties": false,
+          "description": "Metadata associations belonging to one readable document.",
+          "properties": {
+            "scope": {
+              "const": "document",
+              "title": "Scope",
+              "type": "string"
+            },
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "scope",
+            "document_id"
+          ],
+          "title": "DocumentMetadataTarget",
+          "type": "object"
+        },
+        "PageMetadataTarget": {
+          "additionalProperties": false,
+          "description": "Metadata associations for a page checked within its parent document.",
+          "properties": {
+            "scope": {
+              "const": "page",
+              "title": "Scope",
+              "type": "string"
+            },
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "scope",
+            "document_id",
+            "page_id"
+          ],
+          "title": "PageMetadataTarget",
+          "type": "object"
+        }
+      },
+      "title": "delete_metadataArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "delete_metadataOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_tags",
+    "title": null,
+    "description": "List every tag definition in one scope, preserving native pagination data.\n\n        personal_projects selects the current user's tags for projects.\n        project_documents selects tags for documents in the specified project.\n        These are definitions, not a list of assignments to individual records.\n        ",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "discriminator": {
+            "mapping": {
+              "personal_projects": "#/$defs/PersonalProjectTags",
+              "project_documents": "#/$defs/ProjectDocumentTags"
+            },
+            "propertyName": "scope"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/PersonalProjectTags"
+            },
+            {
+              "$ref": "#/$defs/ProjectDocumentTags"
+            }
+          ],
+          "title": "Target"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "type": "object",
+      "$defs": {
+        "PersonalProjectTags": {
+          "additionalProperties": false,
+          "description": "Select the authenticated user's personal definitions for tagging projects.",
+          "properties": {
+            "scope": {
+              "const": "personal_projects",
+              "title": "Scope",
+              "type": "string"
+            }
+          },
+          "required": [
+            "scope"
+          ],
+          "title": "PersonalProjectTags",
+          "type": "object"
+        },
+        "ProjectDocumentTags": {
+          "additionalProperties": false,
+          "description": "Select definitions shared by documents within a single project.",
+          "properties": {
+            "scope": {
+              "const": "project_documents",
+              "title": "Scope",
+              "type": "string"
+            },
+            "project_id": {
+              "exclusiveMinimum": 0,
+              "title": "Project Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "scope",
+            "project_id"
+          ],
+          "title": "ProjectDocumentTags",
+          "type": "object"
+        }
+      },
+      "title": "list_tagsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_tagsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_tag",
+    "title": null,
+    "description": "Read one tag definition within its personal or project scope.",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "discriminator": {
+            "mapping": {
+              "personal_projects": "#/$defs/PersonalProjectTags",
+              "project_documents": "#/$defs/ProjectDocumentTags"
+            },
+            "propertyName": "scope"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/PersonalProjectTags"
+            },
+            {
+              "$ref": "#/$defs/ProjectDocumentTags"
+            }
+          ],
+          "title": "Target"
+        },
+        "tag_id": {
+          "exclusiveMinimum": 0,
+          "title": "Tag Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "target",
+        "tag_id"
+      ],
+      "type": "object",
+      "$defs": {
+        "PersonalProjectTags": {
+          "additionalProperties": false,
+          "description": "Select the authenticated user's personal definitions for tagging projects.",
+          "properties": {
+            "scope": {
+              "const": "personal_projects",
+              "title": "Scope",
+              "type": "string"
+            }
+          },
+          "required": [
+            "scope"
+          ],
+          "title": "PersonalProjectTags",
+          "type": "object"
+        },
+        "ProjectDocumentTags": {
+          "additionalProperties": false,
+          "description": "Select definitions shared by documents within a single project.",
+          "properties": {
+            "scope": {
+              "const": "project_documents",
+              "title": "Scope",
+              "type": "string"
+            },
+            "project_id": {
+              "exclusiveMinimum": 0,
+              "title": "Project Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "scope",
+            "project_id"
+          ],
+          "title": "ProjectDocumentTags",
+          "type": "object"
+        }
+      },
+      "title": "get_tagArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_tagOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "create_tag",
+    "title": null,
+    "description": "Create a tag definition for personal projects or one project's documents.\n\n        Omit color for the server default. Color is nonblank and at most seven\n        characters; server validation remains authoritative. Creation does not\n        assign the tag to any record. Conflicting names remain native errors.\n        ",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "discriminator": {
+            "mapping": {
+              "personal_projects": "#/$defs/PersonalProjectTags",
+              "project_documents": "#/$defs/ProjectDocumentTags"
+            },
+            "propertyName": "scope"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/PersonalProjectTags"
+            },
+            {
+              "$ref": "#/$defs/ProjectDocumentTags"
+            }
+          ],
+          "title": "Target"
+        },
+        "data": {
+          "$ref": "#/$defs/TagCreate"
+        }
+      },
+      "required": [
+        "target",
+        "data"
+      ],
+      "type": "object",
+      "$defs": {
+        "PersonalProjectTags": {
+          "additionalProperties": false,
+          "description": "Select the authenticated user's personal definitions for tagging projects.",
+          "properties": {
+            "scope": {
+              "const": "personal_projects",
+              "title": "Scope",
+              "type": "string"
+            }
+          },
+          "required": [
+            "scope"
+          ],
+          "title": "PersonalProjectTags",
+          "type": "object"
+        },
+        "ProjectDocumentTags": {
+          "additionalProperties": false,
+          "description": "Select definitions shared by documents within a single project.",
+          "properties": {
+            "scope": {
+              "const": "project_documents",
+              "title": "Scope",
+              "type": "string"
+            },
+            "project_id": {
+              "exclusiveMinimum": 0,
+              "title": "Project Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "scope",
+            "project_id"
+          ],
+          "title": "ProjectDocumentTags",
+          "type": "object"
+        },
+        "TagCreate": {
+          "additionalProperties": false,
+          "description": "Omit color to retain the server's generated default.",
+          "properties": {
+            "name": {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Name",
+              "type": "string"
+            },
+            "color": {
+              "anyOf": [
+                {
+                  "maxLength": 7,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Color"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "title": "TagCreate",
+          "type": "object"
+        }
+      },
+      "title": "create_tagArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "create_tagOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_tag",
+    "title": null,
+    "description": "Rename or recolor a definition everywhere it is assigned in its scope.\n\n        Omit unchanged fields; null and empty patches are unsupported. This does\n        not relabel a single project's or document's assignment independently.\n        Preflight reads do not lock the row; native permission errors propagate.\n        ",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "discriminator": {
+            "mapping": {
+              "personal_projects": "#/$defs/PersonalProjectTags",
+              "project_documents": "#/$defs/ProjectDocumentTags"
+            },
+            "propertyName": "scope"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/PersonalProjectTags"
+            },
+            {
+              "$ref": "#/$defs/ProjectDocumentTags"
+            }
+          ],
+          "title": "Target"
+        },
+        "tag_id": {
+          "exclusiveMinimum": 0,
+          "title": "Tag Id",
+          "type": "integer"
+        },
+        "changes": {
+          "$ref": "#/$defs/TagPatch"
+        }
+      },
+      "required": [
+        "target",
+        "tag_id",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "PersonalProjectTags": {
+          "additionalProperties": false,
+          "description": "Select the authenticated user's personal definitions for tagging projects.",
+          "properties": {
+            "scope": {
+              "const": "personal_projects",
+              "title": "Scope",
+              "type": "string"
+            }
+          },
+          "required": [
+            "scope"
+          ],
+          "title": "PersonalProjectTags",
+          "type": "object"
+        },
+        "ProjectDocumentTags": {
+          "additionalProperties": false,
+          "description": "Select definitions shared by documents within a single project.",
+          "properties": {
+            "scope": {
+              "const": "project_documents",
+              "title": "Scope",
+              "type": "string"
+            },
+            "project_id": {
+              "exclusiveMinimum": 0,
+              "title": "Project Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "scope",
+            "project_id"
+          ],
+          "title": "ProjectDocumentTags",
+          "type": "object"
+        },
+        "TagPatch": {
+          "additionalProperties": false,
+          "description": "Edit a definition without accepting empty or explicitly null changes.",
+          "properties": {
+            "name": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Name"
+            },
+            "color": {
+              "anyOf": [
+                {
+                  "maxLength": 7,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Color"
+            }
+          },
+          "title": "TagPatch",
+          "type": "object"
+        }
+      },
+      "title": "update_tagArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_tagOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "delete_tag",
+    "title": null,
+    "description": "Delete a definition and unassign it from every record in that scope.\n\n        Projects, documents and their content remain. To unassign only one record,\n        replace that record's tag array instead. Native 204 means success; this\n        operation is not automatically retried or followed by a speculative read.\n        ",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "discriminator": {
+            "mapping": {
+              "personal_projects": "#/$defs/PersonalProjectTags",
+              "project_documents": "#/$defs/ProjectDocumentTags"
+            },
+            "propertyName": "scope"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/PersonalProjectTags"
+            },
+            {
+              "$ref": "#/$defs/ProjectDocumentTags"
+            }
+          ],
+          "title": "Target"
+        },
+        "tag_id": {
+          "exclusiveMinimum": 0,
+          "title": "Tag Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "target",
+        "tag_id"
+      ],
+      "type": "object",
+      "$defs": {
+        "PersonalProjectTags": {
+          "additionalProperties": false,
+          "description": "Select the authenticated user's personal definitions for tagging projects.",
+          "properties": {
+            "scope": {
+              "const": "personal_projects",
+              "title": "Scope",
+              "type": "string"
+            }
+          },
+          "required": [
+            "scope"
+          ],
+          "title": "PersonalProjectTags",
+          "type": "object"
+        },
+        "ProjectDocumentTags": {
+          "additionalProperties": false,
+          "description": "Select definitions shared by documents within a single project.",
+          "properties": {
+            "scope": {
+              "const": "project_documents",
+              "title": "Scope",
+              "type": "string"
+            },
+            "project_id": {
+              "exclusiveMinimum": 0,
+              "title": "Project Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "scope",
+            "project_id"
+          ],
+          "title": "ProjectDocumentTags",
+          "type": "object"
+        }
+      },
+      "title": "delete_tagArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "delete_tagOutput"
     },
     "icons": null,
     "annotations": {
@@ -2096,10 +4048,10 @@
       "$defs": {
         "Rename": {
           "additionalProperties": false,
-          "description": "A new display name.",
+          "description": "A new project display name.",
           "properties": {
             "name": {
-              "maxLength": 255,
+              "maxLength": 512,
               "minLength": 1,
               "pattern": "\\S",
               "title": "Name",
