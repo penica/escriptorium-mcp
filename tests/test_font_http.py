@@ -2,23 +2,18 @@
 
 import anyio
 import pytest
-from httpx2 import AsyncClient, Timeout
 from mcp import Client
 from mcp.client.streamable_http import streamable_http_client
 
 from tests.font_fixture import FONT, FONTS, FontFixture, font_fixture
-from tests.test_http import TOKEN, running_endpoint
+from tests.test_http import authenticated_client, running_endpoint
 from tests.transcription_fixture import decoded_result
 
 
 async def exercise_http(fixture: FontFixture) -> None:
     async with (
         running_endpoint() as endpoint,
-        AsyncClient(
-            headers={"Authorization": f"Bearer {TOKEN}"},
-            timeout=Timeout(30, connect=5),
-            follow_redirects=False,
-        ) as http,
+        authenticated_client() as http,
         Client(streamable_http_client(endpoint, http_client=http)) as session,
     ):
         # When an authenticated client discovers and reads native font metadata.

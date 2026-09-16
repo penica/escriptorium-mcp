@@ -18,6 +18,9 @@ Existing record reads preserve direct font IDs and authoritative effective font
 objects. The guide and skill explain document/project/user/default inheritance,
 presentation-only effects, and native admin/profile operations absent from REST.
 The release includes updated installer, version, tool catalogue and schemas.
+Authenticated HTTP tests now use the MCP SDK timeout policy instead of a generic
+five-second read limit. A slow alignment-preflight regression verifies completion
+with the original acceptance and single-submission checks; server behavior is unchanged.
 
 ## 0.17.0 — 2026-09-16
 

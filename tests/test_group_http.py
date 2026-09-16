@@ -2,19 +2,18 @@
 
 import anyio
 import pytest
-from httpx2 import AsyncClient
 from mcp import Client
 from mcp.client.streamable_http import streamable_http_client
 
 from tests.group_fixture import CURRENT, GROUP, GROUPS, group_fixture
-from tests.test_http import TOKEN, running_endpoint
+from tests.test_http import authenticated_client, running_endpoint
 from tests.transcription_fixture import decoded_result
 
 
 async def create_group_over_http() -> None:
     async with (
         running_endpoint() as endpoint,
-        AsyncClient(headers={"Authorization": f"Bearer {TOKEN}"}) as http,
+        authenticated_client() as http,
         Client(streamable_http_client(endpoint, http_client=http)) as session,
     ):
         # When acknowledged creation crosses authenticated HTTP MCP.

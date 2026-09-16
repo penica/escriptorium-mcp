@@ -1,20 +1,28 @@
 """Alignment submission through authenticated Streamable HTTP MCP."""
 
+from time import sleep
+
 import anyio
 import pytest
-from httpx2 import AsyncClient
 from mcp import Client
 from mcp.client.streamable_http import streamable_http_client
+from pydantic import JsonValue
 
-from tests.alignment_fixture import ALIGN, alignment_fixture, alignment_job
-from tests.test_http import TOKEN, running_endpoint
+from tests.alignment_fixture import (
+    ALIGN,
+    DOC,
+    AlignmentFixture,
+    alignment_fixture,
+    alignment_job,
+)
+from tests.test_http import authenticated_client, running_endpoint
 from tests.transcription_fixture import decoded_result
 
 
 async def align_over_http() -> None:
     async with (
         running_endpoint() as endpoint,
-        AsyncClient(headers={"Authorization": f"Bearer {TOKEN}"}) as http,
+        authenticated_client() as http,
         Client(streamable_http_client(endpoint, http_client=http)) as session,
     ):
         # When an acknowledged zero-offset alignment crosses authenticated HTTP.
@@ -39,8 +47,24 @@ async def align_over_http() -> None:
         assert tracking["attribution_confirmed"] is False
 
 
-def test_alignment_over_authenticated_http(monkeypatch: pytest.MonkeyPatch) -> None:
+@pytest.mark.parametrize(
+    "preflight_delay", [0.0, 5.2], ids=["normal", "slow_preflight"]
+)
+def test_alignment_over_authenticated_http(
+    monkeypatch: pytest.MonkeyPatch, preflight_delay: float
+) -> None:
     # Given an authenticated MCP server and isolated upstream scopes.
+    original = AlignmentFixture.respond
+
+    def delayed_document(
+        fixture: AlignmentFixture, method: str, path: str, body: JsonValue
+    ) -> tuple[int, JsonValue]:
+        # Given upstream work exceeding the generic client's five-second deadline.
+        if method == "GET" and path == DOC:
+            sleep(preflight_delay)
+        return original(fixture, method, path, body)
+
+    monkeypatch.setattr(AlignmentFixture, "respond", delayed_document)
     with alignment_fixture() as fixture:
         monkeypatch.setenv("ESCRIPTORIUM_URL", fixture.url)
         monkeypatch.setenv("ESCRIPTORIUM_API_KEY", "fixture-key")

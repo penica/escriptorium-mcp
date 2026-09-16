@@ -6,7 +6,7 @@ from typing import Final
 import anyio
 import pytest
 import uvicorn
-from httpx2 import AsyncClient
+from httpx2 import AsyncClient, Timeout
 from mcp import Client
 from mcp.client.streamable_http import streamable_http_client
 from mcp_types import TextContent
@@ -17,6 +17,14 @@ from escriptorium_mcp.transport import http_app
 from tests.test_stdio import ProjectPage, api_fixture
 
 TOKEN: Final = "fixture-service-token-32-characters-minimum"  # noqa: S105
+
+
+def authenticated_client() -> AsyncClient:
+    """Use the MCP SDK's request budget for authenticated transport scenarios."""
+    return AsyncClient(
+        headers={"Authorization": f"Bearer {TOKEN}"},
+        timeout=Timeout(30.0, read=300.0),
+    )
 
 
 @asynccontextmanager
@@ -41,7 +49,7 @@ async def exercise_http() -> None:
     async with (
         running_endpoint() as endpoint,
         AsyncClient() as anonymous,
-        AsyncClient(headers={"Authorization": f"Bearer {TOKEN}"}) as authenticated,
+        authenticated_client() as authenticated,
     ):
         denied = await anonymous.post(endpoint, json={})
         assert denied.status_code == 401

@@ -4,11 +4,10 @@ from pathlib import Path
 
 import anyio
 import pytest
-from httpx2 import AsyncClient, Timeout
 from mcp import Client
 from mcp.client.streamable_http import streamable_http_client
 
-from tests.test_http import TOKEN, running_endpoint
+from tests.test_http import authenticated_client, running_endpoint
 from tests.transcription_fixture import decoded_result
 from tests.witness_fixture import WITNESS, WITNESSES, witness_fixture
 
@@ -16,11 +15,7 @@ from tests.witness_fixture import WITNESS, WITNESSES, witness_fixture
 async def upload_over_http(uploaded: Path) -> None:
     async with (
         running_endpoint() as endpoint,
-        AsyncClient(
-            headers={"Authorization": f"Bearer {TOKEN}"},
-            timeout=Timeout(30, connect=5),
-            follow_redirects=False,
-        ) as http,
+        authenticated_client() as http,
         Client(streamable_http_client(endpoint, http_client=http)) as session,
     ):
         # When the pinned native ownership defect follows an acknowledged upload.
