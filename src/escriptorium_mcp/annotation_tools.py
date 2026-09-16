@@ -13,19 +13,26 @@ from escriptorium_mcp.annotation_models import (
 )
 from escriptorium_mcp.api import CHANGE, CREATE, DELETE, READ, ApiRequest, invoke
 from escriptorium_mcp.bridge import Identifier, call
+from escriptorium_mcp.pagination import PageSelection, paginated_request
 
 
 def register_annotations(server: MCPServer) -> None:
     """Register annotation ontology definitions, independently of annotation data."""
 
     @server.tool(annotations=READ)
-    async def list_annotation_components(document_id: Identifier) -> JsonValue:
-        """List all annotation input fields and their allowed values in a document."""
+    async def list_annotation_components(
+        document_id: Identifier,
+        pagination: PageSelection | None = None,
+    ) -> JsonValue:
+        """List annotation input fields; opt-in pages may request page_size."""
+        route = f"documents/{document_id}/taxonomies/components/"
         return await call(
-            ApiRequest(
+            paginated_request(route, pagination, page_size_supported=True)
+            if pagination is not None
+            else ApiRequest(
                 method="GET",
                 paginate=True,
-                route=f"documents/{document_id}/taxonomies/components/",
+                route=route,
             )
         )
 
@@ -76,14 +83,24 @@ def register_annotations(server: MCPServer) -> None:
     async def list_annotation_taxonomies(
         document_id: Identifier,
         target: Literal["image", "text"] | None = None,
+        pagination: PageSelection | None = None,
     ) -> JsonValue:
-        """List annotation categories, optionally filtering image or text markers."""
+        """List categories by target or native page, with optional page_size."""
+        route = f"documents/{document_id}/taxonomies/annotations/"
+        query = {"target": target} if target else {}
         return await call(
-            ApiRequest(
+            paginated_request(
+                route,
+                pagination,
+                query=query,
+                page_size_supported=True,
+            )
+            if pagination is not None
+            else ApiRequest(
                 method="GET",
                 paginate=True,
-                route=f"documents/{document_id}/taxonomies/annotations/",
-                query={"target": target} if target else {},
+                route=route,
+                query=query,
             )
         )
 

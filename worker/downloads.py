@@ -3,7 +3,7 @@
 import json
 from http import HTTPStatus
 from typing import assert_never
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import urlencode, urljoin, urlsplit
 
 from download_models import (
     DownloadAction,
@@ -14,9 +14,11 @@ from download_models import (
     DownloadRecord,
     Fingerprint,
     ListDownloads,
+    PageSelection,
 )
 from escriptorium_connector import EscriptoriumConnector
 from exports import completed_file, destination_path
+from pagination import annotate_native_page
 from pydantic import parse_raw_as
 from pydantic.json import pydantic_encoder
 from requests import Response
@@ -53,11 +55,24 @@ def collection_url(client: EscriptoriumConnector, next_url: str) -> str:
     return absolute
 
 
-def read_downloads(client: EscriptoriumConnector) -> str:
-    """Preserve a bare list or merge native pages while rejecting unsafe links."""
-    url = collection_url(client, client.api_url + "downloads/")
+def read_downloads(
+    client: EscriptoriumConnector, pagination: PageSelection | None
+) -> str:
+    """Preserve legacy collection reads or return one guarded native page."""
+    collection = client.api_url + "downloads/"
+    query = {"page": str(pagination.page)} if pagination is not None else {}
+    if pagination is not None and pagination.page_size is not None:
+        query["paginate_by"] = str(pagination.page_size)
+    url = collection_url(
+        client, f"{collection}?{urlencode(query)}" if query else collection
+    )
     with client.http.get(url, allow_redirects=False) as response:
         require_success(response)
+        if pagination is not None:
+            return json.dumps(
+                annotate_native_page(client, collection, response.json(), query),
+                ensure_ascii=False,
+            )
         data = parse_raw_as(list[DownloadRecord] | DownloadPage, response.content)
     match data:
         case list():
@@ -141,8 +156,8 @@ def execute_downloads(client: EscriptoriumConnector, raw: str) -> str:
         )
     match DownloadAction.parse_raw(raw).action:
         case "list":
-            _ = ListDownloads.parse_raw(raw)
-            result = read_downloads(client)
+            request = ListDownloads.parse_raw(raw)
+            result = read_downloads(client, request.pagination)
         case "get":
             request = DownloadDetail.parse_raw(raw)
             result = read_download(client, request.fingerprint)

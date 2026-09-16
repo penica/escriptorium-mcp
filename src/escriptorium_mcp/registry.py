@@ -9,7 +9,7 @@ from pydantic import JsonValue
 from escriptorium_mcp.account_tools import build_account_tools
 from escriptorium_mcp.alignment_tools import register_alignment
 from escriptorium_mcp.annotation_tools import register_annotations
-from escriptorium_mcp.api import ApiRequest, invoke
+from escriptorium_mcp.api import invoke
 from escriptorium_mcp.bridge import Identifier, Name, Request, call
 from escriptorium_mcp.collection_tools import register_collections
 from escriptorium_mcp.collection_training import register_collection_training
@@ -27,7 +27,13 @@ from escriptorium_mcp.ontology_repair import register_repairs
 from escriptorium_mcp.ontology_restore import register_snapshots
 from escriptorium_mcp.ontology_tools import register_ontology
 from escriptorium_mcp.page_models import PageFilters
-from escriptorium_mcp.page_tools import list_filtered_pages, register_page_operations
+from escriptorium_mcp.page_tools import (
+    list_page_elements,
+    list_page_records,
+    read_page_transcriptions,
+    register_page_operations,
+)
+from escriptorium_mcp.pagination import PageSelection
 from escriptorium_mcp.project_models import ProjectCreateSettings, RecordName
 from escriptorium_mcp.record_operations import (
     create_project_record,
@@ -60,7 +66,7 @@ def create_server() -> MCPServer:
     """Build tools without making network calls or requiring credentials."""
     server = MCPServer(
         "eScriptorium",
-        version="1.0.0",
+        version="1.1.0",
         tools=(
             build_account_tools()
             + build_group_tools()
@@ -76,13 +82,16 @@ def create_server() -> MCPServer:
     )
 
     @server.tool(annotations=READ)
-    async def list_projects(filters: ProjectFilters | None = None) -> JsonValue:
+    async def list_projects(
+        filters: ProjectFilters | None = None,
+        pagination: PageSelection | None = None,
+    ) -> JsonValue:
         """List accessible projects with native name/tag filters and ordering.
 
-        Follows pagination and preserves expanded sharing, tags and new fields.
-        Native OR tag queries can return duplicate rows; counts are not rewritten.
+        pagination selects one page with page_size up to 50; omission follows all.
+        Native OR tag duplicates and native counts are preserved.
         """
-        return await list_project_records(filters)
+        return await list_project_records(filters, pagination)
 
     @server.tool(annotations=READ)
     async def get_project(project_id: Identifier) -> JsonValue:
@@ -90,13 +99,16 @@ def create_server() -> MCPServer:
         return await invoke("GET", f"projects/{project_id}/")
 
     @server.tool(annotations=READ)
-    async def list_documents(filters: DocumentFilters | None = None) -> JsonValue:
+    async def list_documents(
+        filters: DocumentFilters | None = None,
+        pagination: PageSelection | None = None,
+    ) -> JsonValue:
         """List accessible documents, preserving all native fields and pagination.
 
-        Optional project filter is a numeric ID; document create/move uses a slug.
-        Supports name/tag filters and ordering without deduplicating native rows.
+        pagination selects one page with page_size up to 50; omission follows all.
+        project is a numeric ID here; document create/move uses a slug.
         """
-        return await list_document_records(filters)
+        return await list_document_records(filters, pagination)
 
     @server.tool(annotations=READ)
     async def get_document(document_id: Identifier) -> JsonValue:
@@ -105,12 +117,15 @@ def create_server() -> MCPServer:
 
     @server.tool(annotations=READ)
     async def list_pages(
-        document_id: Identifier, filters: PageFilters | None = None
+        document_id: Identifier,
+        filters: PageFilters | None = None,
+        pagination: PageSelection | None = None,
     ) -> JsonValue:
-        """List pages, optionally filtering names/filenames and sorting server-side."""
-        if filters is not None:
-            return await list_filtered_pages(document_id, filters)
-        return await call(Request(operation="list_pages", document_id=document_id))
+        """List pages, optionally filtering names/filenames and sorting server-side.
+
+        pagination selects one page without page_size; omission follows all.
+        """
+        return await list_page_records(document_id, filters, pagination)
 
     @server.tool(annotations=READ)
     async def get_page(document_id: Identifier, page_id: Identifier) -> JsonValue:
@@ -120,17 +135,39 @@ def create_server() -> MCPServer:
         )
 
     @server.tool(annotations=READ)
-    async def list_lines(document_id: Identifier, page_id: Identifier) -> JsonValue:
-        """Read segmented lines for a page."""
-        return await call(
-            Request(operation="list_lines", document_id=document_id, page_id=page_id)
+    async def list_lines(
+        document_id: Identifier,
+        page_id: Identifier,
+        pagination: PageSelection | None = None,
+    ) -> JsonValue:
+        """Read segmented lines for a page.
+
+        pagination selects one page with page_size up to 50; omission follows all.
+        """
+        return await list_page_elements(
+            "list_lines",
+            f"documents/{document_id}/parts/{page_id}/lines/",
+            document_id,
+            page_id,
+            pagination,
         )
 
     @server.tool(annotations=READ)
-    async def list_regions(document_id: Identifier, page_id: Identifier) -> JsonValue:
-        """Read segmented regions for a page."""
-        return await call(
-            Request(operation="list_regions", document_id=document_id, page_id=page_id)
+    async def list_regions(
+        document_id: Identifier,
+        page_id: Identifier,
+        pagination: PageSelection | None = None,
+    ) -> JsonValue:
+        """Read segmented regions for a page.
+
+        pagination selects one page with page_size up to 50; omission follows all.
+        """
+        return await list_page_elements(
+            "list_regions",
+            f"documents/{document_id}/parts/{page_id}/blocks/",
+            document_id,
+            page_id,
+            pagination,
         )
 
     @server.tool(annotations=READ)
@@ -145,26 +182,14 @@ def create_server() -> MCPServer:
         document_id: Identifier,
         page_id: Identifier,
         transcription_id: Identifier | None = None,
+        pagination: PageSelection | None = None,
     ) -> JsonValue:
-        """Read page text/confidence/history, optionally filtered to one layer."""
-        if transcription_id is not None:
-            _ = await invoke(
-                "GET", f"documents/{document_id}/transcriptions/{transcription_id}/"
-            )
-            return await call(
-                ApiRequest(
-                    method="GET",
-                    route=f"documents/{document_id}/parts/{page_id}/transcriptions/",
-                    query={"transcription": str(transcription_id)},
-                    paginate=True,
-                )
-            )
-        return await call(
-            Request(
-                operation="get_page_transcriptions",
-                document_id=document_id,
-                page_id=page_id,
-            )
+        """Read page text/confidence/history, optionally filtered to one layer.
+
+        pagination selects one page without page_size; omission follows all.
+        """
+        return await read_page_transcriptions(
+            document_id, page_id, transcription_id, pagination
         )
 
     @server.tool(annotations=WRITE)

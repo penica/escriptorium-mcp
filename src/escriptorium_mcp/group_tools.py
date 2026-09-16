@@ -14,20 +14,25 @@ from escriptorium_mcp.group_models import (
     NativeCreateAcknowledgment,
 )
 from escriptorium_mcp.group_scope import read_group
+from escriptorium_mcp.pagination import PageSelection
 from escriptorium_mcp.strict_tools import strict_tool
 
 
 def build_group_tools() -> list[Tool]:
     """Build member-group tools that reject unknown top-level request arguments."""
 
-    async def list_groups(search: DirectorySearch | None = None) -> JsonValue:
+    async def list_groups(
+        search: DirectorySearch | None = None,
+        pagination: PageSelection | None = None,
+    ) -> JsonValue:
         """List all groups visible through current membership, including for staff.
 
-        Optional case-insensitive name search runs locally after full pagination.
-        Its count is the local match count; no native search parameter is sent.
-        With no search, preserve the native collection shape and metadata.
+        Optional case-insensitive name search runs locally. Unbounded calls search
+        all visible pages; bounded calls search only the selected native page and
+        disclose page-scoped totals. Bounded calls may request page_size. No native
+        search parameter is sent.
         """
-        return await read_directory("groups/", search, ("name",))
+        return await read_directory("groups/", search, ("name",), pagination=pagination)
 
     async def get_group(group_id: Identifier) -> JsonValue:
         """Read a membership-visible group; staff has no arbitrary-group bypass."""

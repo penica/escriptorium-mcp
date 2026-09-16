@@ -28,6 +28,11 @@ def register_records(server: MCPServer) -> None:
         """List writing systems; use their name in create_document.main_script."""
         return await call(ApiRequest(method="GET", route="scripts/", paginate=True))
 
+    @server.tool(annotations=READ)
+    async def get_script(script_id: Identifier) -> JsonValue:
+        """Read a writing system by primary key; document creation uses its name."""
+        return await invoke("GET", f"scripts/{script_id}/")
+
     @server.tool(annotations=CREATE)
     async def create_document(data: DocumentCreate) -> JsonValue:
         """Create an empty document; project is a slug, main_script a script name."""

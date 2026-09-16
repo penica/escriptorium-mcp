@@ -1,0 +1,214 @@
+method,path,status,primary_tool,note
+GET,/api/collections/,covered,list_collections,Route-level coverage; see report for field restrictions
+POST,/api/collections/,covered,create_collection,Route-level coverage; see report for field restrictions
+GET,/api/collections/{id}/,covered,get_collection,Route-level coverage; see report for field restrictions
+PUT,/api/collections/{id}/,partial_update_alternative,update_collection,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/collections/{id}/,covered,update_collection,Route-level coverage; see report for field restrictions
+DELETE,/api/collections/{id}/,covered,delete_collection,Route-level coverage; see report for field restrictions
+GET,/api/collections/{id}/items/,covered,list_collection_items,Route-level coverage; see report for field restrictions
+POST,/api/collections/{id}/train_recognizer/,covered,train_collection_recognizer,Route-level coverage; see report for field restrictions
+POST,/api/collections/{id}/train_segmenter/,covered,train_collection_segmenter,Route-level coverage; see report for field restrictions
+GET,/api/documents/,covered,list_documents,Route-level coverage; see report for field restrictions
+POST,/api/documents/,covered,create_document,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/import/,covered,submit_document_import,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/metadata/,covered,list_metadata,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/metadata/,covered,create_metadata,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/metadata/{id}/,covered,get_metadata,Route-level coverage; see report for field restrictions
+PUT,/api/documents/{document_pk}/metadata/{id}/,partial_update_alternative,update_metadata,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/documents/{document_pk}/metadata/{id}/,covered,update_metadata,Route-level coverage; see report for field restrictions
+DELETE,/api/documents/{document_pk}/metadata/{id}/,covered,delete_metadata,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/parts/,covered,list_pages,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/parts/,covered,upload_page,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/parts/{part_pk}/annotations/image/,covered,list_annotations,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/parts/{part_pk}/annotations/image/,covered,create_image_annotation,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/parts/{part_pk}/annotations/image/{id}/,covered,get_annotation,Route-level coverage; see report for field restrictions
+PUT,/api/documents/{document_pk}/parts/{part_pk}/annotations/image/{id}/,partial_update_alternative,update_image_annotation,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/documents/{document_pk}/parts/{part_pk}/annotations/image/{id}/,covered,update_image_annotation,Route-level coverage; see report for field restrictions
+DELETE,/api/documents/{document_pk}/parts/{part_pk}/annotations/image/{id}/,covered,delete_annotation,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/parts/{part_pk}/annotations/text/,covered,list_annotations,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/parts/{part_pk}/annotations/text/,covered,create_text_annotation,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/parts/{part_pk}/annotations/text/{id}/,covered,get_annotation,Route-level coverage; see report for field restrictions
+PUT,/api/documents/{document_pk}/parts/{part_pk}/annotations/text/{id}/,partial_update_alternative,update_text_annotation,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/documents/{document_pk}/parts/{part_pk}/annotations/text/{id}/,covered,update_text_annotation,Route-level coverage; see report for field restrictions
+DELETE,/api/documents/{document_pk}/parts/{part_pk}/annotations/text/{id}/,covered,delete_annotation,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/parts/{part_pk}/blocks/,covered,list_regions,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/parts/{part_pk}/blocks/,covered,create_region,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/parts/{part_pk}/blocks/{id}/,covered,get_region,Route-level coverage; see report for field restrictions
+PUT,/api/documents/{document_pk}/parts/{part_pk}/blocks/{id}/,partial_update_alternative,update_region,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/documents/{document_pk}/parts/{part_pk}/blocks/{id}/,covered,update_region,Route-level coverage; see report for field restrictions
+DELETE,/api/documents/{document_pk}/parts/{part_pk}/blocks/{id}/,covered,delete_region,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/parts/{part_pk}/lines/,covered,list_lines,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/parts/{part_pk}/lines/,covered,create_line,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/parts/{part_pk}/lines/{id}/,covered,get_line,Route-level coverage; see report for field restrictions
+PUT,/api/documents/{document_pk}/parts/{part_pk}/lines/{id}/,partial_update_alternative,update_line,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/documents/{document_pk}/parts/{part_pk}/lines/{id}/,covered,update_line,Route-level coverage; see report for field restrictions
+DELETE,/api/documents/{document_pk}/parts/{part_pk}/lines/{id}/,covered,delete_line,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/parts/{part_pk}/lines/bulk_create/,covered,bulk_create_lines,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/parts/{part_pk}/lines/bulk_delete/,covered,bulk_delete_lines,Route-level coverage; see report for field restrictions
+PUT,/api/documents/{document_pk}/parts/{part_pk}/lines/bulk_update/,covered,bulk_update_lines,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/parts/{part_pk}/lines/merge/,covered,merge_lines,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/parts/{part_pk}/lines/move/,covered,reorder_lines,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/parts/{part_pk}/metadata/,covered,list_metadata,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/parts/{part_pk}/metadata/,covered,create_metadata,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/parts/{part_pk}/metadata/{id}/,covered,get_metadata,Route-level coverage; see report for field restrictions
+PUT,/api/documents/{document_pk}/parts/{part_pk}/metadata/{id}/,partial_update_alternative,update_metadata,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/documents/{document_pk}/parts/{part_pk}/metadata/{id}/,covered,update_metadata,Route-level coverage; see report for field restrictions
+DELETE,/api/documents/{document_pk}/parts/{part_pk}/metadata/{id}/,covered,delete_metadata,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/parts/{part_pk}/transcriptions/,covered,get_page_transcriptions,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/parts/{part_pk}/transcriptions/,covered,create_line_transcription,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/parts/{part_pk}/transcriptions/{id}/,covered,get_line_transcription,Route-level coverage; see report for field restrictions
+PUT,/api/documents/{document_pk}/parts/{part_pk}/transcriptions/{id}/,partial_update_alternative,update_line_transcription,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/documents/{document_pk}/parts/{part_pk}/transcriptions/{id}/,covered,update_line_transcription,Route-level coverage; see report for field restrictions
+DELETE,/api/documents/{document_pk}/parts/{part_pk}/transcriptions/{id}/,covered,delete_line_transcription,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/parts/{part_pk}/transcriptions/bulk_create/,covered,bulk_create_line_transcriptions,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/parts/{part_pk}/transcriptions/bulk_delete/,covered,bulk_clear_line_transcriptions,Route-level coverage; see report for field restrictions
+PUT,/api/documents/{document_pk}/parts/{part_pk}/transcriptions/bulk_update/,covered,bulk_update_line_transcriptions,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/parts/{id}/,covered,get_page,Route-level coverage; see report for field restrictions
+PUT,/api/documents/{document_pk}/parts/{id}/,partial_update_alternative,update_page,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/documents/{document_pk}/parts/{id}/,covered,update_page,Route-level coverage; see report for field restrictions
+DELETE,/api/documents/{document_pk}/parts/{id}/,covered,delete_page,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/parts/{id}/cancel/,covered,cancel_page_tasks,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/parts/{id}/crop/,covered,crop_page,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/parts/{id}/move/,covered,move_page,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/parts/{id}/recalculate_ordering/,covered,recalculate_line_order,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/parts/{id}/reset_masks/,covered,regenerate_line_masks,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/parts/{id}/rotate/,covered,rotate_page,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/parts/byorder/,covered,get_page_by_order,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/task_groups/,covered,list_task_groups,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/task_groups/,not_exposed,,Unexposed task-history CRUD; not job submission
+GET,/api/documents/{document_pk}/task_groups/{id}/,covered,get_task_group,Route-level coverage; see report for field restrictions
+PUT,/api/documents/{document_pk}/task_groups/{id}/,not_exposed,,Unexposed task-history CRUD; not job control
+PATCH,/api/documents/{document_pk}/task_groups/{id}/,not_exposed,,Unexposed task-history CRUD; not job control
+DELETE,/api/documents/{document_pk}/task_groups/{id}/,not_exposed,,Unexposed task-history CRUD; not job control
+GET,/api/documents/{document_pk}/taxonomies/annotations/,covered,list_annotation_taxonomies,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/taxonomies/annotations/,covered,create_annotation_taxonomy,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/taxonomies/annotations/{id}/,covered,get_annotation_taxonomy,Route-level coverage; see report for field restrictions
+PUT,/api/documents/{document_pk}/taxonomies/annotations/{id}/,partial_update_alternative,update_annotation_taxonomy,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/documents/{document_pk}/taxonomies/annotations/{id}/,covered,update_annotation_taxonomy,Route-level coverage; see report for field restrictions
+DELETE,/api/documents/{document_pk}/taxonomies/annotations/{id}/,covered,delete_annotation_taxonomy,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/taxonomies/components/,covered,list_annotation_components,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/taxonomies/components/,covered,create_annotation_component,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/taxonomies/components/{id}/,covered,get_annotation_component,Route-level coverage; see report for field restrictions
+PUT,/api/documents/{document_pk}/taxonomies/components/{id}/,partial_update_alternative,update_annotation_component,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/documents/{document_pk}/taxonomies/components/{id}/,covered,update_annotation_component,Route-level coverage; see report for field restrictions
+DELETE,/api/documents/{document_pk}/taxonomies/components/{id}/,covered,delete_annotation_component,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/transcriptions/,covered,list_transcriptions,Route-level coverage; see report for field restrictions
+POST,/api/documents/{document_pk}/transcriptions/,covered,create_transcription,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/transcriptions/{id}/,covered,get_transcription,Route-level coverage; see report for field restrictions
+PUT,/api/documents/{document_pk}/transcriptions/{id}/,partial_update_alternative,update_transcription,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/documents/{document_pk}/transcriptions/{id}/,covered,update_transcription,Route-level coverage; see report for field restrictions
+DELETE,/api/documents/{document_pk}/transcriptions/{id}/,covered,delete_transcription,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/transcriptions/{id}/parts_by_char/,covered,find_transcription_pages_by_character,Route-level coverage; see report for field restrictions
+GET,/api/documents/{document_pk}/transcriptions/{id}/stats/,covered,get_transcription_statistics,Route-level coverage; see report for field restrictions
+GET,/api/documents/{id}/,covered,get_document,Route-level coverage; see report for field restrictions
+PUT,/api/documents/{id}/,partial_update_alternative,update_document,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/documents/{id}/,covered,update_document,Route-level coverage; see report for field restrictions
+DELETE,/api/documents/{id}/,covered,delete_document,Route-level coverage; see report for field restrictions
+POST,/api/documents/{id}/align/,covered,align_document,Route-level coverage; see report for field restrictions
+POST,/api/documents/{id}/bulk_move_parts/,covered,bulk_move_pages,Route-level coverage; see report for field restrictions
+POST,/api/documents/{id}/cancel_import/,covered,cancel_document_import,Route-level coverage; see report for field restrictions
+POST,/api/documents/{id}/cancel_tasks/,covered,cancel_document_tasks,Route-level coverage; see report for field restrictions
+POST,/api/documents/{id}/cancel_training/,not_exposed,,Missing document shortcut; model-specific cancellation exists
+GET,/api/documents/{id}/elements_by_type/,covered,find_pages_by_type,Route-level coverage; see report for field restrictions
+POST,/api/documents/{id}/export/,covered,request_server_export,Route-level coverage; see report for field restrictions
+POST,/api/documents/{id}/forced_align/,covered,force_align_pages,Route-level coverage; see report for field restrictions
+POST,/api/documents/{id}/imports/,covered,import_document_file,Route-level coverage; see report for field restrictions
+PATCH,/api/documents/{id}/modify_ontology/,covered,set_document_ontology,Route-level coverage; see report for field restrictions
+GET,/api/documents/{id}/ontology/export/,covered,export_native_ontology,Route-level coverage; see report for field restrictions
+POST,/api/documents/{id}/ontology/import/,covered,import_native_ontology,Route-level coverage; see report for field restrictions
+GET,/api/documents/{id}/part_ids/,covered,list_document_page_ids,Route-level coverage; see report for field restrictions
+POST,/api/documents/{id}/segment/,covered,segment_pages,Route-level coverage; see report for field restrictions
+POST,/api/documents/{id}/segtrain/,covered,train_segmentation,Route-level coverage; see report for field restrictions
+POST,/api/documents/{id}/share/,covered,share_document,Route-level coverage; see report for field restrictions
+GET,/api/documents/{id}/stats/,covered,get_document_statistics,Route-level coverage; see report for field restrictions
+POST,/api/documents/{id}/train/,covered,train_recognition,Route-level coverage; see report for field restrictions
+POST,/api/documents/{id}/transcribe/,covered,transcribe_pages,Route-level coverage; see report for field restrictions
+GET,/api/documents/tasks/,covered,list_document_tasks,Route-level coverage; see report for field restrictions
+GET,/api/downloads/,covered,list_downloads,Route-level coverage; see report for field restrictions
+GET,/api/downloads/{fingerprint}/,covered,get_download,Route-level coverage; see report for field restrictions
+DELETE,/api/downloads/{fingerprint}/,covered,delete_download,Route-level coverage; see report for field restrictions
+GET,/api/downloads/{fingerprint}/file/,covered,download_generated_export,Route-level coverage; see report for field restrictions
+GET,/api/fonts/,covered,list_fonts,Route-level coverage; see report for field restrictions
+GET,/api/fonts/{id}/,covered,get_font,Route-level coverage; see report for field restrictions
+GET,/api/groups/,covered,list_groups,Route-level coverage; see report for field restrictions
+POST,/api/groups/,covered,create_group,Route-level coverage; see report for field restrictions
+GET,/api/groups/{id}/,covered,get_group,Route-level coverage; see report for field restrictions
+PUT,/api/groups/{id}/,partial_update_alternative,update_group,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/groups/{id}/,covered,update_group,Route-level coverage; see report for field restrictions
+DELETE,/api/groups/{id}/,covered,delete_group,Route-level coverage; see report for field restrictions
+GET,/api/models/,covered,list_models,Route-level coverage; see report for field restrictions
+POST,/api/models/,covered,upload_model,Route-level coverage; see report for field restrictions
+GET,/api/models/{id}/,covered,get_model,Route-level coverage; see report for field restrictions
+PUT,/api/models/{id}/,partial_update_alternative,update_model,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/models/{id}/,covered,update_model,Route-level coverage; see report for field restrictions
+DELETE,/api/models/{id}/,covered,delete_model,Route-level coverage; see report for field restrictions
+POST,/api/models/{id}/cancel_training/,covered,cancel_model_training,Route-level coverage; see report for field restrictions
+GET,/api/projects/,covered,list_projects,Route-level coverage; see report for field restrictions
+POST,/api/projects/,covered,create_project,Route-level coverage; see report for field restrictions
+GET,/api/projects/{id}/,covered,get_project,Route-level coverage; see report for field restrictions
+PUT,/api/projects/{id}/,partial_update_alternative,update_project,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/projects/{id}/,covered,update_project,Route-level coverage; see report for field restrictions
+DELETE,/api/projects/{id}/,covered,delete_project,Route-level coverage; see report for field restrictions
+GET,/api/projects/{id}/ontology/,covered,get_project_ontology,Route-level coverage; see report for field restrictions
+DELETE,/api/projects/{id}/ontology/,covered,delete_project_ontology,Route-level coverage; see report for field restrictions
+GET,/api/projects/{id}/ontology/export/,covered,export_native_ontology,Route-level coverage; see report for field restrictions
+POST,/api/projects/{id}/ontology/import/,covered,import_native_ontology,Route-level coverage; see report for field restrictions
+POST,/api/projects/{id}/share/,covered,share_project,Route-level coverage; see report for field restrictions
+GET,/api/projects/{project_pk}/tags/,covered,list_tags,Route-level coverage; see report for field restrictions
+POST,/api/projects/{project_pk}/tags/,covered,create_tag,Route-level coverage; see report for field restrictions
+GET,/api/projects/{project_pk}/tags/{id}/,covered,get_tag,Route-level coverage; see report for field restrictions
+PUT,/api/projects/{project_pk}/tags/{id}/,partial_update_alternative,update_tag,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/projects/{project_pk}/tags/{id}/,covered,update_tag,Route-level coverage; see report for field restrictions
+DELETE,/api/projects/{project_pk}/tags/{id}/,covered,delete_tag,Route-level coverage; see report for field restrictions
+GET,/api/scripts/,covered,list_scripts,Route-level coverage; see report for field restrictions
+GET,/api/scripts/{id}/,covered,get_script,Direct read-only script lookup by positive ID
+GET,/api/tags/project/,covered,list_tags,Route-level coverage; see report for field restrictions
+POST,/api/tags/project/,covered,create_tag,Route-level coverage; see report for field restrictions
+GET,/api/tags/project/{id}/,covered,get_tag,Route-level coverage; see report for field restrictions
+PUT,/api/tags/project/{id}/,partial_update_alternative,update_tag,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/tags/project/{id}/,covered,update_tag,Route-level coverage; see report for field restrictions
+DELETE,/api/tags/project/{id}/,covered,delete_tag,Route-level coverage; see report for field restrictions
+GET,/api/tasks/,covered,list_tasks,Route-level coverage; see report for field restrictions
+POST,/api/tasks/,not_exposed,,Unexposed task-history CRUD; not job submission
+GET,/api/tasks/{id}/,covered,get_task,Route-level coverage; see report for field restrictions
+PUT,/api/tasks/{id}/,not_exposed,,Unexposed task-history CRUD; not job control
+PATCH,/api/tasks/{id}/,not_exposed,,Unexposed task-history CRUD; not job control
+DELETE,/api/tasks/{id}/,not_exposed,,Unexposed task-history CRUD; not job control
+GET,/api/textual-witnesses/,covered,list_textual_witnesses,Route-level coverage; see report for field restrictions
+POST,/api/textual-witnesses/,covered,upload_textual_witness,Route-level coverage; see report for field restrictions
+GET,/api/textual-witnesses/{id}/,covered,get_textual_witness,Route-level coverage; see report for field restrictions
+PUT,/api/textual-witnesses/{id}/,partial_update_alternative,update_textual_witness,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/textual-witnesses/{id}/,covered,update_textual_witness,Route-level coverage; see report for field restrictions
+DELETE,/api/textual-witnesses/{id}/,covered,delete_textual_witness,Route-level coverage; see report for field restrictions
+POST,/api/token-auth/,not_exposed,,Credential setup/rotation outside MCP tools
+GET,/api/types/annotations/,covered,list_ontology_types,Route-level coverage; see report for field restrictions
+POST,/api/types/annotations/,covered,create_ontology_type,Route-level coverage; see report for field restrictions
+GET,/api/types/annotations/{id}/,covered,get_ontology_type,Route-level coverage; see report for field restrictions
+PUT,/api/types/annotations/{id}/,partial_update_alternative,update_ontology_type,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/types/annotations/{id}/,covered,update_ontology_type,Route-level coverage; see report for field restrictions
+DELETE,/api/types/annotations/{id}/,covered,delete_ontology_type,Route-level coverage; see report for field restrictions
+GET,/api/types/block/,covered,list_ontology_types,Route-level coverage; see report for field restrictions
+POST,/api/types/block/,covered,create_ontology_type,Route-level coverage; see report for field restrictions
+GET,/api/types/block/{id}/,covered,get_ontology_type,Route-level coverage; see report for field restrictions
+PUT,/api/types/block/{id}/,partial_update_alternative,update_ontology_type,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/types/block/{id}/,covered,update_ontology_type,Route-level coverage; see report for field restrictions
+DELETE,/api/types/block/{id}/,covered,delete_ontology_type,Route-level coverage; see report for field restrictions
+GET,/api/types/line/,covered,list_ontology_types,Route-level coverage; see report for field restrictions
+POST,/api/types/line/,covered,create_ontology_type,Route-level coverage; see report for field restrictions
+GET,/api/types/line/{id}/,covered,get_ontology_type,Route-level coverage; see report for field restrictions
+PUT,/api/types/line/{id}/,partial_update_alternative,update_ontology_type,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/types/line/{id}/,covered,update_ontology_type,Route-level coverage; see report for field restrictions
+DELETE,/api/types/line/{id}/,covered,delete_ontology_type,Route-level coverage; see report for field restrictions
+GET,/api/types/part/,covered,list_ontology_types,Route-level coverage; see report for field restrictions
+POST,/api/types/part/,covered,create_ontology_type,Route-level coverage; see report for field restrictions
+GET,/api/types/part/{id}/,covered,get_ontology_type,Route-level coverage; see report for field restrictions
+PUT,/api/types/part/{id}/,partial_update_alternative,update_ontology_type,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/types/part/{id}/,covered,update_ontology_type,Route-level coverage; see report for field restrictions
+DELETE,/api/types/part/{id}/,covered,delete_ontology_type,Route-level coverage; see report for field restrictions
+GET,/api/users/,covered,list_users,Route-level coverage; see report for field restrictions
+POST,/api/users/,covered,create_user,Route-level coverage; see report for field restrictions
+GET,/api/users/{id}/,covered,get_user,Route-level coverage; see report for field restrictions
+PUT,/api/users/{id}/,partial_update_alternative,update_user,"MCP exposes PATCH, not literal PUT replacement semantics"
+PATCH,/api/users/{id}/,covered,update_user,Route-level coverage; see report for field restrictions
+DELETE,/api/users/{id}/,covered,delete_user,Route-level coverage; see report for field restrictions
+GET,/api/users/current/,covered,get_current_user,Route-level coverage; see report for field restrictions

@@ -10,6 +10,7 @@ from pydantic import HttpUrl, JsonValue
 from escriptorium_mcp.api import CHANGE, CREATE, DELETE, READ, ApiRequest
 from escriptorium_mcp.bridge import Identifier, call
 from escriptorium_mcp.file_models import ExportDownload
+from escriptorium_mcp.pagination import PageSelection, paginated_request
 from escriptorium_mcp.settings import load_settings
 from escriptorium_mcp.witness_files import witness_file_url
 from escriptorium_mcp.witness_models import WitnessPatch, WitnessUpload
@@ -33,10 +34,16 @@ def register_witnesses(server: MCPServer) -> None:
     """Register account-owned witness CRUD and file retrieval."""
 
     @server.tool(annotations=READ)
-    async def list_textual_witnesses() -> JsonValue:
-        """List all current-user-owned witnesses with full strict pagination."""
+    async def list_textual_witnesses(
+        pagination: PageSelection | None = None,
+    ) -> JsonValue:
+        """List owned witnesses; opt-in pages may request page_size."""
         return await call(
-            ApiRequest(
+            paginated_request(
+                "textual-witnesses/", pagination, page_size_supported=True
+            )
+            if pagination is not None
+            else ApiRequest(
                 method="GET",
                 route="textual-witnesses/",
                 paginate=True,

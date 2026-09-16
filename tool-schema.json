@@ -38,7 +38,7 @@
   {
     "name": "list_users",
     "title": null,
-    "description": "List visible accounts: self for nonstaff, all native-visible users for staff.\n\n        Optional search is a local case-insensitive substring match of username,\n        first/last name or email after full pagination. Its count is local; no\n        native search parameters or hidden-user discovery are used.\n        ",
+    "description": "List visible accounts: self for nonstaff, all native-visible users for staff.\n\n        Optional search is a local case-insensitive substring match of username,\n        first/last name or email. Unbounded calls search all visible pages; bounded\n        calls search only the selected native page and disclose page-scoped totals.\n        Bounded calls may request page_size. No native search parameters or\n        hidden-user discovery are used.\n        ",
     "inputSchema": {
       "properties": {
         "search": {
@@ -55,9 +55,50 @@
           ],
           "default": null,
           "title": "Search"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "type": "object",
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
+          "type": "object"
+        }
+      },
       "additionalProperties": false,
       "title": "list_usersArguments"
     },
@@ -393,7 +434,7 @@
   {
     "name": "list_groups",
     "title": null,
-    "description": "List all groups visible through current membership, including for staff.\n\n        Optional case-insensitive name search runs locally after full pagination.\n        Its count is the local match count; no native search parameter is sent.\n        With no search, preserve the native collection shape and metadata.\n        ",
+    "description": "List all groups visible through current membership, including for staff.\n\n        Optional case-insensitive name search runs locally. Unbounded calls search\n        all visible pages; bounded calls search only the selected native page and\n        disclose page-scoped totals. Bounded calls may request page_size. No native\n        search parameter is sent.\n        ",
     "inputSchema": {
       "properties": {
         "search": {
@@ -410,9 +451,50 @@
           ],
           "default": null,
           "title": "Search"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "type": "object",
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
+          "type": "object"
+        }
+      },
       "additionalProperties": false,
       "title": "list_groupsArguments"
     },
@@ -863,10 +945,52 @@
   {
     "name": "list_fonts",
     "title": null,
-    "description": "List all authenticated instance-wide font metadata with strict pagination.\n\n        Preserve native metrics and storage URLs without fetching font bytes.\n        An empty catalogue means no available fonts; missing API remains an error.\n        Uploading fonts and editing metrics require the native admin interface.\n        ",
+    "description": "List authenticated instance-wide font metadata with strict pagination.\n\n        Preserve native metrics and storage URLs without fetching font bytes.\n        Omit pagination to follow every page, or select one fixed-size native page.\n        An empty catalogue means no available fonts; missing API remains an error.\n        Uploading fonts and editing metrics require the native admin interface.\n        ",
     "inputSchema": {
-      "properties": {},
+      "properties": {
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
       "type": "object",
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
+          "type": "object"
+        }
+      },
       "additionalProperties": false,
       "title": "list_fontsArguments"
     },
@@ -944,7 +1068,7 @@
   {
     "name": "list_projects",
     "title": null,
-    "description": "List accessible projects with native name/tag filters and ordering.\n\n        Follows pagination and preserves expanded sharing, tags and new fields.\n        Native OR tag queries can return duplicate rows; counts are not rewritten.\n        ",
+    "description": "List accessible projects with native name/tag filters and ordering.\n\n        pagination selects one page with page_size up to 50; omission follows all.\n        Native OR tag duplicates and native counts are preserved.\n        ",
     "inputSchema": {
       "properties": {
         "filters": {
@@ -957,10 +1081,49 @@
             }
           ],
           "default": null
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "type": "object",
       "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
+          "type": "object"
+        },
         "ProjectFilters": {
           "additionalProperties": false,
           "description": "Project ordering whitelist; omitted ordering uses the server default.",
@@ -1100,13 +1263,24 @@
   {
     "name": "list_documents",
     "title": null,
-    "description": "List accessible documents, preserving all native fields and pagination.\n\n        Optional project filter is a numeric ID; document create/move uses a slug.\n        Supports name/tag filters and ordering without deduplicating native rows.\n        ",
+    "description": "List accessible documents, preserving all native fields and pagination.\n\n        pagination selects one page with page_size up to 50; omission follows all.\n        project is a numeric ID here; document create/move uses a slug.\n        ",
     "inputSchema": {
       "properties": {
         "filters": {
           "anyOf": [
             {
               "$ref": "#/$defs/DocumentFilters"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
             },
             {
               "type": "null"
@@ -1186,6 +1360,34 @@
           },
           "title": "DocumentFilters",
           "type": "object"
+        },
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
+          "type": "object"
         }
       },
       "title": "list_documentsArguments"
@@ -1263,7 +1465,7 @@
   {
     "name": "list_pages",
     "title": null,
-    "description": "List pages, optionally filtering names/filenames and sorting server-side.",
+    "description": "List pages, optionally filtering names/filenames and sorting server-side.\n\n        pagination selects one page without page_size; omission follows all.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -1275,6 +1477,17 @@
           "anyOf": [
             {
               "$ref": "#/$defs/PageFilters"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
             },
             {
               "type": "null"
@@ -1332,6 +1545,34 @@
             }
           },
           "title": "PageFilters",
+          "type": "object"
+        },
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
           "type": "object"
         }
       },
@@ -1416,7 +1657,7 @@
   {
     "name": "list_lines",
     "title": null,
-    "description": "Read segmented lines for a page.",
+    "description": "Read segmented lines for a page.\n\n        pagination selects one page with page_size up to 50; omission follows all.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -1428,6 +1669,17 @@
           "exclusiveMinimum": 0,
           "title": "Page Id",
           "type": "integer"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -1435,6 +1687,36 @@
         "page_id"
       ],
       "type": "object",
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
+          "type": "object"
+        }
+      },
       "title": "list_linesArguments"
     },
     "execution": null,
@@ -1466,7 +1748,7 @@
   {
     "name": "list_regions",
     "title": null,
-    "description": "Read segmented regions for a page.",
+    "description": "Read segmented regions for a page.\n\n        pagination selects one page with page_size up to 50; omission follows all.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -1478,6 +1760,17 @@
           "exclusiveMinimum": 0,
           "title": "Page Id",
           "type": "integer"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -1485,6 +1778,36 @@
         "page_id"
       ],
       "type": "object",
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
+          "type": "object"
+        }
+      },
       "title": "list_regionsArguments"
     },
     "execution": null,
@@ -1560,7 +1883,7 @@
   {
     "name": "get_page_transcriptions",
     "title": null,
-    "description": "Read page text/confidence/history, optionally filtered to one layer.",
+    "description": "Read page text/confidence/history, optionally filtered to one layer.\n\n        pagination selects one page without page_size; omission follows all.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -1585,6 +1908,17 @@
           ],
           "default": null,
           "title": "Transcription Id"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -1592,6 +1926,36 @@
         "page_id"
       ],
       "type": "object",
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
+          "type": "object"
+        }
+      },
       "title": "get_page_transcriptionsArguments"
     },
     "execution": null,
@@ -1805,6 +2169,50 @@
         "JsonValue": {}
       },
       "title": "list_scriptsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_script",
+    "title": null,
+    "description": "Read a writing system by primary key; document creation uses its name.",
+    "inputSchema": {
+      "properties": {
+        "script_id": {
+          "exclusiveMinimum": 0,
+          "title": "Script Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "script_id"
+      ],
+      "type": "object",
+      "title": "get_scriptArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_scriptOutput"
     },
     "icons": null,
     "annotations": {
@@ -2861,7 +3269,7 @@
   {
     "name": "list_metadata",
     "title": null,
-    "description": "List every metadata association for one document or page.\n\n        Follow all pagination and preserve duplicate rows and native fields.\n        This lists associations, not all global key definitions or references.\n        ",
+    "description": "List every metadata association for one document or page.\n\n        Omit pagination to follow every page, or select one native page. Preserve\n        duplicate rows and native fields. This lists associations, not all global\n        key definitions or references. Page metadata supports page_size; document\n        metadata uses its fixed native page size.\n        ",
     "inputSchema": {
       "properties": {
         "target": {
@@ -2881,6 +3289,17 @@
             }
           ],
           "title": "Target"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -2936,6 +3355,34 @@
             "page_id"
           ],
           "title": "PageMetadataTarget",
+          "type": "object"
+        },
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
           "type": "object"
         }
       },
@@ -3658,7 +4105,7 @@
   {
     "name": "list_tags",
     "title": null,
-    "description": "List every tag definition in one scope, preserving native pagination data.\n\n        personal_projects selects the current user's tags for projects.\n        project_documents selects tags for documents in the specified project.\n        These are definitions, not a list of assignments to individual records.\n        ",
+    "description": "List tag definitions in one scope, preserving native pagination data.\n\n        personal_projects selects the current user's tags for projects.\n        project_documents selects tags for documents in the specified project.\n        Opt-in pages use the native fixed page size; omission follows every page.\n        These are definitions, not assignments to individual records.\n        ",
     "inputSchema": {
       "properties": {
         "target": {
@@ -3678,6 +4125,17 @@
             }
           ],
           "title": "Target"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -3685,6 +4143,34 @@
       ],
       "type": "object",
       "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
+          "type": "object"
+        },
         "PersonalProjectTags": {
           "additionalProperties": false,
           "description": "Select the authenticated user's personal definitions for tagging projects.",
@@ -4240,10 +4726,52 @@
   {
     "name": "list_collections",
     "title": null,
-    "description": "List all collections owned by the current user, with full pagination.",
+    "description": "List owned collections; opt-in pages use the native fixed page size.",
     "inputSchema": {
-      "properties": {},
+      "properties": {
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
       "type": "object",
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
+          "type": "object"
+        }
+      },
       "title": "list_collectionsArguments"
     },
     "execution": null,
@@ -4620,19 +5148,60 @@
   {
     "name": "list_collection_items",
     "title": null,
-    "description": "Read all current page/layer pairs, preserving native item metadata.",
+    "description": "Read page/layer pairs; opt-in pages use the native fixed page size.",
     "inputSchema": {
       "properties": {
         "collection_id": {
           "exclusiveMinimum": 0,
           "title": "Collection Id",
           "type": "integer"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
         "collection_id"
       ],
       "type": "object",
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
+          "type": "object"
+        }
+      },
       "title": "list_collection_itemsArguments"
     },
     "execution": null,
@@ -5227,10 +5796,52 @@
   {
     "name": "list_textual_witnesses",
     "title": null,
-    "description": "List all current-user-owned witnesses with full strict pagination.",
+    "description": "List owned witnesses; opt-in pages may request page_size.",
     "inputSchema": {
-      "properties": {},
+      "properties": {
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
       "type": "object",
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
+          "type": "object"
+        }
+      },
       "title": "list_textual_witnessesArguments"
     },
     "execution": null,
@@ -8997,7 +9608,7 @@
   {
     "name": "list_models",
     "title": null,
-    "description": "List models, job type (1 segmentation, 2 recognition), and training state.",
+    "description": "List models, job type (1 segmentation, 2 recognition), and training state.\n\n        pagination selects one native page and supports page_size up to 50;\n        omitting it retains the complete legacy response.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -9028,9 +9639,50 @@
           ],
           "default": null,
           "title": "Job"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "type": "object",
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
+          "type": "object"
+        }
+      },
       "title": "list_modelsArguments"
     },
     "execution": null,
@@ -9183,7 +9835,7 @@
   {
     "name": "list_tasks",
     "title": null,
-    "description": "List own reports: 0 queued, 1 running, 2 crashed, 3 done, 4 canceled.\n\n        Document/group/order filters run on the server. State and exact method\n        filters run locally after all pages. Ordering accepts queued_at,\n        started_at, done_at, comma-separated and optionally prefixed with '-'.\n        document_part is a display label, not a page ID. No arguments retains\n        the existing response shape; local filters return a results envelope.\n        ",
+    "description": "List own reports: 0 queued, 1 running, 2 crashed, 3 done, 4 canceled.\n\n        Document/group/order filters run on the server. State and exact method\n        filters run locally after all pages when pagination is omitted. With\n        pagination, local filters apply only to that native page and metadata\n        reports the filtered total as source-page scoped. page_size supports up\n        to 50. Ordering accepts queued_at, started_at, done_at, comma-separated\n        and optionally prefixed with '-'. document_part is a display label, not\n        a page ID. No arguments retains the existing response shape.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -9255,9 +9907,50 @@
           ],
           "default": null,
           "title": "Method"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "type": "object",
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
+          "type": "object"
+        }
+      },
       "title": "list_tasksArguments"
     },
     "execution": null,
@@ -10320,19 +11013,60 @@
   {
     "name": "list_task_groups",
     "title": null,
-    "description": "List all document job groups with state counts and affected-page counts.",
+    "description": "List document job groups with state counts and affected-page counts.\n\n        pagination selects one native page and supports page_size up to 50;\n        omitting it retains the complete legacy response.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
           "exclusiveMinimum": 0,
           "title": "Document Id",
           "type": "integer"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
         "document_id"
       ],
       "type": "object",
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
+          "type": "object"
+        }
+      },
       "title": "list_task_groupsArguments"
     },
     "execution": null,
@@ -11208,7 +11942,7 @@
   {
     "name": "list_downloads",
     "title": null,
-    "description": "List all current-user download records, following every page safely.\n\n        task_report_id filters locally after pagination. A nonnull report ID links\n        an artifact to that report, not to an unconfirmed submission. Expired rows\n        may remain visible; absence does not prove an export failed. Without a\n        filter the native collection shape and metadata are preserved.\n        ",
+    "description": "List generated-download records, or one guarded native page.\n\n        Omitting pagination preserves complete retrieval. With pagination, only the\n        selected native page is read; page_size maps to supported native paginate_by.\n        task_report_id filters locally after pagination. A nonnull report ID links\n        an artifact to that report, not to an unconfirmed submission. Expired rows\n        may remain visible; absence does not prove an export failed. A filtered page\n        reports only its source-page filtered total, never a full filtered count.\n        ",
     "inputSchema": {
       "properties": {
         "task_report_id": {
@@ -11223,9 +11957,50 @@
           ],
           "default": null,
           "title": "Task Report Id"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "type": "object",
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
+          "type": "object"
+        }
+      },
       "title": "list_downloadsArguments"
     },
     "execution": null,
@@ -11740,7 +12515,7 @@
   {
     "name": "list_ontology_types",
     "title": null,
-    "description": "List public/template types; use get_document_ontology for assigned types.",
+    "description": "List public/template types, optionally selecting one fixed-size page.",
     "inputSchema": {
       "properties": {
         "kind": {
@@ -11752,12 +12527,53 @@
           ],
           "title": "Kind",
           "type": "string"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
         "kind"
       ],
       "type": "object",
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
+          "type": "object"
+        }
+      },
       "title": "list_ontology_typesArguments"
     },
     "execution": null,
@@ -12195,19 +13011,60 @@
   {
     "name": "list_annotation_components",
     "title": null,
-    "description": "List all annotation input fields and their allowed values in a document.",
+    "description": "List annotation input fields; opt-in pages may request page_size.",
     "inputSchema": {
       "properties": {
         "document_id": {
           "exclusiveMinimum": 0,
           "title": "Document Id",
           "type": "integer"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
         "document_id"
       ],
       "type": "object",
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
+          "type": "object"
+        }
+      },
       "title": "list_annotation_componentsArguments"
     },
     "execution": null,
@@ -12516,7 +13373,7 @@
   {
     "name": "list_annotation_taxonomies",
     "title": null,
-    "description": "List annotation categories, optionally filtering image or text markers.",
+    "description": "List categories by target or native page, with optional page_size.",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -12539,12 +13396,53 @@
           ],
           "default": null,
           "title": "Target"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
         "document_id"
       ],
       "type": "object",
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
+          "type": "object"
+        }
+      },
       "title": "list_annotation_taxonomiesArguments"
     },
     "execution": null,
@@ -12981,7 +13879,7 @@
   {
     "name": "list_annotations",
     "title": null,
-    "description": "List page annotations; optionally filter text by transcription layer.",
+    "description": "List annotations by transcription or one fixed-size native page.",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -13014,6 +13912,17 @@
           ],
           "default": null,
           "title": "Transcription Id"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -13022,6 +13931,36 @@
         "kind"
       ],
       "type": "object",
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "description": "Select one native result page; native page sizes are capped at 50.",
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "title": "Page",
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page Size"
+            }
+          },
+          "title": "PageSelection",
+          "type": "object"
+        }
+      },
       "title": "list_annotationsArguments"
     },
     "execution": null,

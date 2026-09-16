@@ -15,6 +15,7 @@ from escriptorium_mcp.ontology_models import (
     TypeKind,
 )
 from escriptorium_mcp.ontology_native import supports_type_color
+from escriptorium_mcp.pagination import PageSelection, paginated_request
 
 
 async def read_ontology(document_id: int) -> DocumentOntology:
@@ -47,10 +48,16 @@ def register_ontology(server: MCPServer) -> None:
         )
 
     @server.tool(annotations=READ)
-    async def list_ontology_types(kind: TypeKind) -> JsonValue:
-        """List public/template types; use get_document_ontology for assigned types."""
+    async def list_ontology_types(
+        kind: TypeKind,
+        pagination: PageSelection | None = None,
+    ) -> JsonValue:
+        """List public/template types, optionally selecting one fixed-size page."""
+        route = f"types/{kind}/"
         return await call(
-            ApiRequest(method="GET", route=f"types/{kind}/", paginate=True)
+            paginated_request(route, pagination, page_size_supported=False)
+            if pagination is not None
+            else ApiRequest(method="GET", route=route, paginate=True)
         )
 
     @server.tool(annotations=CREATE)

@@ -23,6 +23,32 @@ class NonnegativeInteger(ConstrainedInt):
     ge = 0
 
 
+class PositiveInteger(ConstrainedInt):
+    """Native page numbering begins at one."""
+
+    strict = True
+    gt = 0
+
+
+class NativePageSize(PositiveInteger):
+    """Keep opt-in page sizes within the public cross-list safety bound."""
+
+    le = 50
+
+
+class PageSelection(BaseModel):
+    """Validate bounded page input before constructing the fixed download route."""
+
+    page: PositiveInteger = 1
+    page_size: NativePageSize | None = None
+
+    class Config:
+        """Reject private fields that could alter the fixed download route."""
+
+        frozen = True
+        extra = "forbid"
+
+
 class DownloadInput(BaseModel):
     """Reject fields outside the selected private operation."""
 
@@ -36,9 +62,10 @@ class DownloadInput(BaseModel):
 
 
 class ListDownloads(DownloadInput):
-    """Read the complete current-user download catalogue."""
+    """Read the complete catalogue or one guarded native result page."""
 
     action: Literal["list"]
+    pagination: PageSelection | None = None
 
 
 class DownloadDetail(DownloadInput):

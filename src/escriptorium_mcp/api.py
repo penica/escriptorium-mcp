@@ -39,6 +39,7 @@ class ApiRequest(Input):
     file_field: Literal["image", "file", "upload_file", "witness_file"] = "image"
     paginate: bool = False
     strict_pagination: Literal[True] | None = None
+    native_page: Literal[True] | None = None
     single_attempt: Literal[True] | None = None
     query: dict[str, str] = Field(default_factory=dict)
 

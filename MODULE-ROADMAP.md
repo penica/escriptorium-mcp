@@ -1,5 +1,8 @@
 # MCP module expansion task list
 
+All 13 modules below are released. For remaining gaps after 1.0.0, continue with
+[POST-V1-ROADMAP.md](POST-V1-ROADMAP.md).
+
 Saved: 2026-09-16. Baseline: MCP v0.5.0.
 
 Implementation authorized on 2026-09-16. Ontology is complete for the audited API scope and is excluded from this expansion list.

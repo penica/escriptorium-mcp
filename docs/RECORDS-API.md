@@ -28,6 +28,39 @@ fields. The old connector's synthetic defaults and timestamp rewriting are no
 longer applied. A completed collection has `next: null`; a bare upstream list
 remains a list. Missing fields on older servers remain missing.
 
+### Optional bounded pages
+
+`list_projects`, `list_documents` and page/record list tools that advertise the
+same optional `pagination` input can instead return one native page. Omit
+`pagination` to retain the established exhaustive read and its exact existing
+shape. Supply it only when one page is the requested scope:
+
+```json
+{
+  "filters": {"name": "Register", "ordering": ["-updated_at"]},
+  "pagination": {"page": 2, "page_size": 20}
+}
+```
+
+`page` is a positive integer and defaults to `1`; `page_size` is a positive
+integer through `50`. It maps directly to native `paginate_by` only for routes
+that support it. A route without that native option rejects a supplied
+`page_size`; the MCP never silently truncates a complete result locally.
+
+The selected-page response preserves the native envelope and extra fields, then
+adds a `pagination` object with `mode: "native_page"`, requested `page` and
+`page_size`, `returned_count`, native collection total/scope, `has_next`,
+`has_previous`, validated `next_page`/`previous_page`, and
+`collection_consistency: "snapshot_not_guaranteed"`. Use the numeric page fields
+for another request. Native continuation links are checked for the same route and
+valid page number before they are exposed; they are not arbitrary URLs to follow.
+
+The native total is a collection count, not a transaction snapshot. A collection
+can change between page requests, so an empty final-looking page does not prove a
+stable collection was completely observed. Complete record work remains complete
+by omitting `pagination`: `list_document_page_ids`, document/audit reads and job
+summaries do not treat a selected page as their whole scope.
+
 ## Creating and editing records
 
 Project and document names support the native 512-character limit. Other named
@@ -40,6 +73,28 @@ Document creation/editing supports name, project **slug**, script **name**, read
 direction, line offset, confidence visualization and document-tag IDs. The project
 filter uses an ID, whereas document creation/movement uses a slug. Explicit false
 confidence values are retained. Omitted fields are not sent as synthetic defaults.
+
+Writing-system lookup is deliberately distinct from document creation. Use
+`list_scripts` for the catalogue or read one known script by its positive primary
+key:
+
+```json
+{"script_id": 7}
+```
+
+`get_script` is read-only and returns the native script mapping unchanged, such as
+its `id`, `name`, `iso_code`, `text_direction` and any server-added fields. Feed
+the returned **name**, not the numeric ID, to `create_document`:
+
+```json
+{
+  "data": {
+    "name": "Baptisms 1838-1879",
+    "project": "druzina",
+    "main_script": "Latin"
+  }
+}
+```
 
 Assignments replace the complete tag array: `[]` clears it. Project tags belong
 to the caller; document tags must belong to the effective destination project.

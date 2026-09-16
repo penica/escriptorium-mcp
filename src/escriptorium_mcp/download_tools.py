@@ -17,23 +17,37 @@ from escriptorium_mcp.download_models import (
     DownloadReportRecord,
     Fingerprint,
 )
+from escriptorium_mcp.pagination import PageSelection, annotate_filtered_page
 
 
 def register_downloads(server: MCPServer) -> None:
     """Expose the authenticated user's generated-download records and files."""
 
     @server.tool(annotations=READ)
-    async def list_downloads(task_report_id: Identifier | None = None) -> JsonValue:
-        """List all current-user download records, following every page safely.
+    async def list_downloads(
+        task_report_id: Identifier | None = None,
+        pagination: PageSelection | None = None,
+    ) -> JsonValue:
+        """List generated-download records, or one guarded native page.
 
+        Omitting pagination preserves complete retrieval. With pagination, only the
+        selected native page is read; page_size maps to supported native paginate_by.
         task_report_id filters locally after pagination. A nonnull report ID links
         an artifact to that report, not to an unconfirmed submission. Expired rows
-        may remain visible; absence does not prove an export failed. Without a
-        filter the native collection shape and metadata are preserved.
+        may remain visible; absence does not prove an export failed. A filtered page
+        reports only its source-page filtered total, never a full filtered count.
         """
-        raw = await call(DownloadList())
+        raw = await call(DownloadList(pagination=pagination))
         if task_report_id is None:
             return raw
+        if pagination is not None:
+            page = DownloadReportPage.model_validate(raw)
+            results = [
+                record.as_json()
+                for record in page.results
+                if record.task_report_id == task_report_id
+            ]
+            return annotate_filtered_page(raw, results)
         parsed = TypeAdapter[list[DownloadReportRecord] | DownloadReportPage](
             list[DownloadReportRecord] | DownloadReportPage
         ).validate_python(raw)

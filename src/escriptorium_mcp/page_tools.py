@@ -1,11 +1,13 @@
 """Native page lookup, filtering, movement and image actions."""
 
+from typing import Literal
+
 from mcp.server import MCPServer
 from mcp.server.mcpserver.exceptions import ToolError
 from pydantic import BaseModel, FilePath, JsonValue
 
 from escriptorium_mcp.api import JOB, READ, ApiRequest, invoke
-from escriptorium_mcp.bridge import Identifier, call
+from escriptorium_mcp.bridge import Identifier, Request, call
 from escriptorium_mcp.page_models import (
     Angle,
     BulkPageMove,
@@ -18,11 +20,14 @@ from escriptorium_mcp.page_models import (
     Rotation,
 )
 from escriptorium_mcp.page_scope import require_crop, require_move
+from escriptorium_mcp.pagination import PageSelection, paginated_request
 from escriptorium_mcp.text_scope import require_page
 
 
 async def list_filtered_pages(
-    document_id: Identifier, filters: PageFilters
+    document_id: Identifier,
+    filters: PageFilters,
+    pagination: PageSelection | None = None,
 ) -> JsonValue:
     """Preserve native fields and pagination with a documented query whitelist."""
     query: dict[str, str] = {}
@@ -31,13 +36,80 @@ async def list_filtered_pages(
     if filters.ordering is not None:
         query["ordering"] = ",".join(filters.ordering)
     return await call(
-        ApiRequest(
-            method="GET",
-            route=f"documents/{document_id}/parts/",
-            paginate=True,
+        paginated_request(
+            f"documents/{document_id}/parts/",
+            pagination,
             query=query,
+            page_size_supported=False,
         )
     )
+
+
+async def list_page_records(
+    document_id: Identifier,
+    filters: PageFilters | None,
+    pagination: PageSelection | None,
+) -> JsonValue:
+    """Retain legacy page reads unless one native page is requested."""
+    if filters is not None:
+        return await list_filtered_pages(document_id, filters, pagination)
+    request = (
+        Request(operation="list_pages", document_id=document_id)
+        if pagination is None
+        else paginated_request(
+            f"documents/{document_id}/parts/",
+            pagination,
+            page_size_supported=False,
+        )
+    )
+    return await call(request)
+
+
+async def list_page_elements(
+    operation: Literal["list_lines", "list_regions"],
+    route: str,
+    document_id: Identifier,
+    page_id: Identifier,
+    pagination: PageSelection | None,
+) -> JsonValue:
+    """Retain legacy geometry reads unless one native page is requested."""
+    request = (
+        Request(operation=operation, document_id=document_id, page_id=page_id)
+        if pagination is None
+        else paginated_request(route, pagination, page_size_supported=True)
+    )
+    return await call(request)
+
+
+async def read_page_transcriptions(
+    document_id: Identifier,
+    page_id: Identifier,
+    transcription_id: Identifier | None,
+    pagination: PageSelection | None,
+) -> JsonValue:
+    """Retain legacy text reads unless one native page is requested."""
+    route = f"documents/{document_id}/parts/{page_id}/transcriptions/"
+    request = paginated_request(
+        route,
+        pagination,
+        query=(
+            {"transcription": str(transcription_id)}
+            if transcription_id is not None
+            else None
+        ),
+        page_size_supported=False,
+    )
+    if transcription_id is not None:
+        _ = await invoke(
+            "GET", f"documents/{document_id}/transcriptions/{transcription_id}/"
+        )
+        return await call(request)
+    legacy = Request(
+        operation="get_page_transcriptions",
+        document_id=document_id,
+        page_id=page_id,
+    )
+    return await call(legacy if pagination is None else request)
 
 
 async def transform_image(route: str, payload: BaseModel) -> JsonValue:

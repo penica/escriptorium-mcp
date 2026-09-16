@@ -8,6 +8,7 @@ from pydantic import JsonValue
 
 from escriptorium_mcp.api import CHANGE, CREATE, DELETE, READ, ApiRequest, invoke
 from escriptorium_mcp.bridge import Identifier, call
+from escriptorium_mcp.pagination import PageSelection, paginated_request
 from escriptorium_mcp.tag_models import (
     PersonalProjectTags,
     ProjectDocumentTags,
@@ -50,15 +51,22 @@ def register_tags(server: MCPServer) -> None:
     """Expose tag definitions within current-user or explicitly selected projects."""
 
     @server.tool(annotations=READ)
-    async def list_tags(target: TagTarget) -> JsonValue:
-        """List every tag definition in one scope, preserving native pagination data.
+    async def list_tags(
+        target: TagTarget,
+        pagination: PageSelection | None = None,
+    ) -> JsonValue:
+        """List tag definitions in one scope, preserving native pagination data.
 
         personal_projects selects the current user's tags for projects.
         project_documents selects tags for documents in the specified project.
-        These are definitions, not a list of assignments to individual records.
+        Opt-in pages use the native fixed page size; omission follows every page.
+        These are definitions, not assignments to individual records.
         """
+        route = await tag_route(target)
         return await call(
-            ApiRequest(method="GET", route=await tag_route(target), paginate=True)
+            paginated_request(route, pagination, page_size_supported=False)
+            if pagination is not None
+            else ApiRequest(method="GET", route=route, paginate=True)
         )
 
     @server.tool(annotations=READ)

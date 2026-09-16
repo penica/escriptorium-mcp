@@ -11,19 +11,19 @@ mkdir -p "$install_dir/bin"
 if [ ! -e "$install_dir/.venv" ]; then
     uv venv --python 3.11 "$install_dir/.venv"
     uv pip install --python "$install_dir/.venv/bin/python" --require-hashes -r requirements.txt
-    uv pip install --python "$install_dir/.venv/bin/python" --no-deps escriptorium_mcp-1.0.0-py3-none-any.whl
+    uv pip install --python "$install_dir/.venv/bin/python" --no-deps escriptorium_mcp-1.1.0-py3-none-any.whl
 else
     installed_version="$("$install_dir/.venv/bin/python" -c 'from importlib.metadata import version; print(version("escriptorium-mcp"))')"
-    if [ "$installed_version" != '1.0.0' ]; then
+    if [ "$installed_version" != '1.1.0' ]; then
         if command -v systemctl >/dev/null && systemctl --user is-active --quiet escriptorium-mcp 2>/dev/null; then
             echo 'Stop the service before upgrading: systemctl --user stop escriptorium-mcp'
             exit 1
         fi
-        echo "Upgrading $installed_version to 1.0.0; saved configuration will be retained."
+        echo "Upgrading $installed_version to 1.1.0; saved configuration will be retained."
         uv pip install --python "$install_dir/.venv/bin/python" --require-hashes -r requirements.txt
-        uv pip install --python "$install_dir/.venv/bin/python" --no-deps escriptorium_mcp-1.0.0-py3-none-any.whl
+        uv pip install --python "$install_dir/.venv/bin/python" --no-deps escriptorium_mcp-1.1.0-py3-none-any.whl
     else
-        echo 'Existing 1.0.0 installation found; configuring it again.'
+        echo 'Existing 1.1.0 installation found; configuring it again.'
     fi
 fi
 python_bin="$install_dir/.venv/bin/python"

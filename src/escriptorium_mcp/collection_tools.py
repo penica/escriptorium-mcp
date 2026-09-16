@@ -15,6 +15,7 @@ from escriptorium_mcp.collection_scope import (
     read_collection_items,
     require_collection_references,
 )
+from escriptorium_mcp.pagination import PageSelection, paginated_request
 
 
 def _payload(data: CollectionCreate | CollectionPatch) -> str:
@@ -54,10 +55,14 @@ def register_collections(server: MCPServer) -> None:
     """Register owned collections and explicit complete membership replacement."""
 
     @server.tool(annotations=READ)
-    async def list_collections() -> JsonValue:
-        """List all collections owned by the current user, with full pagination."""
+    async def list_collections(
+        pagination: PageSelection | None = None,
+    ) -> JsonValue:
+        """List owned collections; opt-in pages use the native fixed page size."""
         return await call(
-            ApiRequest(
+            paginated_request("collections/", pagination, page_size_supported=False)
+            if pagination is not None
+            else ApiRequest(
                 method="GET",
                 route="collections/",
                 paginate=True,
@@ -108,6 +113,18 @@ def register_collections(server: MCPServer) -> None:
         return await _write("DELETE", f"collections/{collection_id}/")
 
     @server.tool(annotations=READ)
-    async def list_collection_items(collection_id: Identifier) -> JsonValue:
-        """Read all current page/layer pairs, preserving native item metadata."""
-        return await read_collection_items(collection_id)
+    async def list_collection_items(
+        collection_id: Identifier,
+        pagination: PageSelection | None = None,
+    ) -> JsonValue:
+        """Read page/layer pairs; opt-in pages use the native fixed page size."""
+        if pagination is None:
+            return await read_collection_items(collection_id)
+        _ = await read_collection(collection_id)
+        return await call(
+            paginated_request(
+                f"collections/{collection_id}/items/",
+                pagination,
+                page_size_supported=False,
+            )
+        )

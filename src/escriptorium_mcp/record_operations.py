@@ -1,6 +1,5 @@
 """Native project/document reads and expanded project settings operations."""
 
-from collections.abc import Sequence
 from typing import Literal
 
 from mcp.server import MCPServer
@@ -9,6 +8,7 @@ from pydantic import JsonValue
 from escriptorium_mcp.api import CHANGE, READ, ApiRequest, invoke
 from escriptorium_mcp.bridge import Identifier, call
 from escriptorium_mcp.font_scope import save_record
+from escriptorium_mcp.pagination import PageSelection, paginated_request
 from escriptorium_mcp.project_models import (
     ProjectCreate,
     ProjectCreateSettings,
@@ -26,40 +26,54 @@ from escriptorium_mcp.record_scope import require_personal_tags, require_project
 
 def _listing(
     route: Literal["projects/", "documents/"],
-    name: str | None,
-    tags: str | None,
-    ordering: Sequence[str] | None,
-    project: Identifier | None = None,
+    query: dict[str, str],
+    pagination: PageSelection | None = None,
 ) -> ApiRequest:
     """Serialize only native supported filters while retaining full pagination."""
-    query: dict[str, str] = {}
-    if name is not None:
-        query["name"] = name
-    if tags is not None:
-        query["tags"] = tags
-    if ordering is not None:
-        query["ordering"] = ",".join(ordering)
-    if project is not None:
-        query["project"] = str(project)
-    return ApiRequest(method="GET", route=route, query=query, paginate=True)
+    return paginated_request(route, pagination, query=query, page_size_supported=True)
 
 
-async def list_project_records(filters: ProjectFilters | None = None) -> JsonValue:
+async def list_project_records(
+    filters: ProjectFilters | None = None,
+    pagination: PageSelection | None = None,
+) -> JsonValue:
     """Keep raw fields for both no-argument and filtered project lists."""
     options = filters or ProjectFilters()
-    return await call(
-        _listing("projects/", options.name, options.tags, options.ordering)
-    )
+    query = {
+        key: value
+        for key, value in (
+            ("name", options.name),
+            ("tags", options.tags),
+            (
+                "ordering",
+                ",".join(options.ordering) if options.ordering is not None else None,
+            ),
+        )
+        if value is not None
+    }
+    return await call(_listing("projects/", query, pagination))
 
 
-async def list_document_records(filters: DocumentFilters | None = None) -> JsonValue:
+async def list_document_records(
+    filters: DocumentFilters | None = None,
+    pagination: PageSelection | None = None,
+) -> JsonValue:
     """Keep native document fields, counts and duplicate OR-filter matches."""
     options = filters or DocumentFilters()
-    return await call(
-        _listing(
-            "documents/", options.name, options.tags, options.ordering, options.project
+    query = {
+        key: value
+        for key, value in (
+            ("name", options.name),
+            ("tags", options.tags),
+            (
+                "ordering",
+                ",".join(options.ordering) if options.ordering is not None else None,
+            ),
+            ("project", str(options.project) if options.project is not None else None),
         )
-    )
+        if value is not None
+    }
+    return await call(_listing("documents/", query, pagination))
 
 
 async def create_project_record(

@@ -15,6 +15,7 @@ from escriptorium_mcp.account_scope import (
 from escriptorium_mcp.api import CHANGE, CREATE, DELETE, READ, ApiRequest
 from escriptorium_mcp.bridge import Identifier, call
 from escriptorium_mcp.directory_reads import read_directory
+from escriptorium_mcp.pagination import PageSelection
 from escriptorium_mcp.strict_tools import strict_tool
 
 USER_SEARCH_FIELDS: Final = ("username", "first_name", "last_name", "email")
@@ -40,14 +41,21 @@ def build_account_tools() -> list[Tool]:
         """Read the authenticated account's native identity and capability fields."""
         return await read_current_user()
 
-    async def list_users(search: DirectorySearch | None = None) -> JsonValue:
+    async def list_users(
+        search: DirectorySearch | None = None,
+        pagination: PageSelection | None = None,
+    ) -> JsonValue:
         """List visible accounts: self for nonstaff, all native-visible users for staff.
 
         Optional search is a local case-insensitive substring match of username,
-        first/last name or email after full pagination. Its count is local; no
-        native search parameters or hidden-user discovery are used.
+        first/last name or email. Unbounded calls search all visible pages; bounded
+        calls search only the selected native page and disclose page-scoped totals.
+        Bounded calls may request page_size. No native search parameters or
+        hidden-user discovery are used.
         """
-        return await read_directory("users/", search, USER_SEARCH_FIELDS)
+        return await read_directory(
+            "users/", search, USER_SEARCH_FIELDS, pagination=pagination
+        )
 
     async def get_user(user_id: Identifier) -> JsonValue:
         """Read an account visible to the current self/staff native queryset."""

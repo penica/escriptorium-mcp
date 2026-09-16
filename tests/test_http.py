@@ -64,7 +64,7 @@ async def exercise_http() -> None:
             streamable_http_client(endpoint, http_client=authenticated)
         ) as session:
             discovered = await session.list_tools()
-            assert len(discovered.tools) == 175
+            assert len(discovered.tools) == 176
             result = await session.call_tool("list_projects")
             assert not result.is_error
             content = result.content[0]

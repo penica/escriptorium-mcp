@@ -7,6 +7,11 @@ from pydantic import JsonValue, TypeAdapter
 from escriptorium_mcp.account_models import DirectorySearch
 from escriptorium_mcp.api import ApiRequest
 from escriptorium_mcp.bridge import call
+from escriptorium_mcp.pagination import (
+    PageSelection,
+    annotate_filtered_page,
+    paginated_request,
+)
 from escriptorium_mcp.text_scope import RecordPage
 
 
@@ -36,11 +41,19 @@ def _directory_rows(raw: JsonValue) -> list[JsonValue]:
 
 
 async def read_directory(
-    route: str, search: DirectorySearch | None, fields: tuple[str, ...]
+    route: str,
+    search: DirectorySearch | None,
+    fields: tuple[str, ...],
+    *,
+    pagination: PageSelection | None = None,
 ) -> JsonValue:
     """Fetch the entire authorized collection before any local casefold comparison."""
     raw = await call(
-        ApiRequest(method="GET", route=route, paginate=True, strict_pagination=True)
+        paginated_request(route, pagination, page_size_supported=True)
+        if pagination is not None
+        else ApiRequest(
+            method="GET", route=route, paginate=True, strict_pagination=True
+        )
     )
     if search is None:
         return raw
@@ -53,4 +66,6 @@ async def read_directory(
         values = [_searchable(record.get(field)) for field in fields]
         if any(needle in value.casefold() for value in values if value is not None):
             matches.append(row)
+    if pagination is not None:
+        return annotate_filtered_page(raw, matches)
     return {"count": len(matches), "next": None, "previous": None, "results": matches}

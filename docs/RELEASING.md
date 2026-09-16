@@ -11,10 +11,13 @@ scope, compatibility limits and validation in `CHANGELOG.md` and
 
 1. Update the version in `pyproject.toml`, the MCP registry, the WSL installer and
    version-specific examples. Run `uv sync` to refresh the project lock entry.
-2. Update the roadmap, changelog, README, WSL instructions and agent skill for the
+2. Compare actual discovery against `contracts/v1-tools.json`. Review every
+   normalized machine-schema difference under `STABILITY.md`; update only approved
+   compatible additions rather than replacing the baseline wholesale.
+3. Update the roadmap, changelog, README, WSL instructions and agent skill for the
    released behavior. Keep credentials and live-instance evidence out of public
    files.
-3. Run the relevant tests, lint and type checks. Exercise the changed tools
+4. Run the relevant tests, lint and type checks. Exercise the changed tools
    through an MCP client. Use isolated fixtures for writes; real-instance checks
    must stay within the actions authorized for that instance.
 

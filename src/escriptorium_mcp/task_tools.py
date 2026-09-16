@@ -5,6 +5,7 @@ from pydantic import JsonValue
 
 from escriptorium_mcp.api import CHANGE, READ, ApiRequest, invoke
 from escriptorium_mcp.bridge import Identifier, call
+from escriptorium_mcp.pagination import PageSelection, paginated_request
 from escriptorium_mcp.task_monitoring import (
     IMPORT_METHOD,
     StateLabel,
@@ -44,13 +45,19 @@ def register_task_monitoring(server: MCPServer) -> None:
         )
 
     @server.tool(annotations=READ)
-    async def list_task_groups(document_id: Identifier) -> JsonValue:
-        """List all document job groups with state counts and affected-page counts."""
+    async def list_task_groups(
+        document_id: Identifier, pagination: PageSelection | None = None
+    ) -> JsonValue:
+        """List document job groups with state counts and affected-page counts.
+
+        pagination selects one native page and supports page_size up to 50;
+        omitting it retains the complete legacy response.
+        """
         return await call(
-            ApiRequest(
-                method="GET",
-                route=f"documents/{document_id}/task_groups/",
-                paginate=True,
+            paginated_request(
+                f"documents/{document_id}/task_groups/",
+                pagination,
+                page_size_supported=True,
             )
         )
 

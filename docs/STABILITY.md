@@ -1,6 +1,8 @@
 # Stable public contract for 1.x
 
-Version 1.0 establishes 175 public tools. The reviewed machine contract is in
+Version 1.0 established 175 public tools. Version 1.1 adds `get_script` and
+optional bounded pagination on supported list tools without changing their
+unbounded default. The reviewed machine contract is in
 [`contracts/v1-tools.json`](../contracts/v1-tools.json); the complete discovery
 catalogue, including descriptions, is in [`tool-schema.json`](../tool-schema.json).
 Both STDIO and Streamable HTTP expose the same tools.
@@ -30,7 +32,7 @@ explain any compatibility impact and migration in the release notes.
 
 ## What depends on eScriptorium
 
-All 175 tools currently advertise a general JSON `result`, not a closed model
+All tools currently advertise a general JSON `result`, not a closed model
 of every upstream field. Native eScriptorium response fields, available actions,
 permissions and task visibility depend on the connected server version and
 account. Version 1.0 does not freeze the upstream API or promise newer features

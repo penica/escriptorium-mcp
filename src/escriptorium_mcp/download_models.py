@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field, JsonValue, TypeAdapter
 
 from escriptorium_mcp.api import Input
 from escriptorium_mcp.bridge import Identifier
+from escriptorium_mcp.pagination import PageSelection
 
 Fingerprint = Annotated[
     str, Field(strict=True, min_length=32, max_length=32, pattern=r"^[0-9a-f]{32}$")
@@ -14,10 +15,11 @@ Fingerprint = Annotated[
 
 
 class DownloadList(Input):
-    """Read every page of the authenticated user's generated downloads."""
+    """Read all generated downloads or one explicitly selected native page."""
 
     operation: Literal["downloads"] = "downloads"
     action: Literal["list"] = "list"
+    pagination: PageSelection | None = None
 
 
 class DownloadGet(Input):

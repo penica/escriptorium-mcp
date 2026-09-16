@@ -28,7 +28,7 @@ you to the updater. The updater retains your configured service address, port,
 credentials and archive settings. The first-install bootstrap is for WSL/Linux;
 the Python MCP package itself also supports Windows and macOS.
 
-Both commands accept an explicit version with `| sh -s -- 1.0.0` and a custom
+Both commands accept an explicit version with `| sh -s -- 1.1.0` and a custom
 installation directory with
 `| ESCRIPTORIUM_INSTALL_DIR='/absolute/install/path' sh`.
 
@@ -76,12 +76,12 @@ For a custom location on macOS/Linux:
 curl -fsSL https://raw.githubusercontent.com/penica/escriptorium-mcp/main/install-skills.sh | ESCRIPTORIUM_SKILLS_DIR='/absolute/skills/path' sh
 ```
 
-For a specific release on macOS/Linux, append `-s -- 1.0.0` after `sh`. In
+For a specific release on macOS/Linux, append `-s -- 1.1.0` after `sh`. In
 PowerShell, optionally set the corresponding environment values before running
 the command:
 
 ```powershell
-$env:ESCRIPTORIUM_RELEASE_VERSION = '1.0.0'
+$env:ESCRIPTORIUM_RELEASE_VERSION = '1.1.0'
 $env:ESCRIPTORIUM_SKILLS_DIR = 'C:\Users\YOUR_USER\.agents\skills'
 irm https://raw.githubusercontent.com/penica/escriptorium-mcp/main/install-skills.ps1 | iex
 ```

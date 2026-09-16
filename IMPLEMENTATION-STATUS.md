@@ -37,6 +37,34 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 - Ruff and strict type checks passed. The isolated 0.18.0-to-1.0.0 package upgrade preserved all settings, private backups and launcher in paths containing spaces; actual installed STDIO discovery advertised 175 tools and fixture-backed reads passed.
 - The release publication gate requires the exact release commit to pass the six-job Windows/macOS/Linux × Python 3.11/3.13 compatibility matrix. Final CI links and artifact digests are recorded on the GitHub release after this gate passes.
 
+## 1.1.0 additive release candidate
+
+- Added one read-only tool, `get_script`, for the audited script-detail route;
+  176 tools total. Native fields and ordinary missing/permission failures are
+  preserved, and the existing script catalogue remains unchanged.
+- Supported public list tools accept optional one-page retrieval. Pagination
+  omission preserves complete retrieval, including internal scope checks and
+  aggregate workflows. Page size is exposed only on verified routes, and local
+  page filters do not claim a complete global filtered count.
+- The 175-tool 1.0 contract remains the historical baseline. Reviewed additions
+  are limited to the new tool and optional `pagination` properties on 22 existing
+  tools; there are no removals, renames, new required inputs or changed defaults.
+- The unchanged live schema contains 107 paths and 213 operations. Coverage after
+  direct script lookup is 179 covered routes, 24 PATCH alternatives and 10
+  intentionally unexposed operations. Deferred and upstream-dependent roadmap
+  items remain unchanged.
+- Publication and deployment are separate actions. The exact release commit still
+  requires the compatibility matrix and authorized publication workflow.
+- Targeted actual-STDIO pagination/script and contract tests passed (75 plus the
+  2-test stable-contract gate); authenticated HTTP passed 8 tests with 176-tool
+  discovery. The installed wheel independently advertised version 1.1.0, 176
+  unique tools and `get_script` outside the checkout.
+- Wheel, source distribution and WSL transfer archive built. The WSL outer and
+  all 38 inner checksums passed; archive ownership is normalized and wheel,
+  source and WSL contents contain no private environment, `.omo` or live-evidence
+  files. Post-v1 roadmap, pagination and coverage documents are bundled, including
+  the skill's pagination-guide reference.
+
 ## Baseline evidence
 - Initial public commit: 73f08eb (MCP 0.5.0, 89 tools).
 - GitHub compatibility run 35070341311 succeeded across Windows/macOS/Linux and Python 3.11/3.13.

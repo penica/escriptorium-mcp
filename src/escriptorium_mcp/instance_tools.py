@@ -17,6 +17,7 @@ from escriptorium_mcp.instance_models import (
     TextAnnotationCreate,
     TextAnnotationPatch,
 )
+from escriptorium_mcp.pagination import PageSelection, paginated_request
 
 
 async def write_annotation(
@@ -48,19 +49,27 @@ def register_instances(server: MCPServer) -> None:
         page_id: Identifier,
         kind: AnnotationKind,
         transcription_id: Identifier | None = None,
+        pagination: PageSelection | None = None,
     ) -> JsonValue:
-        """List page annotations; optionally filter text by transcription layer."""
+        """List annotations by transcription or one fixed-size native page."""
         if transcription_id is not None and kind != "text":
             msg = "The transcription filter is only supported for text annotations."
             raise ToolError(msg)
+        route = f"documents/{document_id}/parts/{page_id}/annotations/{kind}/"
+        query = {"transcription": str(transcription_id)} if transcription_id else {}
         return await call(
-            ApiRequest(
+            paginated_request(
+                route,
+                pagination,
+                query=query,
+                page_size_supported=False,
+            )
+            if pagination is not None
+            else ApiRequest(
                 method="GET",
-                route=f"documents/{document_id}/parts/{page_id}/annotations/{kind}/",
+                route=route,
                 paginate=True,
-                query={"transcription": str(transcription_id)}
-                if transcription_id
-                else {},
+                query=query,
             )
         )
 

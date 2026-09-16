@@ -15,6 +15,7 @@ from escriptorium_mcp.job_models import (
     SegmentationTraining,
 )
 from escriptorium_mcp.model_models import ModelJob, job_label
+from escriptorium_mcp.pagination import PageSelection, paginated_request
 from escriptorium_mcp.task_monitoring import (
     TaskFilters,
     TaskOrdering,
@@ -29,16 +30,24 @@ def register_jobs(server: MCPServer) -> None:
 
     @server.tool(annotations=READ)
     async def list_models(
-        document_id: Identifier | None = None, job: ModelJob | None = None
+        document_id: Identifier | None = None,
+        job: ModelJob | None = None,
+        pagination: PageSelection | None = None,
     ) -> JsonValue:
-        """List models, job type (1 segmentation, 2 recognition), and training state."""
+        """List models, job type (1 segmentation, 2 recognition), and training state.
+
+        pagination selects one native page and supports page_size up to 50;
+        omitting it retains the complete legacy response.
+        """
         query = {
             key: str(value)
             for key, value in (("documents", document_id), ("job", job))
             if value is not None
         }
         return await call(
-            ApiRequest(method="GET", route="models/", paginate=True, query=query)
+            paginated_request(
+                "models/", pagination, query=query, page_size_supported=True
+            )
         )
 
     @server.tool(annotations=CREATE)
@@ -62,20 +71,24 @@ def register_jobs(server: MCPServer) -> None:
         return await invoke("GET", f"models/{model_id}/")
 
     @server.tool(annotations=READ)
-    async def list_tasks(
+    async def list_tasks(  # noqa: PLR0913 - preserve additive flat public filters
         document_id: Identifier | None = None,
         group_id: Identifier | None = None,
         ordering: TaskOrdering | None = None,
         workflow_state: TaskState | None = None,
         method: str | None = None,
+        *,
+        pagination: PageSelection | None = None,
     ) -> JsonValue:
         """List own reports: 0 queued, 1 running, 2 crashed, 3 done, 4 canceled.
 
         Document/group/order filters run on the server. State and exact method
-        filters run locally after all pages. Ordering accepts queued_at,
-        started_at, done_at, comma-separated and optionally prefixed with '-'.
-        document_part is a display label, not a page ID. No arguments retains
-        the existing response shape; local filters return a results envelope.
+        filters run locally after all pages when pagination is omitted. With
+        pagination, local filters apply only to that native page and metadata
+        reports the filtered total as source-page scoped. page_size supports up
+        to 50. Ordering accepts queued_at, started_at, done_at, comma-separated
+        and optionally prefixed with '-'. document_part is a display label, not
+        a page ID. No arguments retains the existing response shape.
         """
         return await read_tasks(
             TaskFilters(
@@ -84,7 +97,8 @@ def register_jobs(server: MCPServer) -> None:
                 ordering=ordering,
                 workflow_state=workflow_state,
                 method=method,
-            )
+            ),
+            pagination,
         )
 
     @server.tool(annotations=READ)

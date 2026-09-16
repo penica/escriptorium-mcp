@@ -13,20 +13,34 @@ from escriptorium_mcp.metadata_models import (
     SharedMetadataKeyUpdate,
 )
 from escriptorium_mcp.metadata_scope import metadata_route, read_metadata
+from escriptorium_mcp.pagination import PageSelection, paginated_request
 
 
 def register_metadata(server: MCPServer) -> None:
     """Register both document and page metadata through the same scoped surface."""
 
     @server.tool(annotations=READ)
-    async def list_metadata(target: MetadataTarget) -> JsonValue:
+    async def list_metadata(
+        target: MetadataTarget,
+        pagination: PageSelection | None = None,
+    ) -> JsonValue:
         """List every metadata association for one document or page.
 
-        Follow all pagination and preserve duplicate rows and native fields.
-        This lists associations, not all global key definitions or references.
+        Omit pagination to follow every page, or select one native page. Preserve
+        duplicate rows and native fields. This lists associations, not all global
+        key definitions or references. Page metadata supports page_size; document
+        metadata uses its fixed native page size.
         """
         route = await metadata_route(target)
-        return await call(ApiRequest(method="GET", route=route, paginate=True))
+        return await call(
+            paginated_request(
+                route,
+                pagination,
+                page_size_supported=target.scope == "page",
+            )
+            if pagination is not None
+            else ApiRequest(method="GET", route=route, paginate=True)
+        )
 
     @server.tool(annotations=READ)
     async def get_metadata(

@@ -4,10 +4,11 @@ import json
 from http import HTTPStatus
 from pathlib import Path
 from typing import Literal
-from urllib.parse import urljoin, urlsplit
 
 from escriptorium_connector import EscriptoriumConnector
+from pagination import annotate_native_page, validate_native_request
 from pydantic import BaseModel, Field
+from url_guard import same_origin, scoped_next_url
 
 
 class ApiRequest(BaseModel):
@@ -27,6 +28,7 @@ class ApiRequest(BaseModel):
     file_field: Literal["image", "file", "upload_file", "witness_file"] = "image"
     paginate: bool = False
     strict_pagination: bool = False
+    native_page: bool = False
     single_attempt: bool = False
     query: dict[str, str] = Field(default_factory=dict)
 
@@ -37,47 +39,20 @@ class ApiRequest(BaseModel):
         frozen = True
 
 
-def same_origin(client: EscriptoriumConnector, url: str) -> str:
-    """Prevent pagination links from forwarding an API token to another server."""
-    absolute = urljoin(client.base_url, url)
-    expected = urlsplit(client.base_url)
-    actual = urlsplit(absolute)
-    if (actual.scheme, actual.netloc) != (expected.scheme, expected.netloc):
-        msg = "Cross-origin authenticated URL refused."
-        raise ValueError(msg)
-    return absolute
-
-
-def scoped_next_url(
-    client: EscriptoriumConnector, initial_url: str, next_url: str
-) -> str:
-    """Keep strict pagination inside the original authenticated collection route."""
-    supplied = urlsplit(next_url)
-    absolute = same_origin(client, urljoin(initial_url, next_url))
-    parsed = urlsplit(absolute)
-    if (
-        any(char <= " " for char in next_url)
-        or "\\" in next_url
-        or "#" in next_url
-        or "%" in supplied.path
-        or any(segment in {".", ".."} for segment in supplied.path.split("/"))
-        or parsed.username is not None
-        or parsed.password is not None
-        or parsed.path != urlsplit(initial_url).path
-    ):
-        msg = "Pagination leaves the original collection route."
-        raise ValueError(msg)
-    return absolute
-
-
 def execute_api(client: EscriptoriumConnector, request: ApiRequest) -> str:
     """Perform one action, preserving server JSON and bodyless success responses."""
+    if request.native_page:
+        validate_native_request(
+            request.method, request.query, paginate=request.paginate
+        )
     if request.single_attempt:
         for adapter in client.http.adapters.values():
             adapter.max_retries = adapter.max_retries.new(
                 total=0, connect=0, read=0, redirect=0, status=0, raise_on_status=False
             )
-    guarded_response = request.strict_pagination or request.single_attempt
+    guarded_response = (
+        request.strict_pagination or request.native_page or request.single_attempt
+    )
     url = client.api_url + request.route
     body = json.loads(request.body_json)
     if request.route.endswith("/export/") and "region_types" not in body:
@@ -112,6 +87,11 @@ def execute_api(client: EscriptoriumConnector, request: ApiRequest) -> str:
         response.raise_for_status()
     if not response.content:
         return json.dumps({"status": "success", "http_status": response.status_code})
+    if request.native_page:
+        return json.dumps(
+            annotate_native_page(client, url, response.json(), request.query),
+            ensure_ascii=False,
+        )
     if request.paginate:
         data = response.json()
         if isinstance(data, list):

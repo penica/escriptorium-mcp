@@ -5,8 +5,13 @@ from typing import Annotated, ClassVar, Final, Literal, assert_never
 
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, TypeAdapter
 
-from escriptorium_mcp.api import ApiRequest, Input, invoke
+from escriptorium_mcp.api import Input, invoke
 from escriptorium_mcp.bridge import Identifier, call
+from escriptorium_mcp.pagination import (
+    PageSelection,
+    annotate_filtered_page,
+    paginated_request,
+)
 
 TaskState = Literal[0, 1, 2, 3, 4]
 StateLabel = Literal["queued", "running", "crashed", "finished", "canceled"]
@@ -66,7 +71,9 @@ def task_records(value: JsonValue) -> list[TaskRecord]:
             assert_never(parsed)
 
 
-async def read_tasks(filters: TaskFilters) -> JsonValue:
+async def read_tasks(
+    filters: TaskFilters, pagination: PageSelection | None = None
+) -> JsonValue:
     """Preserve legacy listing responses unless a local filter is requested."""
     query = {
         key: str(value)
@@ -78,7 +85,7 @@ async def read_tasks(filters: TaskFilters) -> JsonValue:
         if value is not None
     }
     raw = await call(
-        ApiRequest(method="GET", route="tasks/", paginate=True, query=query)
+        paginated_request("tasks/", pagination, query=query, page_size_supported=True)
     )
     if filters.workflow_state is None and filters.method is None:
         return raw
@@ -91,6 +98,8 @@ async def read_tasks(filters: TaskFilters) -> JsonValue:
         )
         and (filters.method is None or report.method == filters.method)
     ]
+    if pagination is not None:
+        return annotate_filtered_page(raw, records)
     return {"count": len(records), "next": None, "previous": None, "results": records}
 
 

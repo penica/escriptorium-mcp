@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.1.0 — 2026-09-16
+
+Added `get_script` for direct, read-only script lookup by positive ID. Supported
+list tools now accept an optional `pagination` object that selects one native
+page. Omitting pagination preserves the 1.0 behavior of following every page;
+internal aggregate and safety checks continue to retrieve complete selections.
+
+Paged results report native continuation metadata without exposing arbitrary URL
+fetching. `page_size` is accepted only on routes verified to support it, local
+filters apply to the returned native page, and their global filtered totals remain
+unknown. Same-origin and original-route checks, redirect refusal and loop detection
+remain enforced. See `docs/PAGINATION.md` for route support and response semantics.
+
+This additive minor release exposes 176 tools. The reviewed 1.x baseline adds only
+the new tool and compatible optional pagination properties; no existing tool is
+removed or renamed, and no required input, default or result meaning changes.
+The API coverage map now records 179 covered operations, 24 PATCH alternatives
+and 10 intentionally unexposed operations out of the same 213-operation schema.
+
 ## 1.0.0 — 2026-09-16
 
 First stable release of the 175-tool interface, covering all 13 expansion modules.

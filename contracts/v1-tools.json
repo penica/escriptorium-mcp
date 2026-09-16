@@ -30,6 +30,33 @@
   {
     "name": "list_users",
     "inputSchema": {
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
       "properties": {
         "search": {
           "anyOf": [
@@ -44,10 +71,20 @@
             }
           ],
           "default": null
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
-      "type": "object",
-      "additionalProperties": false
+      "type": "object"
     },
     "outputSchema": {
       "properties": {
@@ -327,6 +364,33 @@
   {
     "name": "list_groups",
     "inputSchema": {
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
       "properties": {
         "search": {
           "anyOf": [
@@ -341,10 +405,20 @@
             }
           ],
           "default": null
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
-      "type": "object",
-      "additionalProperties": false
+      "type": "object"
     },
     "outputSchema": {
       "properties": {
@@ -714,9 +788,47 @@
   {
     "name": "list_fonts",
     "inputSchema": {
-      "properties": {},
-      "type": "object",
-      "additionalProperties": false
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
     },
     "outputSchema": {
       "properties": {
@@ -778,21 +890,31 @@
   {
     "name": "list_projects",
     "inputSchema": {
-      "properties": {
-        "filters": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/ProjectFilters"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null
-        }
-      },
-      "type": "object",
       "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
+        },
         "ProjectFilters": {
           "additionalProperties": false,
           "properties": {
@@ -851,7 +973,32 @@
           },
           "type": "object"
         }
-      }
+      },
+      "properties": {
+        "filters": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProjectFilters"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
     },
     "outputSchema": {
       "properties": {
@@ -912,20 +1059,6 @@
   {
     "name": "list_documents",
     "inputSchema": {
-      "properties": {
-        "filters": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/DocumentFilters"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null
-        }
-      },
-      "type": "object",
       "$defs": {
         "DocumentFilters": {
           "additionalProperties": false,
@@ -990,8 +1123,57 @@
             }
           },
           "type": "object"
+        },
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
         }
-      }
+      },
+      "properties": {
+        "filters": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DocumentFilters"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "type": "object"
     },
     "outputSchema": {
       "properties": {
@@ -1052,27 +1234,6 @@
   {
     "name": "list_pages",
     "inputSchema": {
-      "properties": {
-        "document_id": {
-          "exclusiveMinimum": 0,
-          "type": "integer"
-        },
-        "filters": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/PageFilters"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null
-        }
-      },
-      "required": [
-        "document_id"
-      ],
-      "type": "object",
       "$defs": {
         "PageFilters": {
           "additionalProperties": false,
@@ -1115,8 +1276,64 @@
             }
           },
           "type": "object"
+        },
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
         }
-      }
+      },
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        "filters": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageFilters"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "type": "object"
     },
     "outputSchema": {
       "properties": {
@@ -1182,6 +1399,32 @@
   {
     "name": "list_lines",
     "inputSchema": {
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
+        }
+      },
       "properties": {
         "document_id": {
           "exclusiveMinimum": 0,
@@ -1190,6 +1433,17 @@
         "page_id": {
           "exclusiveMinimum": 0,
           "type": "integer"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -1222,6 +1476,32 @@
   {
     "name": "list_regions",
     "inputSchema": {
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
+        }
+      },
       "properties": {
         "document_id": {
           "exclusiveMinimum": 0,
@@ -1230,6 +1510,17 @@
         "page_id": {
           "exclusiveMinimum": 0,
           "type": "integer"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -1297,6 +1588,32 @@
   {
     "name": "get_page_transcriptions",
     "inputSchema": {
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
+        }
+      },
       "properties": {
         "document_id": {
           "exclusiveMinimum": 0,
@@ -1311,6 +1628,17 @@
             {
               "exclusiveMinimum": 0,
               "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
             },
             {
               "type": "null"
@@ -1502,6 +1830,41 @@
       "$defs": {
         "JsonValue": {}
       }
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    }
+  },
+  {
+    "name": "get_script",
+    "inputSchema": {
+      "properties": {
+        "script_id": {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "script_id"
+      ],
+      "type": "object"
+    },
+    "outputSchema": {
+      "$defs": {
+        "JsonValue": {}
+      },
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object"
     },
     "annotations": {
       "readOnlyHint": true,
@@ -2398,29 +2761,6 @@
   {
     "name": "list_metadata",
     "inputSchema": {
-      "properties": {
-        "target": {
-          "discriminator": {
-            "mapping": {
-              "document": "#/$defs/DocumentMetadataTarget",
-              "page": "#/$defs/PageMetadataTarget"
-            },
-            "propertyName": "scope"
-          },
-          "oneOf": [
-            {
-              "$ref": "#/$defs/DocumentMetadataTarget"
-            },
-            {
-              "$ref": "#/$defs/PageMetadataTarget"
-            }
-          ]
-        }
-      },
-      "required": [
-        "target"
-      ],
-      "type": "object",
       "$defs": {
         "DocumentMetadataTarget": {
           "additionalProperties": false,
@@ -2462,8 +2802,66 @@
             "page_id"
           ],
           "type": "object"
+        },
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
         }
-      }
+      },
+      "properties": {
+        "target": {
+          "discriminator": {
+            "mapping": {
+              "document": "#/$defs/DocumentMetadataTarget",
+              "page": "#/$defs/PageMetadataTarget"
+            },
+            "propertyName": "scope"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/DocumentMetadataTarget"
+            },
+            {
+              "$ref": "#/$defs/PageMetadataTarget"
+            }
+          ]
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "type": "object"
     },
     "outputSchema": {
       "properties": {
@@ -3069,30 +3467,31 @@
   {
     "name": "list_tags",
     "inputSchema": {
-      "properties": {
-        "target": {
-          "discriminator": {
-            "mapping": {
-              "personal_projects": "#/$defs/PersonalProjectTags",
-              "project_documents": "#/$defs/ProjectDocumentTags"
-            },
-            "propertyName": "scope"
-          },
-          "oneOf": [
-            {
-              "$ref": "#/$defs/PersonalProjectTags"
-            },
-            {
-              "$ref": "#/$defs/ProjectDocumentTags"
-            }
-          ]
-        }
-      },
-      "required": [
-        "target"
-      ],
-      "type": "object",
       "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
+        },
         "PersonalProjectTags": {
           "additionalProperties": false,
           "properties": {
@@ -3124,7 +3523,41 @@
           ],
           "type": "object"
         }
-      }
+      },
+      "properties": {
+        "target": {
+          "discriminator": {
+            "mapping": {
+              "personal_projects": "#/$defs/PersonalProjectTags",
+              "project_documents": "#/$defs/ProjectDocumentTags"
+            },
+            "propertyName": "scope"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/PersonalProjectTags"
+            },
+            {
+              "$ref": "#/$defs/ProjectDocumentTags"
+            }
+          ]
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "type": "object"
     },
     "outputSchema": {
       "properties": {
@@ -3560,7 +3993,45 @@
   {
     "name": "list_collections",
     "inputSchema": {
-      "properties": {},
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
+        }
+      },
+      "properties": {
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
       "type": "object"
     },
     "outputSchema": {
@@ -3877,10 +4348,47 @@
   {
     "name": "list_collection_items",
     "inputSchema": {
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
+        }
+      },
       "properties": {
         "collection_id": {
           "exclusiveMinimum": 0,
           "type": "integer"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -4392,7 +4900,45 @@
   {
     "name": "list_textual_witnesses",
     "inputSchema": {
-      "properties": {},
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
+        }
+      },
+      "properties": {
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
       "type": "object"
     },
     "outputSchema": {
@@ -7587,6 +8133,32 @@
   {
     "name": "list_models",
     "inputSchema": {
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
+        }
+      },
       "properties": {
         "document_id": {
           "anyOf": [
@@ -7608,6 +8180,17 @@
                 2
               ],
               "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
             },
             {
               "type": "null"
@@ -7741,6 +8324,32 @@
   {
     "name": "list_tasks",
     "inputSchema": {
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
+        }
+      },
       "properties": {
         "document_id": {
           "anyOf": [
@@ -7800,6 +8409,17 @@
           "anyOf": [
             {
               "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
             },
             {
               "type": "null"
@@ -8691,10 +9311,47 @@
   {
     "name": "list_task_groups",
     "inputSchema": {
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
+        }
+      },
       "properties": {
         "document_id": {
           "exclusiveMinimum": 0,
           "type": "integer"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -9429,12 +10086,49 @@
   {
     "name": "list_downloads",
     "inputSchema": {
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
+        }
+      },
       "properties": {
         "task_report_id": {
           "anyOf": [
             {
               "exclusiveMinimum": 0,
               "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
             },
             {
               "type": "null"
@@ -9875,6 +10569,32 @@
   {
     "name": "list_ontology_types",
     "inputSchema": {
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
+        }
+      },
       "properties": {
         "kind": {
           "enum": [
@@ -9884,6 +10604,17 @@
             "annotations"
           ],
           "type": "string"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -10256,10 +10987,47 @@
   {
     "name": "list_annotation_components",
     "inputSchema": {
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
+        }
+      },
       "properties": {
         "document_id": {
           "exclusiveMinimum": 0,
           "type": "integer"
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -10521,6 +11289,32 @@
   {
     "name": "list_annotation_taxonomies",
     "inputSchema": {
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
+        }
+      },
       "properties": {
         "document_id": {
           "exclusiveMinimum": 0,
@@ -10534,6 +11328,17 @@
                 "text"
               ],
               "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
             },
             {
               "type": "null"
@@ -10915,6 +11720,32 @@
   {
     "name": "list_annotations",
     "inputSchema": {
+      "$defs": {
+        "PageSelection": {
+          "additionalProperties": false,
+          "properties": {
+            "page": {
+              "default": 1,
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            "page_size": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 50,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          "type": "object"
+        }
+      },
       "properties": {
         "document_id": {
           "exclusiveMinimum": 0,
@@ -10936,6 +11767,17 @@
             {
               "exclusiveMinimum": 0,
               "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "pagination": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageSelection"
             },
             {
               "type": "null"

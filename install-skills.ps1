@@ -36,7 +36,7 @@ function Install-EscriptoriumSkill {
             $release = Invoke-RestMethod -Uri 'https://api.github.com/repos/penica/escriptorium-mcp/releases/latest' -Headers @{ 'User-Agent' = 'escriptorium-skill-installer' } -TimeoutSec 120
             $version = $release.tag_name -replace '^v', ''
         }
-        if ($version -notmatch '^[0-9]+\.[0-9]+\.[0-9]+$') { throw 'Expected a stable release version such as 0.18.0.' }
+        if ($version -notmatch '^[0-9]+\.[0-9]+\.[0-9]+$') { throw 'Expected a stable release version such as 1.1.0.' }
         $archive = "escriptorium-mcp-$version-wsl.tar.gz"
         $archivePath = Join-Path $work $archive
         $assetUrl = "https://github.com/penica/escriptorium-mcp/releases/download/v$version"

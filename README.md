@@ -1,6 +1,6 @@
 # eScriptorium MCP server
 
-Version 1.0.0 exposes **175 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
+Version 1.1.0 exposes **176 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
 
 For a first installation on WSL/Linux, run without sudo:
 
@@ -27,7 +27,7 @@ for requirements, a specific-version option and first-install instructions.
 
 | Area | Available operations |
 |---|---|
-| Projects and documents | Search/filter/sort; create/edit; move between project slugs; statistics/page lookup; scoped metadata and tags; delete |
+| Projects and documents | Search/filter/sort; create/edit; move between project slugs; statistics/page/script lookup; scoped metadata and tags; delete |
 | Pages | Filter/read/order lookup; upload/replace images; rotate/crop; metadata; single/bulk moves; delete |
 | Transcriptions | Create/rename/delete layers; write/correct/delete line text |
 | Segmentation | Read/edit lines and regions; bulk line operations and merging; masks and reading order; supported region locking |
@@ -69,7 +69,7 @@ For a standalone installation, from this directory:
 uv tool install --python 3.11 .
 ```
 
-Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-1.0.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
+Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-1.1.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
 
 ## Credentials and paths
 
@@ -103,7 +103,7 @@ The supplied key remains in the ignored checkout `.env`; package and client exam
 
 ## Transport choice (checked 16 September 2026)
 
-**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 175 tools in either transport.
+**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 176 tools in either transport.
 
 STDIO is the default and needs no listening port. To run HTTP, first generate a separate service token:
 
@@ -372,7 +372,10 @@ For example, `ExampleParish/02751_Baptisms_1838-1879/`. Scans are written direct
 
 ## Stable 1.x interface
 
-The 175 existing tools follow the [stability policy](docs/STABILITY.md).
+The 175-tool 1.0 baseline and the compatible 1.1 additions follow the
+[stability policy](docs/STABILITY.md). Supported list tools accept an optional
+`pagination` object for one bounded native page; omission keeps the established
+complete retrieval behavior. See [pagination behavior](docs/PAGINATION.md).
 Existing documented calls and MCP-owned result meanings stay compatible within
 1.x; upstream capabilities and native response fields still depend on the
 eScriptorium server. A reviewed machine baseline guards the advertised contract.
