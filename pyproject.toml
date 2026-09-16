@@ -1,6 +1,6 @@
 [project]
 name = "escriptorium-mcp"
-version = "0.5.0"
+version = "0.6.0"
 description = "Local MCP tools backed by escriptorium-connector"
 requires-python = ">=3.11"
 dependencies = ["mcp>=2.2,<3", "pydantic-settings>=2,<3", "typer>=0.16,<1", "platformdirs>=4,<5"]

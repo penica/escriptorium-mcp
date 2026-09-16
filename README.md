@@ -1,6 +1,6 @@
 # eScriptorium MCP server
 
-Version 0.5.0 exposes **89 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
+Version 0.6.0 exposes **96 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
 
 ## Capabilities
 
@@ -47,7 +47,7 @@ For a standalone installation, from this directory:
 uv tool install --python 3.11 .
 ```
 
-Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.5.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
+Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.6.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
 
 ## Credentials and paths
 
@@ -81,7 +81,7 @@ The supplied key remains in the ignored checkout `.env`; package and client exam
 
 ## Transport choice (checked 16 September 2026)
 
-**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 89 tools in either transport.
+**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 96 tools in either transport.
 
 STDIO is the default and needs no listening port. To run HTTP, first generate a separate service token:
 
@@ -112,6 +112,21 @@ The HTTP endpoint uses stateless requests; queued eScriptorium work remains moni
 ## Agent skill
 
 [skills/escriptorium/SKILL.md](skills/escriptorium/SKILL.md) is the portable **$escriptorium** skill. It explains tool selection, IDs, transcription corrections, processing and archive verification. Copy the `skills/escriptorium` directory into your agent's skill directory on another machine. A skill guides the agent; it does not install or connect the MCP server. This directory is also included in the source distribution.
+
+## Task and job monitoring (0.6.0)
+
+- `list_tasks` now accepts optional `document_id`, `group_id`, `ordering`, `workflow_state` and exact `method` filters. Existing no-argument calls retain their response shape. Ordering accepts comma-separated `queued_at`, `started_at`, `done_at`, each optionally prefixed by `-`. State/method filtering happens locally after following every page because the server does not support those query filters.
+- `list_document_tasks` lists document task counts and last-start timestamps, with name substring, state and staff-only user filtering. State filters select documents; the returned counts still include their historical tasks in all states.
+- `list_task_groups` and `get_task_group` expose submission groups with state buckets, timestamps and associated-page counts. A group's page count does not mean completed pages.
+- `get_document_job_status` summarizes the authenticated user's reports for a document, optionally restricted to a group. It preserves report messages and timestamps for diagnosis. Without a group, old jobs remain included. Groups can include other users' reports, so group counts may differ from this current-user summary.
+- `get_import_status` summarizes visible import reports. It does not read native import records or invent processed/total counts. Inspect timestamps to identify the relevant import; no visible reports does not prove that no import exists.
+- `cancel_document_tasks` cancels queued/running work across the document. `cancel_document_import` uses the dedicated latest-import cancellation action; it cannot choose an arbitrary historical import. Already-stopped imports return an error; affected upstream versions return HTTP 500 if no import exists.
+
+**Completion semantics:** `terminal_percent` counts finished, crashed and canceled reports. It is not a success rate, page-completion measure or percentage inside a running job. `all_finished` is true only for a nonempty set containing exclusively Finished reports. Empty results return a null percentage; unknown states prevent success. These are paginated observations, not atomic snapshots; refresh while work is changing.
+
+**Cancellation scope:** the existing `cancel_task` endpoint has document-wide cleanup side effects: even with one task ID, upstream also marks all document training models and imports canceled. Prefer the dedicated model or import cancellation action for those jobs. Owner/staff permissions apply. Cancellation is not transactional; re-read status after errors or timeouts before retrying.
+
+See [CHANGELOG.md](CHANGELOG.md) for releases and [MODULE-ROADMAP.md](MODULE-ROADMAP.md) for the remaining modules.
 
 ## Ontology and annotations (0.5.0)
 

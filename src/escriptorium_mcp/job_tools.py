@@ -14,6 +14,12 @@ from escriptorium_mcp.job_models import (
     Segmentation,
     SegmentationTraining,
 )
+from escriptorium_mcp.task_monitoring import (
+    TaskFilters,
+    TaskOrdering,
+    TaskState,
+    read_tasks,
+)
 
 
 def register_jobs(server: MCPServer) -> None:
@@ -45,9 +51,30 @@ def register_jobs(server: MCPServer) -> None:
         return await invoke("GET", f"models/{model_id}/")
 
     @server.tool(annotations=READ)
-    async def list_tasks() -> JsonValue:
-        """List task reports: 0 queued, 1 running, 2 crashed, 3 done, 4 canceled."""
-        return await call(ApiRequest(method="GET", route="tasks/", paginate=True))
+    async def list_tasks(
+        document_id: Identifier | None = None,
+        group_id: Identifier | None = None,
+        ordering: TaskOrdering | None = None,
+        workflow_state: TaskState | None = None,
+        method: str | None = None,
+    ) -> JsonValue:
+        """List own reports: 0 queued, 1 running, 2 crashed, 3 done, 4 canceled.
+
+        Document/group/order filters run on the server. State and exact method
+        filters run locally after all pages. Ordering accepts queued_at,
+        started_at, done_at, comma-separated and optionally prefixed with '-'.
+        document_part is a display label, not a page ID. No arguments retains
+        the existing response shape; local filters return a results envelope.
+        """
+        return await read_tasks(
+            TaskFilters(
+                document_id=document_id,
+                group_id=group_id,
+                ordering=ordering,
+                workflow_state=workflow_state,
+                method=method,
+            )
+        )
 
     @server.tool(annotations=READ)
     async def get_task(task_id: Identifier) -> JsonValue:
@@ -82,7 +109,12 @@ def register_jobs(server: MCPServer) -> None:
 
     @server.tool(annotations=CHANGE)
     async def cancel_task(document_id: Identifier, task_id: Identifier) -> JsonValue:
-        """Cancel a queued/running task using the server's cancellation action."""
+        """Cancel a report with DOCUMENT-WIDE training/import cleanup side effects.
+
+        Even with one task ID, the server also marks all document training models
+        and imports canceled. Prefer dedicated model/import cancellation for those
+        jobs. Requires document owner/staff; refresh reports afterward.
+        """
         return await invoke(
             "POST",
             f"documents/{document_id}/cancel_tasks/",

@@ -2530,9 +2530,80 @@
   {
     "name": "list_tasks",
     "title": null,
-    "description": "List task reports: 0 queued, 1 running, 2 crashed, 3 done, 4 canceled.",
+    "description": "List own reports: 0 queued, 1 running, 2 crashed, 3 done, 4 canceled.\n\n        Document/group/order filters run on the server. State and exact method\n        filters run locally after all pages. Ordering accepts queued_at,\n        started_at, done_at, comma-separated and optionally prefixed with '-'.\n        document_part is a display label, not a page ID. No arguments retains\n        the existing response shape; local filters return a results envelope.\n        ",
     "inputSchema": {
-      "properties": {},
+      "properties": {
+        "document_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document Id"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Id"
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "pattern": "^-?(queued_at|started_at|done_at)(,-?(queued_at|started_at|done_at))*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ordering"
+        },
+        "workflow_state": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1,
+                2,
+                3,
+                4
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Workflow State"
+        },
+        "method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Method"
+        }
+      },
       "type": "object",
       "title": "list_tasksArguments"
     },
@@ -3013,7 +3084,7 @@
   {
     "name": "cancel_task",
     "title": null,
-    "description": "Cancel a queued/running task using the server's cancellation action.",
+    "description": "Cancel a report with DOCUMENT-WIDE training/import cleanup side effects.\n\n        Even with one task ID, the server also marks all document training models\n        and imports canceled. Prefer dedicated model/import cancellation for those\n        jobs. Requires document owner/staff; refresh reports afterward.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -3143,6 +3214,369 @@
         "JsonValue": {}
       },
       "title": "cancel_model_trainingOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_document_tasks",
+    "title": null,
+    "description": "List document task counts and last-start timestamps, following pagination.\n\n        Name matches a substring. State selects documents with that state; counts\n        still include their historical reports in every state. user_id is for\n        staff only; nonstaff results follow the server's document ownership rules.\n        ",
+    "inputSchema": {
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "task_state": {
+          "anyOf": [
+            {
+              "enum": [
+                "queued",
+                "running",
+                "crashed",
+                "finished",
+                "canceled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task State"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        }
+      },
+      "type": "object",
+      "title": "list_document_tasksArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_document_tasksOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_task_groups",
+    "title": null,
+    "description": "List all document job groups with state counts and affected-page counts.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "type": "object",
+      "title": "list_task_groupsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_task_groupsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_task_group",
+    "title": null,
+    "description": "Read group state buckets, counts and timestamps; inspect every bucket.\n\n        A bucket's done_at is its latest report finish, not proof the group\n        succeeded. page_count counts associated pages, not completed pages.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "group_id": {
+          "exclusiveMinimum": 0,
+          "title": "Group Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id",
+        "group_id"
+      ],
+      "type": "object",
+      "title": "get_task_groupArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_task_groupOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_document_job_status",
+    "title": null,
+    "description": "Summarize the current user's task reports, including failure messages.\n\n        Filter by group to monitor one submission. Without a group, historical\n        jobs are included. terminal_percent includes failures/cancellations and\n        is not page progress. Empty/unknown reports never mean successful completion.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Id"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "type": "object",
+      "title": "get_document_job_statusArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_document_job_statusOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_import_status",
+    "title": null,
+    "description": "Read visible import task history, messages and report state counts.\n\n        Includes old imports; inspect timestamps to identify the relevant job.\n        No visible reports does not prove no import exists. Native import record\n        status, processed/total counts and progress percentages are not exposed.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "type": "object",
+      "title": "get_import_statusArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_import_statusOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "cancel_document_tasks",
+    "title": null,
+    "description": "Cancel all queued/running document tasks and mark training/imports canceled.\n\n        Requires owner/staff permission. The upstream operation is not atomic;\n        refresh reports afterward. This is document-wide, across users and pages.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "type": "object",
+      "title": "cancel_document_tasksArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "cancel_document_tasksOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "cancel_document_import",
+    "title": null,
+    "description": "Cancel the latest document import through its dedicated server action.\n\n        This cannot select an arbitrary historical import. Already stopped imports\n        return an upstream error; some versions return HTTP 500 when none exists.\n        Task history alone cannot reliably prove that a cancelable import exists.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "type": "object",
+      "title": "cancel_document_importArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "cancel_document_importOutput"
     },
     "icons": null,
     "annotations": {

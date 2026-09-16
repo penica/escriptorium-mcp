@@ -28,7 +28,9 @@ Apply changes within the user's authorized scope. Existing authorization carries
 - OCR may replace text in its target layer, and segmentation with override may replace existing geometry. Select the intended layer and override behavior from the user's request.
 - Recognition training needs a ground-truth layer and a starting model or new model name. Segmentation training needs at least two distinct segmented pages and a starting model or new name.
 - A successful submission means **queued**, not completed. Inspect task reports, model state or page workflow before reporting success. Task states are **0 queued, 1 running, 2 crashed, 3 finished, 4 canceled**.
-- Cancel through the dedicated task, page or model cancellation tools. If a submission times out, inspect remote state before retrying: the original write may already have succeeded.
+- Use `list_task_groups` and `get_task_group` to identify and monitor one submission. `get_document_job_status` can filter by group; otherwise it includes historical reports. Task reports belong to the authenticated user, while group buckets can describe a broader set. `terminal_percent` counts finished, crashed and canceled reports; it is not a success rate or page progress. Empty or unknown reports do not prove completion.
+- `list_tasks` supports document/group/date ordering and local state/exact-method filters. `get_import_status` reads import task history and messages; it cannot provide native import processed/total counts. No visible reports does not prove no import exists.
+- Prefer dedicated page, model or `cancel_document_import` actions for their respective jobs. **`cancel_task` has document-wide side effects:** even when given one report ID, the server also marks all document training models and imports canceled. `cancel_document_tasks` explicitly cancels all queued/running document work. The import action targets the latest import, not an arbitrary report. If a submission times out, inspect remote state before retrying: the original write may already have succeeded.
 
 ## Export or archive
 

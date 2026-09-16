@@ -1,6 +1,6 @@
 # eScriptorium MCP tools
 
-Version 0.5.0: 89 tools.
+Version 0.6.0: 96 tools.
 
 | Tool | Description |
 |---|---|
@@ -41,27 +41,34 @@ Version 0.5.0: 89 tools.
 | `list_models` | List models, job type (1 segmentation, 2 recognition), and training state. |
 | `upload_model` | Register a local Kraken model for segmentation (1) or recognition (2). |
 | `get_model` | Read model training progress, versions and available accuracy metadata. |
-| `list_tasks` | List task reports: 0 queued, 1 running, 2 crashed, 3 done, 4 canceled. |
+| `list_tasks` | List own reports: 0 queued, 1 running, 2 crashed, 3 done, 4 canceled. Document/group/order filters run on the server. State and exact method filters run locally after all pages. Ordering accepts queued_at, started_at, done_at, comma-separated and optionally prefixed with '-'. document_part is a display label, not a page ID. No arguments retains the existing response shape; local filters return a results envelope. |
 | `get_task` | Read a task report's status, messages and timestamps. |
 | `segment_pages` | Queue automatic segmentation; override replaces existing geometry. |
 | `transcribe_pages` | Queue OCR/HTR; existing text in the selected layer may be replaced. |
 | `train_recognition` | Queue recognition model training from selected ground-truth pages. |
 | `train_segmentation` | Queue segmentation training from at least two segmented pages. |
-| `cancel_task` | Cancel a queued/running task using the server's cancellation action. |
+| `cancel_task` | Cancel a report with DOCUMENT-WIDE training/import cleanup side effects. Even with one task ID, the server also marks all document training models and imports canceled. Prefer dedicated model/import cancellation for those jobs. Requires document owner/staff; refresh reports afterward. |
 | `cancel_page_tasks` | Cancel pending processing for one page. |
 | `cancel_model_training` | Stop training an existing model using the dedicated cancel action. |
-| `download_register` | Download ALL available scans directly to NAS with a checksum manifest.          Requires a new catalogue folder. Existing destinations are never overwritten.         Download completion does not mean visual inspection or transcription completion.          |
-| `export_transcriptions` | Save a layer as UTF-8 text or JSON locally in page/line order.          Works with API-token authentication without waiting for server notifications.         Existing files are never overwritten. JSON preserves line IDs and revisions.          |
-| `request_server_export` | Queue a native ALTO, PAGE XML or text archive export.          Success means queued, not complete. Use the URL in the eScriptorium completion         notification with download_export. This instance has no downloads-list API.          |
+| `list_document_tasks` | List document task counts and last-start timestamps, following pagination. Name matches a substring. State selects documents with that state; counts still include their historical reports in every state. user_id is for staff only; nonstaff results follow the server's document ownership rules. |
+| `list_task_groups` | List all document job groups with state counts and affected-page counts. |
+| `get_task_group` | Read group state buckets, counts and timestamps; inspect every bucket. A bucket's done_at is its latest report finish, not proof the group succeeded. page_count counts associated pages, not completed pages. |
+| `get_document_job_status` | Summarize the current user's task reports, including failure messages. Filter by group to monitor one submission. Without a group, historical jobs are included. terminal_percent includes failures/cancellations and is not page progress. Empty/unknown reports never mean successful completion. |
+| `get_import_status` | Read visible import task history, messages and report state counts. Includes old imports; inspect timestamps to identify the relevant job. No visible reports does not prove no import exists. Native import record status, processed/total counts and progress percentages are not exposed. |
+| `cancel_document_tasks` | Cancel all queued/running document tasks and mark training/imports canceled. Requires owner/staff permission. The upstream operation is not atomic; refresh reports afterward. This is document-wide, across users and pages. |
+| `cancel_document_import` | Cancel the latest document import through its dedicated server action. This cannot select an arbitrary historical import. Already stopped imports return an upstream error; some versions return HTTP 500 when none exists. Task history alone cannot reliably prove that a cancelable import exists. |
+| `download_register` | Download ALL available scans directly to NAS with a checksum manifest. Requires a new catalogue folder. Existing destinations are never overwritten. Download completion does not mean visual inspection or transcription completion. |
+| `export_transcriptions` | Save a layer as UTF-8 text or JSON locally in page/line order. Works with API-token authentication without waiting for server notifications. Existing files are never overwritten. JSON preserves line IDs and revisions. |
+| `request_server_export` | Queue a native ALTO, PAGE XML or text archive export. Success means queued, not complete. Use the URL in the eScriptorium completion notification with download_export. This instance has no downloads-list API. |
 | `download_export` | Save a completed same-server export URL to a new local file with checksum. |
-| `import_document_file` | Queue import of PDF, ZIP, ALTO or PAGE XML into an existing document.          override=true can replace segmentation and text. Poll task reports afterward.          |
+| `import_document_file` | Queue import of PDF, ZIP, ALTO or PAGE XML into an existing document. override=true can replace segmentation and text. Poll task reports afterward. |
 | `get_document_ontology` | Read the document's allowed page, region and line types with actual IDs. |
 | `list_ontology_types` | List public/template types; use get_document_ontology for assigned types. |
 | `create_ontology_type` | Create/reuse a named type; this does not attach it to a document. |
 | `update_ontology_type` | Rename a type. Legacy/shared types affect every document using that ID. |
-| `delete_ontology_type` | Delete a definition globally where permitted.          Page/region/line references become untyped. Deleting an annotation         type can cascade to taxonomies and their annotations.          To remove it only from one document, use set_document_ontology instead.          |
-| `set_document_ontology` | Replace supplied allowed-type lists, preserving omitted categories.          Audit/reassign used types before removal. Newer servers may clear content         assignments when dropping a document-owned type. Re-read resulting IDs.          |
-| `add_document_ontology_type` | Create/reuse and attach a named type while keeping existing allowed types.          Multiple requests are not atomic. If attachment fails, the created         definition may remain. Re-read the document to obtain its assigned ID.          |
+| `delete_ontology_type` | Delete a definition globally where permitted. Page/region/line references become untyped. Deleting an annotation type can cascade to taxonomies and their annotations. To remove it only from one document, use set_document_ontology instead. |
+| `set_document_ontology` | Replace supplied allowed-type lists, preserving omitted categories. Audit/reassign used types before removal. Newer servers may clear content assignments when dropping a document-owned type. Re-read resulting IDs. |
+| `add_document_ontology_type` | Create/reuse and attach a named type while keeping existing allowed types. Multiple requests are not atomic. If attachment fails, the created definition may remain. Re-read the document to obtain its assigned ID. |
 | `list_annotation_components` | List all annotation input fields and their allowed values in a document. |
 | `get_annotation_component` | Read an annotation input field and its allowed values. |
 | `create_annotation_component` | Create a document annotation field; empty allowed_values means free text. |
@@ -70,26 +77,26 @@ Version 0.5.0: 89 tools.
 | `list_annotation_taxonomies` | List annotation categories, optionally filtering image or text markers. |
 | `get_annotation_taxonomy` | Read a complete annotation category before replacing its definition. |
 | `create_annotation_taxonomy` | Create an annotation category; typology uses name, components use IDs. |
-| `update_annotation_taxonomy` | Replace the full definition: supply every setting to preserve it.          Read first; convert nested components to their IDs and typology to {name}.         Explicit components=[] removes all fields; typology=null clears the type.         Omitted display fields reset to defaults. Existing annotations remain.          |
+| `update_annotation_taxonomy` | Replace the full definition: supply every setting to preserve it. Read first; convert nested components to their IDs and typology to {name}. Explicit components=[] removes all fields; typology=null clears the type. Omitted display fields reset to defaults. Existing annotations remain. |
 | `delete_annotation_taxonomy` | Delete an annotation category; its existing annotations may be deleted. |
 | `list_annotations` | List page annotations; optionally filter text by transcription layer. |
 | `get_annotation` | Read an annotation, component values and its server-generated W3C form. |
 | `delete_annotation` | Delete an annotation and its component values from this page. |
 | `create_image_annotation` | Create an image annotation on this page using a document taxonomy. |
-| `update_image_annotation` | Update image fields; components upsert by ID, [] preserves existing values.          Set a component value to null to clear it. Its relation remains because         the upstream API has no component-value deletion endpoint.          |
+| `update_image_annotation` | Update image fields; components upsert by ID, [] preserves existing values. Set a component value to null to clear it. Its relation remains because the upstream API has no component-value deletion endpoint. |
 | `create_text_annotation` | Create a text span; use page line IDs and the document transcription ID. |
-| `update_text_annotation` | Update text fields; components upsert by ID, [] preserves existing values.          Set a component value to null to clear it. Its relation remains because         the upstream API has no component-value deletion endpoint.          |
-| `patch_annotation_taxonomy` | Edit only supplied taxonomy fields, preserving omitted relations/settings.          Explicit typology=null clears its relation; components=[] removes all fields.         The API has no atomic conditional update: avoid concurrent taxonomy edits.          |
-| `merge_annotation_taxonomies` | Preview/apply reassignment of all source image/text annotations to target.          Target must support every stored component and the same marker family.         Existing values/geometry/text spans remain. Source deletion is opt-in and         requires a clean rescan. Pause concurrent editing: upstream has no atomic         conditional writes. Failures return partial progress; inspect before retry.          |
+| `update_text_annotation` | Update text fields; components upsert by ID, [] preserves existing values. Set a component value to null to clear it. Its relation remains because the upstream API has no component-value deletion endpoint. |
+| `patch_annotation_taxonomy` | Edit only supplied taxonomy fields, preserving omitted relations/settings. Explicit typology=null clears its relation; components=[] removes all fields. The API has no atomic conditional update: avoid concurrent taxonomy edits. |
+| `merge_annotation_taxonomies` | Preview/apply reassignment of all source image/text annotations to target. Target must support every stored component and the same marker family. Existing values/geometry/text spans remain. Source deletion is opt-in and requires a clean rescan. Pause concurrent editing: upstream has no atomic conditional writes. Failures return partial progress; inspect before retry. |
 | `audit_document_ontology` | Audit type usage, untyped content and invalid/duplicate labels. |
-| `replace_ontology_assignments` | Preview (default) or apply type replacement across an entire document.          Null source selects untyped content; null target clears assignments.         Writes are sequential, not atomic; avoid concurrent editing during repair.         Returns partial progress on failure. Source removal affects this document only.          |
-| `merge_ontology_types` | Preview/apply a merge: reassign usage, then remove source from this document.          Both definitions remain globally on legacy servers; no global deletion.         Concurrent edits are not transactionally isolated. Inspect partial results.          |
-| `get_ontology_capabilities` | Probe native import/export and project templates using GET and OPTIONS.          A missing/denied parent stays an HTTP error. Endpoint 404 means absent         or hidden, 403 means denied; neither is guessed to be a server version.         Methods and serializer fields are reported where OPTIONS supplies them.          |
-| `export_native_ontology` | Save native ontology YAML on the MCP host without overwriting files.          Requires the server's native endpoint; use portable ontology backup on         older servers. Project export can return 404 when no template is set.          |
-| `import_native_ontology` | Apply server-native YAML/legacy JSON from the MCP host (maximum 16 MiB).          Document import can replace definitions and affect annotations; project         import sets the template for future documents. Preserve returned warnings.         Unsupported/denied endpoints return capability evidence without writing.          |
-| `get_project_ontology` | Read the default template for future documents; null means none set.          Older servers return 404 for the unsupported endpoint.          |
+| `replace_ontology_assignments` | Preview (default) or apply type replacement across an entire document. Null source selects untyped content; null target clears assignments. Writes are sequential, not atomic; avoid concurrent editing during repair. Returns partial progress on failure. Source removal affects this document only. |
+| `merge_ontology_types` | Preview/apply a merge: reassign usage, then remove source from this document. Both definitions remain globally on legacy servers; no global deletion. Concurrent edits are not transactionally isolated. Inspect partial results. |
+| `get_ontology_capabilities` | Probe native import/export and project templates using GET and OPTIONS. A missing/denied parent stays an HTTP error. Endpoint 404 means absent or hidden, 403 means denied; neither is guessed to be a server version. Methods and serializer fields are reported where OPTIONS supplies them. |
+| `export_native_ontology` | Save native ontology YAML on the MCP host without overwriting files. Requires the server's native endpoint; use portable ontology backup on older servers. Project export can return 404 when no template is set. |
+| `import_native_ontology` | Apply server-native YAML/legacy JSON from the MCP host (maximum 16 MiB). Document import can replace definitions and affect annotations; project import sets the template for future documents. Preserve returned warnings. Unsupported/denied endpoints return capability evidence without writing. |
+| `get_project_ontology` | Read the default template for future documents; null means none set. Older servers return 404 for the unsupported endpoint. |
 | `delete_project_ontology` | Clear the project template without changing existing documents. |
-| `get_ontology_type` | Read a public/template type; private document types may return 404.          Use get_document_ontology for assigned document-owned type records.          |
-| `update_ontology_type_color` | Set a region/line type color when exposed by this server's OPTIONS.          Prefer #RRGGBB; blank or null clears the override. Permission rules         still apply; public templates may be read-only.          |
-| `export_ontology_snapshot` | Return versioned JSON ontology schema, excluding annotations/text/geometry.          Save this result as JSON for backup or pass it to restore_ontology_snapshot.         Component relations use names, so source database IDs are not required.          |
-| `restore_ontology_snapshot` | Preview or add portable schema to a document; never delete existing schema.          Conflicting same-name definitions stop all writes. Apply is non-atomic;         failures report completed steps. Re-export to inspect state before retrying.         Annotation instances, text and geometry are not restored by this tool.          |
+| `get_ontology_type` | Read a public/template type; private document types may return 404. Use get_document_ontology for assigned document-owned type records. |
+| `update_ontology_type_color` | Set a region/line type color when exposed by this server's OPTIONS. Prefer #RRGGBB; blank or null clears the override. Permission rules still apply; public templates may be read-only. |
+| `export_ontology_snapshot` | Return versioned JSON ontology schema, excluding annotations/text/geometry. Save this result as JSON for backup or pass it to restore_ontology_snapshot. Component relations use names, so source database IDs are not required. |
+| `restore_ontology_snapshot` | Preview or add portable schema to a document; never delete existing schema. Conflicting same-name definitions stop all writes. Apply is non-atomic; failures report completed steps. Re-export to inspect state before retrying. Annotation instances, text and geometry are not restored by this tool. |
