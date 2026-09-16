@@ -1,6 +1,35 @@
-# eScriptorium MCP 0.13.0: WSL transfer bundle
+# eScriptorium MCP 0.18.0: WSL transfer bundle
 
-Transfer `escriptorium-mcp-0.13.0-wsl.tar.gz` to the Windows computer, then extract it **inside WSL's Linux home directory**. The bundle includes the wheel, locked dependency hashes, installer, private configuration template, optional user service, full documentation and the agent skill. Internet access is needed for uv, Python and dependencies; this is not an offline installer. No API key is included.
+Transfer `escriptorium-mcp-0.18.0-wsl.tar.gz` to the Windows computer, then extract it **inside WSL's Linux home directory**. The bundle includes the wheel, locked dependency hashes, installer, private configuration template, optional user service, full documentation and the agent skill. Internet access is needed for uv, Python and dependencies; this is not an offline installer. No API key is included.
+
+## Upgrade directly from GitHub
+
+Run as the Linux user who owns the existing installation, without sudo:
+
+```bash
+mkdir -p ~/mcp-updates/0.18.0
+cd ~/mcp-updates/0.18.0
+curl -fL -O https://github.com/penica/escriptorium-mcp/releases/download/v0.18.0/escriptorium-mcp-0.18.0-wsl.tar.gz
+curl -fL -O https://github.com/penica/escriptorium-mcp/releases/download/v0.18.0/escriptorium-mcp-0.18.0-wsl.tar.gz.sha256
+sha256sum --check escriptorium-mcp-0.18.0-wsl.tar.gz.sha256 && tar -xzf escriptorium-mcp-0.18.0-wsl.tar.gz
+```
+
+After successful verification/extraction, stop the existing service and upgrade:
+
+```bash
+cd ~/mcp-updates/0.18.0/escriptorium-mcp-0.18.0-wsl
+systemctl --user stop escriptorium-mcp && bash install.sh
+```
+
+Keep the existing URL/key, select HTTP and service installation, and answer **No** to replacing the existing service. The installer preserves its endpoint settings and restarts it. Check:
+
+```bash
+~/.local/share/escriptorium-mcp/.venv/bin/python -c 'from importlib.metadata import version; print(version("escriptorium-mcp"))'
+systemctl --user status escriptorium-mcp --no-pager
+journalctl --user -u escriptorium-mcp -n 50 --no-pager
+```
+
+The published 0.18.0 archive has stale 0.13.0 references in its README-WSL.md; its installer and wheel are 0.18.0. Use the versioned commands above. Reconnect MCP clients after the upgrade to refresh the 175-tool catalogue.
 
 ## 1. Extract in WSL
 
@@ -8,8 +37,8 @@ Adjust the Windows username/path below:
 
 ```bash
 cd ~
-tar -xzf /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/escriptorium-mcp-0.13.0-wsl.tar.gz
-cd escriptorium-mcp-0.13.0-wsl
+tar -xzf /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/escriptorium-mcp-0.18.0-wsl.tar.gz
+cd escriptorium-mcp-0.18.0-wsl
 ```
 
 Install **Linux uv inside WSL** using the [official installation instructions](https://docs.astral.sh/uv/getting-started/installation/), then:
@@ -25,7 +54,7 @@ The installer asks for:
 3. Streamable HTTP or STDIO.
 4. For HTTP, whether to install and start a systemd user service.
 
-It verifies bundled files and installs locked dependencies with Python 3.11. Running it again upgrades an older installation or reconfigures version 0.13.0, backs up its configuration, and preserves the HTTP token and archive settings. It asks before replacing an existing service. Credentials are stored with owner-only permissions and are not printed.
+It verifies bundled files and installs locked dependencies with Python 3.11. Running it again upgrades an older installation or reconfigures version 0.18.0, backs up its configuration, and preserves the HTTP token and archive settings. It asks before replacing an existing service. Credentials are stored with owner-only permissions and are not printed.
 
 The configured command is linked into `~/.local/bin/escriptorium-mcp`. Open a fresh terminal, or run `export PATH="$HOME/.local/bin:$PATH"` if the command is not found. `escriptorium-mcp` starts your chosen transport automatically. If you installed the service, it is already running; do not start a second HTTP process on the same port.
 
@@ -35,7 +64,7 @@ If upgrading, first stop the old HTTP process (Ctrl+C) or service:
 systemctl --user stop escriptorium-mcp
 ```
 
-Then extract this bundle into `~/escriptorium-mcp-0.13.0-wsl` and run `bash install.sh` using the same Linux user. Keep the default installation directory. Press Enter to keep your URL/key. Choose HTTP and service installation. When asked whether to replace the existing service, press Enter (No) to retain your bind address, port and allowed hosts; the installer restarts that existing unit. Your configuration, HTTP token and NAS settings are retained. If you explicitly replace the unit, its previous version is backed up and the new unit starts on loopback. Do not delete the old configuration or virtual environment.
+Then extract this bundle into `~/escriptorium-mcp-0.18.0-wsl` and run `bash install.sh` using the same Linux user. Keep the default installation directory. Press Enter to keep your URL/key. Choose HTTP and service installation. When asked whether to replace the existing service, press Enter (No) to retain your bind address, port and allowed hosts; the installer restarts that existing unit. Your configuration, HTTP token and NAS settings are retained. If you explicitly replace the unit, its previous version is backed up and the new unit starts on loopback. Do not delete the old configuration or virtual environment.
 
 Set `ESCRIPTORIUM_API_KEY` and verify `ESCRIPTORIUM_URL`. The default URL is `http://127.0.0.1:8091/`, suitable when eScriptorium is published on the same WSL host. Use the actual reachable address and published port, without `/api/`. A Docker service name is not automatically reachable from the WSL host.
 
@@ -84,7 +113,7 @@ For a local client launching the MCP within WSL, use the same environment config
 
 Copy `skills/escriptorium` to the client agent's skill directory if needed; the skill belongs on the agent's machine, not necessarily on WSL. It does not install the MCP connection.
 
-Version 0.13.0 exposes 129 tools, including expanded native exports and generated-download management, mode-aware PDF/XML/IIIF/METS imports and optional import-group tracking, page lookup/filtering, rotation/cropping, image replacement and bulk page moves, bulk segmentation, merging, mask regeneration, reading order, supported region locking, bulk transcription edits, layer statistics and character lookup, optional training-submission tracking, raw training reports, model management/downloads, job monitoring and ontology operations. Training groups remain unproven candidates; model idle state is not successful completion. Model writes require ownership, and overwrite/replacement/deletion requires stopped training. Document associations are read-only in the audited REST API. See `docs/EXPORTS-API.md`, `docs/IMPORTS-API.md`, `docs/PAGES-API.md`, `docs/SEGMENTATION-API.md`, `docs/TRAINING-API.md` and `docs/MODEL-API.md` for API limits, `IMPLEMENTATION-STATUS.md` for release validation and `ONTOLOGY-COVERAGE.md` for ontology endpoint coverage. Actual WSL/systemd/network deployment remains to be verified on your Windows computer. Nothing is deployed automatically by transferring or extracting the archive.
+Version 0.18.0 exposes 175 tools, including font catalogue and transcription-font settings, native account/group operations and additive sharing, textual witnesses and alignment, virtual collections and cross-document training, expanded project/document metadata and tags, expanded native exports and generated-download management, mode-aware PDF/XML/IIIF/METS imports and optional import-group tracking, page lookup/filtering, rotation/cropping, image replacement and bulk page moves, bulk segmentation, merging, mask regeneration, reading order, supported region locking, bulk transcription edits, layer statistics and character lookup, optional training-submission tracking, raw training reports, model management/downloads, job monitoring and ontology operations. Training groups remain unproven candidates; model idle state is not successful completion. Model writes require ownership, and overwrite/replacement/deletion requires stopped training. Document associations are read-only in the audited REST API. See `docs/EXPORTS-API.md`, `docs/IMPORTS-API.md`, `docs/PAGES-API.md`, `docs/SEGMENTATION-API.md`, `docs/TRAINING-API.md` and `docs/MODEL-API.md` for API limits, `IMPLEMENTATION-STATUS.md` for release validation and `ONTOLOGY-COVERAGE.md` for ontology endpoint coverage. Actual WSL/systemd/network deployment remains to be verified on your Windows computer. Nothing is deployed automatically by transferring or extracting the archive.
 
 Bulk transcription update is non-atomic; inspect affected records after errors.
 Bulk clear retains rows/history and blanks content only. Layer deletion archives

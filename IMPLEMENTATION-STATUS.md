@@ -22,9 +22,9 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 8. **Released and verified:** Exports and downloads (0.13.0), expanded export settings and four new download tools; 129 tools total.
 9. **Released and verified:** Projects, documents and metadata (0.14.0), 15 new tools and expanded record operations; 144 tools total.
 10. **Released and verified:** Virtual collections (0.15.0), eight new tools; 152 tools total.
-11. **Locally verified, GitHub regression pending:** Alignment and textual witnesses (0.16.0), eight new tools; 160 tools total.
-12. **Locally verified, GitHub regression pending:** Sharing, users and groups (0.17.0), 13 new tools; 173 tools total.
-13. **Locally verified, release preparation:** Fonts and presentation settings (0.18.0), two new tools and four expanded record operations; 175 tools total.
+11. **Released and verified:** Alignment and textual witnesses (0.16.0), eight new tools; 160 tools total.
+12. **Released and verified:** Sharing, users and groups (0.17.0), 13 new tools; 173 tools total.
+13. **Released and verified:** Fonts and presentation settings (0.18.0), two new tools and four expanded record operations; 175 tools total.
 
 ## Baseline evidence
 - Initial public commit: 73f08eb (MCP 0.5.0, 89 tools).
@@ -194,7 +194,7 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 - [Compatibility run 35113306988](https://github.com/penica/escriptorium-mcp/actions/runs/35113306988) passed all six Windows/macOS/Linux and Python 3.11/3.13 jobs, each with 1005 tests and zero annotations.
 - [GitHub release v0.15.0](https://github.com/penica/escriptorium-mcp/releases/tag/v0.15.0) published all four artifacts. Uploaded sizes/digests and the release tag match the verified commit and final files.
 
-### 0.16.0 — Alignment and textual witnesses (release validation)
+### 0.16.0 — Alignment and textual witnesses
 
 - Added eight tools for owned textual-witness CRUD, local file download, ordinary reference alignment and forced character alignment; 160 tools total. Witness inputs validate nonempty UTF-8 text without rewriting bytes. Downloads reuse the existing portable storage/byte-count/SHA-256 implementation after owned metadata and strict media-URL checks.
 - Standalone witness upload explicitly acknowledges the pinned upstream owner-assignment defect. Its result separates native acceptance from one bounded ownership readback. Missing, contradictory or unavailable ownership evidence never hides a successful response, fabricates ownership, queues hidden alignment work, triggers repair/cleanup or repeats creation.
@@ -203,12 +203,12 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 - Added an opt-in private single-attempt flag, exact witness route family and multipart field. Existing requests omit the flag and retain their behavior. Flagged requests disable every retry budget, reject redirects and propagate even bodyless HTTP errors before reporting success.
 - Initial actual-STDIO tests confirmed absent tools; private-worker RED confirmed absent transport support. All 176 distinct new cases passed: 80 alignment, 56 witness and 40 transport. They exercise actual STDIO/authenticated HTTP, native payloads, strict acknowledgments, archived forced alignment, partial submission, unconfirmed tracking, ownership anomalies, multipart bytes, safe downloads and bounded retries.
 - Two failing witness cases exposed and fixed real boundaries: substring counting missed adjacent repeated witness storage segments, and a local diagnostic OSError after accepted creation discarded acceptance. Exact path-segment counting now prevents the unwanted file request; a sanitized readback failure preserves accepted creation. The complete 56-case witness suite passed after both fixes; targeted evidence retained the failing cases.
-- Existing regression checks passed: nine STDIO/HTTP cases in 6.77 seconds and the existing worker-retry case alongside the 40 new transport cases (41 passed in 28.43 seconds). Alignment's 77-case run passed in 87.96 seconds, six strengthened forced-error cases passed in 13.25 seconds, and three additional file boundaries passed in 5.84 seconds. Witness final suite passed 56 cases in 85.50 seconds. The complete suite collects 1181 tests for exact-commit platform verification.
+- Existing regression checks passed: nine STDIO/HTTP cases in 6.77 seconds and the existing worker-retry case alongside the 40 new transport cases (41 passed in 28.43 seconds). Alignment's 77-case run passed in 87.96 seconds, six strengthened forced-error cases passed in 13.25 seconds, and three additional file boundaries passed in 5.84 seconds. Witness final suite passed 56 cases in 85.50 seconds. The original suite collected 1181 tests; the slow-preflight regression below brings the corrected release to 1182.
 - Ruff lint/format, strict Basedpyright for source/tests/scripts, programming checks across 28 changed/new Python files, shell syntax and skill validation passed. Actual discovery generated the 160-tool schema/catalogue and distributions built. Read-only live STDIO verified 0.16.0, the empty owned-witness envelope, missing-record errors and validation before an invalid upload. No live upload, alignment, cancellation, reference download or service change occurred.
 - Fresh 0.16 installation and real 0.15-to-0.16 upgrade passed in temporary paths with spaces, preserving URL/key/token/Books settings, 0600 configuration/backup permissions and launcher/help. Installed interpreter isolation (`-I`, outside the checkout) verified 160 tools, witness CRUD, exact BOM/CRLF bytes and download SHA-256, all three ownership-readback outcomes with one POST/readback, ordinary existing/direct-file alignment defaults and zero offset, strict acknowledgment rejection, and archived-layer forced alignment without an active-only layer read.
 - Artifacts passed 26 inner checksums, outer checksum, normalized ownership, private-file exclusion and packaged worker equivalence. The alignment guide is included. Final documentation-only rebuilding must preserve installed-QA wheel SHA-256 `5424fc9671223fadedb5b8cccf9433bd557b857a224cfb9adb854fa3cd445956`. Native alignment execution/quality, database side effects and actual WSL/systemd deployment remain outside fixture verification.
 
-### 0.17.0 — Sharing, users and groups (release validation)
+### 0.17.0 — Sharing, users and groups
 
 - Added 13 tools for current/visible account discovery and CRUD, membership-scoped groups and additive project/document sharing; 173 tools total. Directory search runs locally after all strict pagination pages and preserves raw rows. No unsupported server filters or global nonstaff user discovery are invented.
 - Account fields are limited to native username/email/display-name/active-status edits. Staff is required for creation/deletion, while self/staff updates retain native email permissions. Self-deactivation/deletion preserves native success without after-reads. Creating an account is explicitly not password setup or an invitation workflow.
@@ -221,7 +221,7 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 - Actual MCP error tests exposed rejected synthetic passwords in validation results. Hiding validation input values fixed both top-level and nested leaks without changing zero-network rejection; both failing cases now pass and remain in the suite.
 - Fresh 0.17 installation and real 0.16-to-0.17 upgrade passed in temporary paths with spaces. Isolated installed execution verified 173 tools, all 13 strict schemas, account permissions, group diagnostics, additive sharing and private error results. Configuration/backup permissions, 27 inner checksums, outer checksum, private-file exclusion and packaged worker equivalence passed. Final documentation-only rebuilding must preserve installed-QA wheel SHA-256 `889883215599f9029274c08ffa5ff5396072429fff880eba6f3eda3f4de1609b`. No service was deployed.
 
-### 0.18.0 — Fonts and presentation settings (release validation)
+### 0.18.0 — Fonts and presentation settings
 
 - Added two strict tools for full native font catalogue traversal and identity-checked detail; 175 tools total. Responses preserve all 13 current metadata fields, nulls, zeroes, negative margins and future fields. Advertised URLs remain inert metadata; no font files are fetched or installed.
 - Four existing project/document create/update operations accept nullable transcription_font. Omission leaves existing request sequences and settings intact; explicit null clears an override. Supplied values require action-specific writable OPTIONS metadata, including clearing; non-null values additionally require matching readable font identity. Font-bearing writes use one attempt. The document patch validator now excludes the nullable font from its non-null setting checks.
@@ -236,8 +236,27 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 
 - Module 11's initial Windows/Python 3.13 run failed one alignment HTTP case with a read timeout; the other five jobs passed. The supplied generic HTTP test client used a five-second read budget while the SDK default uses 300 seconds. Server traces showed normal preflight work awaiting a subprocess, before alignment submission.
 - A controlled fixture reproduced the failure with delayed preflights: the generic client timed out before POST, the SDK client completed with one POST and unchanged acceptance/tracking assertions, and the restored fast fixture passed. The exact contribution of Windows runner load is unknown; a server deadlock was not reproduced.
-- Test infrastructure now uses the SDK's bounded connection/read policy, and a deliberately slow alignment case protects this boundary. No production deadline, retry policy or runtime package code is changed. The unpublished 0.18.0 draft requires a new exact-commit regression run; its superseded run is not counted as a pass. Historical failing evidence remains recorded even if the original immutable release rerun passes.
+- Test infrastructure now uses the SDK's bounded connection/read policy, and a deliberately slow alignment case protects this boundary. No production deadline, retry policy or runtime package code is changed. The original 0.16.0 Windows/Python 3.13 diagnostic rerun also failed at the same test-client boundary. The existing test-only correction was backported to release/0.16.0-validation; the corrected 0.16.0 and final 0.18.0 commits each passed a fresh complete matrix. The superseded 0.18.0 run is not counted as a pass, and both original failures remain recorded.
 
 - The persistent slow-preflight case failed under the old generic client in 6.83 seconds and passed with the shared MCP-compatible client; normal and slow scenarios passed together in 12.28 seconds. The final suite contains 1433 cases. The diagnostic driver and monkeypatches were removed; sanitized timing/failure evidence is retained.
 
-- All 32 authenticated HTTP and related transport cases passed in 54.92 seconds after consolidation, including normal and slow alignment. Full lint/format/type checks passed; the final suite collects 1433 tests. Runtime wheel bytes remain subject to the original installed-QA hash check before replacing draft artifacts.
+- All 32 authenticated HTTP and related transport cases passed in 54.92 seconds after consolidation, including normal and slow alignment. Full lint/format/type checks passed; the final suite collects 1433 tests. The corrected 0.16.0 and 0.18.0 runtime wheels matched their original installed-QA SHA-256 hashes before draft assets were replaced.
+
+### Final publication and completion — 2026-09-16
+
+All 13 roadmap modules are implemented and published as releases 0.6.0 through 0.18.0. Each module has a versioned implementation commit, release description and verified release assets. Operations absent from the audited upstream API remain explicitly documented in the individual contract guides.
+
+| Release | Exact release commit | Cross-platform CI | Tests per job |
+| --- | --- | --- | --- |
+| [0.16.0](https://github.com/penica/escriptorium-mcp/releases/tag/v0.16.0) | `74b32b9c9880e6d42d295f448fd15e110893f9a8` | [35124685800](https://github.com/penica/escriptorium-mcp/actions/runs/35124685800) | 1182 |
+| [0.17.0](https://github.com/penica/escriptorium-mcp/releases/tag/v0.17.0) | `004ad19d7ae7eb7b2fc30088230e4c8050eda624` | [35117765971](https://github.com/penica/escriptorium-mcp/actions/runs/35117765971) | 1339 |
+| [0.18.0](https://github.com/penica/escriptorium-mcp/releases/tag/v0.18.0) | `41a1856c5280399eecd6bd4bbf9e45a8570ede4b` | [35120215246](https://github.com/penica/escriptorium-mcp/actions/runs/35120215246) | 1433 |
+
+- Each listed run passed all six macOS, Windows and Linux jobs on Python 3.11 and 3.13, with zero annotations. The corrected 0.16.0 release contains the test-only backport described above; its production wheel is unchanged from installed-package verification.
+- Releases were published in order, 0.16.0 then 0.17.0 then 0.18.0. For each release, the public tag resolved to the exact verified commit, and all four uploaded asset sizes and SHA-256 digests matched the local manifest. GitHub identifies 0.18.0 as the latest release.
+- The final catalogue contains 175 tools: all 89 names from 0.5.0 are retained and 86 tools were added. This confirms tool-name preservation, not an unrestricted claim that every historical input or server behavior is identical.
+- A direct upgrade from the original 0.5.0 transfer archive to the final 0.18.0 archive passed using the shell installer on macOS in isolated paths containing spaces. URL/key/token/Books settings, configuration and backup permissions (0600), launcher and help were preserved. Installed execution outside the checkout with Python isolation advertised 175 tools and exercised the new font reads against a fixture. The final archive includes the updated skill and 28 verified internal files.
+- Live development-server checks used GET/OPTIONS only. Mutations, uploads, training, sharing and account operations were exercised with isolated fixtures. No running service was upgraded or reconfigured, and actual WSL/systemd deployment remains untested in this release exercise.
+- This completion record is a documentation-only follow-up. Published packages retain the source and validation evidence from their immutable release commits.
+
+- Final installation guidance inspection found stale 0.13.0 labels in the bundled WSL README. The source guide and public 0.18.0 release notes now provide correct GitHub upgrade instructions and disclose those labels; the bundled installer and wheel are 0.18.0. Published artifact bytes were retained.

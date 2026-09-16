@@ -127,7 +127,7 @@ The HTTP endpoint uses stateless requests; queued eScriptorium work remains moni
 
 **Cancellation scope:** the existing `cancel_task` endpoint has document-wide cleanup side effects: even with one task ID, upstream also marks all document training models and imports canceled. Prefer the dedicated model or import cancellation action for those jobs. Owner/staff permissions apply. Cancellation is not transactional; re-read status after errors or timeouts before retrying.
 
-See [CHANGELOG.md](CHANGELOG.md) for releases and [MODULE-ROADMAP.md](MODULE-ROADMAP.md) for the remaining modules.
+See [CHANGELOG.md](CHANGELOG.md) for releases and [MODULE-ROADMAP.md](MODULE-ROADMAP.md) for the module release record.
 
 ## Fonts and presentation (0.18.0)
 
@@ -361,7 +361,7 @@ uv run pytest -q
 uv build
 ```
 
-Tests drive real MCP STDIO processes and Streamable HTTP and the real connector against isolated HTTP fixtures. They cover mutation paths/payloads, multipart uploads/imports, task requests, input validation, bodyless deletes, pagination, direct exports, overwrite refusal, and NAS acquisition success/partial failure. Modern adapter and test code is type-checked; legacy worker code is exercised through integration tests. The repository CI matrix runs Python 3.11 and 3.13 on macOS, Windows and Linux. Local execution was on macOS; native Windows/Linux results must be confirmed by that CI.
+Tests drive real MCP STDIO processes and Streamable HTTP and the real connector against isolated HTTP fixtures. They cover mutation paths/payloads, multipart uploads/imports, task requests, input validation, bodyless deletes, pagination, direct exports, overwrite refusal, and NAS acquisition success/partial failure. Modern adapter and test code is type-checked; legacy worker code is exercised through integration tests. The repository CI matrix runs Python 3.11 and 3.13 on macOS, Windows and Linux. Release 0.18.0 passed all six matrix jobs with 1433 tests per job; see the exact-commit evidence in IMPLEMENTATION-STATUS.md.
 
 Live checks use reads and local downloads/exports only. Mutation paths are tested with isolated fixtures; no live processing/training jobs are started for release verification. Actual OCR accuracy and training outcomes depend on installed server workers, models and training data. See [IMPLEMENTATION-STATUS.md](IMPLEMENTATION-STATUS.md) for the validation completed for each release.
 
