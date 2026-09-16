@@ -1,6 +1,6 @@
 # eScriptorium MCP server
 
-Version 0.9.0 exposes **111 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
+Version 0.10.0 exposes **119 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
 
 ## Capabilities
 
@@ -9,7 +9,7 @@ Version 0.9.0 exposes **111 tools** for eScriptorium. It uses the published [esc
 | Projects and documents | Browse; create; rename; move a document between project slugs; delete |
 | Pages | Upload an image; import PDF/image archives; edit metadata; reorder within a document; delete |
 | Transcriptions | Create/rename/delete layers; write/correct/delete line text |
-| Segmentation | Create/edit/delete line baselines and polygons or regions; reorder lines; run automatic segmentation |
+| Segmentation | Read/edit lines and regions; bulk line operations and merging; masks and reading order; supported region locking |
 | Ontology and annotations | Manage types, components and taxonomies; edit image/text annotation instances; preview repairs/merges; portable schema snapshots; capability-gated native ontology files and project templates |
 | OCR and models | Filter/read/upload models; update owned models; replace/delete idle owned models; download weights/checkpoints; inspect document associations; run OCR/HTR and training |
 | Training reports | Optionally track submission candidates; combine model metrics/checkpoints with caller-selected training reports |
@@ -48,7 +48,7 @@ For a standalone installation, from this directory:
 uv tool install --python 3.11 .
 ```
 
-Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.9.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
+Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.10.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
 
 ## Credentials and paths
 
@@ -82,7 +82,7 @@ The supplied key remains in the ignored checkout `.env`; package and client exam
 
 ## Transport choice (checked 16 September 2026)
 
-**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 111 tools in either transport.
+**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 119 tools in either transport.
 
 STDIO is the default and needs no listening port. To run HTTP, first generate a separate service token:
 
@@ -158,6 +158,16 @@ Use `get_line_transcription` for a text record and `get_transcription` / `update
 Bulk clear only blanks content. It retains rows, graphs, confidence and existing history, and creates no history revision. Individual line-transcription deletion removes a row. The existing `delete_transcription` tool archives/renames a layer and retains its text; the default manual layer is protected.
 
 `get_transcription_statistics` returns nonempty-line count and stored-character frequencies. Sum frequencies for the stored-character total; stored markup is included, and server results can be cached for one hour. `find_transcription_pages_by_character` locates pages by one Unicode code point on newer servers. Permission failures remain errors; an absent or hidden endpoint is not interpreted as an empty result. See [docs/TRANSCRIPTION-API.md](docs/TRANSCRIPTION-API.md).
+
+## Segmentation (0.10.0)
+
+`get_line` and `get_region` read individual page elements. Line creation supports a baseline, a mask, or both. Line edits must leave at least one geometry. Lines accept external IDs and reading-order indexes; regions accept external IDs and supported `locked` settings. Locking is an editor preference and does not prevent API edits or deletion.
+
+`bulk_create_lines`, `bulk_update_lines` and `bulk_delete_lines` use native endpoints. Creation can include text in document-owned layers. The MCP checks page membership, every selected line and supplied region/layer/type references. Bulk updates can partially apply; after an error, read affected lines before retrying. Preflight checks do not lock concurrent writers.
+
+`merge_lines` replaces two to eight distinct baseline-bearing lines. The server determines text order from geometry and script. Originals are deleted, and transcription graphs, confidence and history are not preserved. Bulk deletion also removes attached text and history. Returned deleted records are not a complete recovery archive.
+
+`regenerate_line_masks` submits asynchronous work for all eligible page lines or a nonempty selection. Acceptance has no task ID and does not prove completion. `recalculate_line_order` synchronously replaces the page's reading order, including intentional manual ordering. See [docs/SEGMENTATION-API.md](docs/SEGMENTATION-API.md).
 
 ## Ontology and annotations (0.5.0)
 

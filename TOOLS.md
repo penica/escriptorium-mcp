@@ -1,6 +1,6 @@
 # eScriptorium MCP tools
 
-Version 0.9.0: 111 tools.
+Version 0.10.0: 119 tools.
 
 | Tool | Description |
 |---|---|
@@ -38,14 +38,22 @@ Version 0.9.0: 111 tools.
 | `update_transcription` | Edit layer name, archived state, comments or average-confidence metadata. Omit unchanged fields; null clears comments/average confidence. Archiving hides a layer but retains its line records. This does not recompute scores. |
 | `get_transcription_statistics` | Return nonempty-line count and stored-character frequencies for a layer. Sum the returned frequencies for the stored-character count. Stored markup is included; these are not normalized plain-text/grapheme counts. The server caches statistics for up to one hour. Preserve zero counts. |
 | `find_transcription_pages_by_character` | Locate pages containing one stored Unicode code point in a layer. Requires the newer parts_by_char endpoint. A multi-code-point grapheme must be queried by individual code point; stored markup is included. Page IDs and per-page counts come directly from the server. |
-| `create_line` | Create a segmented line on line.document_part; coordinates are pixels. |
-| `update_line` | Edit an existing line's baseline, mask, region or type. |
-| `create_region` | Create a region polygon on region.document_part. |
-| `update_region` | Edit an existing region's polygon or type. |
-| `delete_line` | Delete a segmented line and its attached transcription text. |
+| `create_line` | Create a line with a baseline or mask on line.document_part. Coordinates are image pixels. Optional region and typology references must belong to this page/document; external_id and order are editable. |
+| `update_line` | Edit line geometry, region, typology, external_id or reading-order index. Omit unchanged fields. Null clears nullable fields, but the final line must retain a baseline or mask. Supplied references are checked first. |
+| `create_region` | Create a region polygon with optional typology, external_id and locked. Explicit locking requires writable server support. Locked is an editor cutting preference, not a permission lock; API edits remain possible. |
+| `update_region` | Edit a region polygon, typology, external_id or editor locking flag. Explicit locked changes probe writable server support before submitting. Locking does not prevent API edits or deletion. Omit unchanged fields; null clears typology/external_id but cannot remove the region polygon. |
+| `delete_line` | Delete a segmented line, attached text/history and cascaded relations. |
 | `delete_region` | Delete a region; related line treatment follows server rules. |
 | `move_page` | Reorder one page within its document using a zero-based index. |
-| `reorder_lines` | Change line reading order within a page. |
+| `reorder_lines` | Change explicit line reading-order indexes after checking page membership. Duplicate IDs are rejected; the native response lists whole-page orders. |
+| `get_line` | Read one segmented line including its detailed transcription records. |
+| `get_region` | Read one region, including locking when supported by the server. |
+| `bulk_create_lines` | Create segmented lines and optional nested text in document-owned layers. Coordinates are image pixels. A baseline or mask is required. Native creation is atomic on the audited server; preflight is not a lock. |
+| `bulk_update_lines` | Edit existing segmented lines with one native PUT after scoped preflight. A later save failure can leave earlier edits applied. Never retry blindly; re-read affected records. Omitted fields remain, explicit null clears nullable fields. Every final line needs a baseline or mask. |
+| `bulk_delete_lines` | Delete selected geometry, attached text/history and cascaded relations. Every selected ID must belong to this page. Returned deleted records are not a complete backup of all cascaded objects. Preflight is not a lock. |
+| `merge_lines` | Replace 2-8 distinct baseline-bearing lines with one merged line. Original lines are deleted. The server chooses geometric/text order, region and type; character graphs, confidence and history are not preserved. The mask may need explicit regeneration afterward. |
+| `regenerate_line_masks` | Queue mask regeneration for selected lines or all eligible page lines. A status ok response means submitted, not completed. The native response has no task ID. Omit line_ids for all lines; an empty list is invalid. |
+| `recalculate_line_order` | Replace manual line ordering using page geometry and document direction. This native action runs synchronously and returns whole-page line orders. |
 | `list_models` | List models, job type (1 segmentation, 2 recognition), and training state. |
 | `upload_model` | Register a local Kraken model for segmentation (1) or recognition (2). |
 | `get_model` | Read model training progress, versions and available accuracy metadata. |

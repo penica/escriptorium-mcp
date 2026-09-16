@@ -95,12 +95,20 @@ def case_id(case: Case) -> str:
             {"target": ELEMENT},
             "documents/7/parts/11/lines/19/",
             "DELETE",
+            preflight=(
+                ("GET", "/api/documents/7/parts/11/"),
+                ("GET", "/api/documents/7/parts/11/lines/19/"),
+            ),
         ),
         Case(
             "delete_region",
             {"target": ELEMENT},
             "documents/7/parts/11/blocks/19/",
             "DELETE",
+            preflight=(
+                ("GET", "/api/documents/7/parts/11/"),
+                ("GET", "/api/documents/7/parts/11/blocks/19/"),
+            ),
         ),
     ],
     ids=case_id,

@@ -9,8 +9,8 @@ Implementation authorized on 2026-09-16. Ontology is complete for the audited AP
 | 1 | Released (0.6.0) | Tasks and job monitoring | Document task groups, document-level progress, filtering, import status/cancellation, and clearer completion/failure reporting. |
 | 2 | Released (0.7.0) | Model management | Rename/update/delete models, manage document associations, download model files and available checkpoints. Listing, uploading and basic inspection already exist. |
 | 3 | Released (0.8.0) | Training and evaluation | Expose remaining server-supported training options, connect submissions to task groups, and provide consistent checkpoint/result reporting. |
-| 4 | Implemented (0.9.0), release validation | Transcriptions | Bulk create/update/clear line text, transcription statistics and character counts, character-to-page lookup and layer settings. |
-| 5 | Pending | Segmentation | Bulk line operations, line merging, individual region/line retrieval, mask regeneration and automatic reading-order recalculation. Region locking requires newer support. |
+| 4 | Released (0.9.0) | Transcriptions | Bulk create/update/clear line text, transcription statistics and character counts, character-to-page lookup and layer settings. |
+| 5 | Implemented (0.10.0), release validation | Segmentation | Bulk line operations, line merging, individual region/line retrieval, mask regeneration and automatic reading-order recalculation. Region locking requires newer support. |
 | 6 | Pending | Pages and image operations | Rotation, cropping, lookup by page order, bulk page moves and server-side filtering. Basic upload/edit/delete/reorder already exist. |
 | 7 | Pending | Imports | IIIF manifests, METS files/URLs, explicit import modes and target transcription layers, plus status and cancellation. |
 | 8 | Pending | Exports and downloads | More export options, full-document JSON archives, and listing/retrieving/deleting generated downloads. The downloads API requires the newer release. |

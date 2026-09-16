@@ -7,46 +7,19 @@ from pydantic import Field, JsonValue
 
 from escriptorium_mcp.api import CHANGE, CREATE, DELETE, Input, invoke
 from escriptorium_mcp.bridge import Identifier
-from escriptorium_mcp.record_models import Patch
-
-Coordinate = Annotated[float, Field(ge=0, allow_inf_nan=False)]
-Point = Annotated[list[Coordinate], Field(min_length=2, max_length=2)]
-Polygon = Annotated[list[Point], Field(min_length=3)]
-Baseline = Annotated[list[Point], Field(min_length=2)]
-
-
-class LineCreate(Input):
-    """Baseline coordinates in image pixels and optional region/polygon."""
-
-    document_part: Identifier
-    baseline: Baseline
-    mask: Polygon | None = None
-    region: Identifier | None = None
-    typology: Identifier | None = None
-
-
-class LinePatch(Patch):
-    """Change supplied geometry fields; null clears a polygon or region."""
-
-    baseline: Baseline | None = None
-    mask: Polygon | None = None
-    region: Identifier | None = None
-    typology: Identifier | None = None
-
-
-class RegionCreate(Input):
-    """A page region polygon in image pixels."""
-
-    document_part: Identifier
-    box: Polygon
-    typology: Identifier | None = None
-
-
-class RegionPatch(Patch):
-    """Edit a region's outline or classification."""
-
-    box: Polygon | None = None
-    typology: Identifier | None = None
+from escriptorium_mcp.segmentation_models import (
+    LineCreate,
+    LinePatch,
+    RegionCreate,
+    RegionPatch,
+)
+from escriptorium_mcp.segmentation_scope import (
+    ElementState,
+    SegmentationScope,
+    require_geometry,
+    require_lock_field,
+    require_unique_ids,
+)
 
 
 class ElementTarget(Input):
@@ -86,53 +59,82 @@ def register_segmentation(server: MCPServer) -> None:
 
     @server.tool(annotations=CREATE)
     async def create_line(document_id: Identifier, line: LineCreate) -> JsonValue:
-        """Create a segmented line on line.document_part; coordinates are pixels."""
-        return await invoke(
-            "POST", f"documents/{document_id}/parts/{line.document_part}/lines/", line
-        )
+        """Create a line with a baseline or mask on line.document_part.
+
+        Coordinates are image pixels. Optional region and typology references
+        must belong to this page/document; external_id and order are editable.
+        """
+        scope = SegmentationScope(document_id, line.document_part)
+        await scope.require_page()
+        await scope.line_references([line])
+        return await invoke("POST", scope.route + "lines/", line)
 
     @server.tool(annotations=CHANGE)
     async def update_line(target: ElementTarget, changes: LinePatch) -> JsonValue:
-        """Edit an existing line's baseline, mask, region or type."""
-        return await invoke(
-            "PATCH",
-            target.route("lines"),
-            changes,
+        """Edit line geometry, region, typology, external_id or reading-order index.
+
+        Omit unchanged fields. Null clears nullable fields, but the final line
+        must retain a baseline or mask. Supplied references are checked first.
+        """
+        scope = SegmentationScope(target.document_id, target.page_id)
+        await scope.require_page()
+        current = ElementState.model_validate(
+            await scope.detail("lines", target.element_id)
         )
+        require_geometry(current, changes)
+        await scope.line_references([changes])
+        return await invoke("PATCH", target.route("lines"), changes)
 
     @server.tool(annotations=CREATE)
     async def create_region(document_id: Identifier, region: RegionCreate) -> JsonValue:
-        """Create a region polygon on region.document_part."""
-        return await invoke(
-            "POST",
-            f"documents/{document_id}/parts/{region.document_part}/blocks/",
-            region,
+        """Create a region polygon with optional typology, external_id and locked.
+
+        Explicit locking requires writable server support. Locked is an editor
+        cutting preference, not a permission lock; API edits remain possible.
+        """
+        scope = SegmentationScope(document_id, region.document_part)
+        await scope.require_page()
+        await scope.require_types(
+            "blocks", {region.typology} if region.typology is not None else set()
         )
+        route = scope.route + "blocks/"
+        if "locked" in region.model_fields_set:
+            await require_lock_field(route)
+        return await invoke("POST", route, region)
 
     @server.tool(annotations=CHANGE)
     async def update_region(target: ElementTarget, changes: RegionPatch) -> JsonValue:
-        """Edit an existing region's polygon or type."""
-        return await invoke(
-            "PATCH",
-            target.route("blocks"),
-            changes,
+        """Edit a region polygon, typology, external_id or editor locking flag.
+
+        Explicit locked changes probe writable server support before submitting.
+        Locking does not prevent API edits or deletion. Omit unchanged fields;
+        null clears typology/external_id but cannot remove the region polygon.
+        """
+        scope = SegmentationScope(target.document_id, target.page_id)
+        await scope.require_page()
+        _ = await scope.detail("blocks", target.element_id)
+        await scope.require_types(
+            "blocks", {changes.typology} if changes.typology is not None else set()
         )
+        if "locked" in changes.model_fields_set:
+            await require_lock_field(target.route("blocks"))
+        return await invoke("PATCH", target.route("blocks"), changes)
 
     @server.tool(annotations=DELETE)
     async def delete_line(target: ElementTarget) -> JsonValue:
-        """Delete a segmented line and its attached transcription text."""
-        return await invoke(
-            "DELETE",
-            target.route("lines"),
-        )
+        """Delete a segmented line, attached text/history and cascaded relations."""
+        scope = SegmentationScope(target.document_id, target.page_id)
+        await scope.require_page()
+        _ = await scope.detail("lines", target.element_id)
+        return await invoke("DELETE", target.route("lines"))
 
     @server.tool(annotations=DELETE)
     async def delete_region(target: ElementTarget) -> JsonValue:
         """Delete a region; related line treatment follows server rules."""
-        return await invoke(
-            "DELETE",
-            target.route("blocks"),
-        )
+        scope = SegmentationScope(target.document_id, target.page_id)
+        await scope.require_page()
+        _ = await scope.detail("blocks", target.element_id)
+        return await invoke("DELETE", target.route("blocks"))
 
     @server.tool(annotations=CHANGE)
     async def move_page(
@@ -151,7 +153,13 @@ def register_segmentation(server: MCPServer) -> None:
         page_id: Identifier,
         order: LineOrder,
     ) -> JsonValue:
-        """Change line reading order within a page."""
-        return await invoke(
-            "POST", f"documents/{document_id}/parts/{page_id}/lines/move/", order
-        )
+        """Change explicit line reading-order indexes after checking page membership.
+
+        Duplicate IDs are rejected; the native response lists whole-page orders.
+        """
+        line_ids = [line.pk for line in order.lines]
+        require_unique_ids(line_ids)
+        scope = SegmentationScope(document_id, page_id)
+        await scope.require_page()
+        _ = await scope.selected(line_ids)
+        return await invoke("POST", scope.route + "lines/move/", order)

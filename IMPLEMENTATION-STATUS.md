@@ -15,7 +15,8 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 1. **Released and verified:** Tasks and job monitoring (0.6.0).
 2. **Released and verified:** Model management (0.7.0), six new tools and filtered model listing; 102 tools total. Contract evidence and API limits are recorded in docs/MODEL-API.md.
 3. **Released and verified:** Training and evaluation (0.8.0), optional tracked submissions and the new `get_training_report`; 103 tools total. API limits are recorded in docs/TRAINING-API.md.
-4. **Locally verified, publication pending:** Transcriptions (0.9.0), with a fresh audit of the upgraded development API. Modules 5–13 remain pending in roadmap order.
+4. **Released and verified:** Transcriptions (0.9.0), eight new tools; 111 total.
+5. **Locally verified, publication pending:** Segmentation (0.10.0), eight new tools; 119 total. Modules 6–13 remain pending in roadmap order.
 
 ## Baseline evidence
 - Initial public commit: 73f08eb (MCP 0.5.0, 89 tools).
@@ -65,22 +66,35 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 - Fresh installation and a real 0.7.0-to-0.8.0 upgrade passed in temporary directories, preserving the complete URL/key/token/Books configuration, private backup and 0600 permissions, linked launcher and installed version. The isolated wheel advertised 103 tools and passed raw null/zero-metric reporting and accepted training after a monitoring failure with exactly one fixture POST. No service or live model was changed.
 - Package/server/installer metadata, training documentation, roadmap and bundled skill are updated. Actual STDIO discovery generated the catalogue/schema with 103 tools. Wheel, source distribution and WSL archive built; both new training modules are included. Outer and 18 inner hashes, normalized ownership and private-file exclusion passed.
 
-### Next release
-
-Module 4: transcriptions, target 0.9.0, after training and evaluation is verified and published.
 - Public commit: `a1aeb813236caca8f8691dc1905b22f52b4f215b`.
 - [Compatibility run 35084887534](https://github.com/penica/escriptorium-mcp/actions/runs/35084887534) passed all six Windows/macOS/Linux and Python 3.11/3.13 jobs.
 - [GitHub release v0.8.0](https://github.com/penica/escriptorium-mcp/releases/tag/v0.8.0) published all four artifacts after the user resumed work. Each GitHub asset's SHA-256 and size matched the previously verified local distribution.
 - Subsequent workflow-only commits updated actions to Node.js 24 and separated caches by Python matrix version. [Run 35087328474](https://github.com/penica/escriptorium-mcp/actions/runs/35087328474) passed all six jobs with zero annotations at `5c54d7eb2c73da73f50db5e9b0920c247da3ece3`.
 
-### 0.9.0 — Transcriptions (locally verified; GitHub CI/publication pending)
+### 0.9.0 — Transcriptions
 
 - Added eight tools for bulk create/update/clear, individual text/layer reads, layer settings, statistics and character lookup; 111 tools total. Existing page-text reads gain optional layer filtering; single text operations gain graphs/confidence and scoped reference edits.
 - Added page/document membership preflight, pagination, duplicate IDs/pairs and collision rejection. Bulk update uses native PUT with partial-write errors and no retry. Bulk clear preserves rows/history/graphs/confidence. Layer deletion documentation now matches archival semantics.
 - The upgraded development API was audited read-only. Character lookup, native ontology YAML, fonts, downloads, collections and region locking are available. Exact deployed source SHA is unknown; generated OpenAPI bulk metadata is inaccurate, so contracts use source and observed endpoint metadata.
 - Initial regression failures confirmed missing tools before implementation. New tests drive actual STDIO and authenticated HTTP, including foreign-reference rejection, one-PUT partial failure, 204 clearing, nullable fields, Unicode and layer archival.
-- Full regression: 319 tests passed in 398.22 seconds. Ruff lint/format, strict Basedpyright for source/tests/scripts, programming-rule checks, installer syntax and skill validation passed. GitHub CI/publication remain pending.
+- Full regression: 319 tests passed in 398.22 seconds. Ruff lint/format, strict Basedpyright for source/tests/scripts, programming-rule checks, installer syntax and skill validation passed.
 - Focused module verification: all 66 transcription tests passed in 105.91 seconds. Structured MCP results preserve empty, single-item and multi-item arrays; test decoding was corrected to read the complete result instead of the first text block.
 - Read-only local MCP STDIO against the development backend verified 111 tools/version 0.9.0, layer/detail reads, 99 page/layer-filtered records, 188 nonempty lines, 70 stored-character entries and matching character lookup frequencies. Existing model training-report reads also passed. No live writes were performed.
 - Package QA passed with 19 inner checksums, the outer checksum, normalized archive ownership, private-file exclusion and all new text modules in the wheel. Fresh 0.9 installation and an actual 0.8-to-0.9 upgrade in temporary paths with spaces preserved URL/key/token/Books settings, 0600 configuration/backup permissions and the command launcher. No systemd service was touched.
-- The isolated installed interpreter (`-I`) discovered version 0.9.0 and 111 tools, returned both records from a bulk update, preserved zero statistics/lookup values and cleared text without deleting rows/history against isolated fixtures. Final artifacts are rebuilt after this ledger update before publication.
+- The isolated installed interpreter (`-I`) discovered version 0.9.0 and 111 tools, returned both records from a bulk update, preserved zero statistics/lookup values and cleared text without deleting rows/history against isolated fixtures.
+
+- Public commit: `3bdad0de1765b0b666412fb40bbbc7ba54b47e36`.
+- [Compatibility run 35092809099](https://github.com/penica/escriptorium-mcp/actions/runs/35092809099) passed all six Windows/macOS/Linux and Python 3.11/3.13 jobs with zero annotations.
+- [GitHub release v0.9.0](https://github.com/penica/escriptorium-mcp/releases/tag/v0.9.0) published all four artifacts. Uploaded SHA-256 digests and sizes matched verified local files.
+
+### 0.10.0 — Segmentation (release validation)
+
+- Added eight tools for detailed line/region reads, native bulk line creation/update/deletion, merging, mask regeneration and automatic reading order; 119 tools total. Existing edits gain nullable geometry, external IDs, line order and supported region locking.
+- Scoped preflight verifies parent pages, complete line selections, page regions, document layers and assigned types. Mask-only lines are supported; edits must retain geometry. Explicit locking checks writable metadata and remains an editor preference, not access control.
+- Bulk update uses one PUT and reports possible partial application. Merge deletes original lines and does not preserve graphs, confidence or history. Masks return asynchronous acceptance without a task ID; automatic ordering returns synchronous page results.
+- Initial actual-STDIO regression failed with unknown `get_line`. Wire tests then caught unwanted JSON bodies for mask/order actions; corrected to bodyless POSTs before release.
+- All 72 focused segmentation tests passed in 110.20 seconds, covering actual STDIO and authenticated Streamable HTTP. All 42 existing mutation cases also passed with explicit new preflight expectations. Full regression: 391 tests passed in 519.89 seconds. GitHub CI/publication remain pending.
+- Ruff lint/format, strict Basedpyright for source/tests/scripts, installer syntax and skill validation passed. Programming-rule checks passed for all 17 changed Python files. A broad audit also reports a pre-existing mutable `SnapshotAPI` test fixture in `tests/snapshot_fixture.py`; unrelated snapshot behavior was left unchanged.
+- Read-only live STDIO verified version 0.10.0, 119 tools, detailed line retrieval including text and region retrieval including the development API's locked field. No live geometry, text or jobs were changed.
+- Fresh 0.10 installation and real 0.9-to-0.10 upgrade passed in temporary paths with spaces, retaining URL/key/token/Books settings, configuration/backup 0600 permissions, command launcher and help. The isolated installed interpreter (`-I`) exercised two-row bulk updates, queued masks with a bodyless selected request, merge replacement/deletion and invalid selection rejection.
+- Artifacts passed 20 inner checksums, the outer checksum, normalized ownership and private-file exclusion. Final distributions are rebuilt after this ledger update; the wheel must match the isolated installed QA hash. No service was installed or changed; actual WSL/systemd execution remains deployment verification.

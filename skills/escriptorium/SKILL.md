@@ -20,6 +20,12 @@ Read the relevant page's lines and transcription records before writing correcti
 
 Geometry is in image pixels: baselines need at least two points and polygons at least three. For PATCH tools, omit fields that should remain unchanged; explicit `null` clears a nullable field. Deleting a segmented line can also remove its transcription text.
 
+Use `get_line` / `get_region` for individual geometry records. A line can have a baseline, a mask, or both; changes must leave at least one geometry. External IDs and line order are editable. Region `locked` requires supported writable metadata and is only an editor preference, not a permission lock.
+
+Bulk line creation can include text in document-owned layers. Bulk update uses line PKs and can partially apply on failure; re-read before retrying. Bulk line deletion removes geometry and attached text/history. `merge_lines` requires two to eight distinct lines with baselines and deletes originals; geometry/script determines text order, and graphs/confidence/history are not retained. Returned deleted records are not a complete backup. Pause concurrent writers; membership preflight is not a lock.
+
+`regenerate_line_masks` queues processing for all eligible page lines when `line_ids` is omitted, or a nonempty selection. Acceptance has no task ID and is not completion. `recalculate_line_order` replaces page ordering synchronously and can overwrite deliberate manual ordering. A merged mask is not guaranteed to be recomputed; request regeneration separately when appropriate.
+
 Use `get_line_transcription` to inspect a text record including history. Line text creation/edits accept character graphs and average-confidence metadata. `get_transcription` and `update_transcription` read/edit layer settings; `get_page_transcriptions` optionally filters by `transcription_id`. Layer `delete_transcription` archives/renames while retaining text, and the default manual layer is protected.
 
 Bulk text tools check page/document membership before writing, including paginated records. Supply text-record PKs to bulk update/clear and segmented-line PKs with layer IDs to bulk create. Bulk updates are non-atomic: after any failure, re-read affected records before retrying. Pause concurrent writers; preflight is not a lock. Bulk clear blanks only content, preserving rows, graphs, confidence and old history without creating a revision. Bulk create does not run the single-create progress/author hooks.

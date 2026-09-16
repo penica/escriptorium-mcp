@@ -2565,7 +2565,7 @@
   {
     "name": "create_line",
     "title": null,
-    "description": "Create a segmented line on line.document_part; coordinates are pixels.",
+    "description": "Create a line with a baseline or mask on line.document_part.\n\n        Coordinates are image pixels. Optional region and typology references\n        must belong to this page/document; external_id and order are editable.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -2585,162 +2585,7 @@
       "$defs": {
         "LineCreate": {
           "additionalProperties": false,
-          "description": "Baseline coordinates in image pixels and optional region/polygon.",
-          "properties": {
-            "document_part": {
-              "exclusiveMinimum": 0,
-              "title": "Document Part",
-              "type": "integer"
-            },
-            "baseline": {
-              "items": {
-                "items": {
-                  "minimum": 0,
-                  "type": "number"
-                },
-                "maxItems": 2,
-                "minItems": 2,
-                "type": "array"
-              },
-              "minItems": 2,
-              "title": "Baseline",
-              "type": "array"
-            },
-            "mask": {
-              "anyOf": [
-                {
-                  "items": {
-                    "items": {
-                      "minimum": 0,
-                      "type": "number"
-                    },
-                    "maxItems": 2,
-                    "minItems": 2,
-                    "type": "array"
-                  },
-                  "minItems": 3,
-                  "type": "array"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "default": null,
-              "title": "Mask"
-            },
-            "region": {
-              "anyOf": [
-                {
-                  "exclusiveMinimum": 0,
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "default": null,
-              "title": "Region"
-            },
-            "typology": {
-              "anyOf": [
-                {
-                  "exclusiveMinimum": 0,
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "default": null,
-              "title": "Typology"
-            }
-          },
-          "required": [
-            "document_part",
-            "baseline"
-          ],
-          "title": "LineCreate",
-          "type": "object"
-        }
-      },
-      "title": "create_lineArguments"
-    },
-    "execution": null,
-    "outputSchema": {
-      "properties": {
-        "result": {
-          "$ref": "#/$defs/JsonValue"
-        }
-      },
-      "required": [
-        "result"
-      ],
-      "type": "object",
-      "$defs": {
-        "JsonValue": {}
-      },
-      "title": "create_lineOutput"
-    },
-    "icons": null,
-    "annotations": {
-      "title": null,
-      "readOnlyHint": false,
-      "destructiveHint": false,
-      "idempotentHint": false,
-      "openWorldHint": null
-    },
-    "_meta": null
-  },
-  {
-    "name": "update_line",
-    "title": null,
-    "description": "Edit an existing line's baseline, mask, region or type.",
-    "inputSchema": {
-      "properties": {
-        "target": {
-          "$ref": "#/$defs/ElementTarget"
-        },
-        "changes": {
-          "$ref": "#/$defs/LinePatch"
-        }
-      },
-      "required": [
-        "target",
-        "changes"
-      ],
-      "type": "object",
-      "$defs": {
-        "ElementTarget": {
-          "additionalProperties": false,
-          "description": "Address an existing line or region inside a page.",
-          "properties": {
-            "document_id": {
-              "exclusiveMinimum": 0,
-              "title": "Document Id",
-              "type": "integer"
-            },
-            "page_id": {
-              "exclusiveMinimum": 0,
-              "title": "Page Id",
-              "type": "integer"
-            },
-            "element_id": {
-              "exclusiveMinimum": 0,
-              "title": "Element Id",
-              "type": "integer"
-            }
-          },
-          "required": [
-            "document_id",
-            "page_id",
-            "element_id"
-          ],
-          "title": "ElementTarget",
-          "type": "object"
-        },
-        "LinePatch": {
-          "additionalProperties": false,
-          "description": "Change supplied geometry fields; null clears a polygon or region.",
+          "description": "Single-line creation explicitly names its parent page.",
           "properties": {
             "baseline": {
               "anyOf": [
@@ -2811,6 +2656,220 @@
               ],
               "default": null,
               "title": "Typology"
+            },
+            "external_id": {
+              "anyOf": [
+                {
+                  "maxLength": 128,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "External Id"
+            },
+            "order": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Order"
+            },
+            "document_part": {
+              "exclusiveMinimum": 0,
+              "title": "Document Part",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "document_part"
+          ],
+          "title": "LineCreate",
+          "type": "object"
+        }
+      },
+      "title": "create_lineArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "create_lineOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_line",
+    "title": null,
+    "description": "Edit line geometry, region, typology, external_id or reading-order index.\n\n        Omit unchanged fields. Null clears nullable fields, but the final line\n        must retain a baseline or mask. Supplied references are checked first.\n        ",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/ElementTarget"
+        },
+        "changes": {
+          "$ref": "#/$defs/LinePatch"
+        }
+      },
+      "required": [
+        "target",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "ElementTarget": {
+          "additionalProperties": false,
+          "description": "Address an existing line or region inside a page.",
+          "properties": {
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            },
+            "element_id": {
+              "exclusiveMinimum": 0,
+              "title": "Element Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "document_id",
+            "page_id",
+            "element_id"
+          ],
+          "title": "ElementTarget",
+          "type": "object"
+        },
+        "LinePatch": {
+          "additionalProperties": false,
+          "description": "Omitted fields survive; nullable geometry requires final-state preflight.",
+          "properties": {
+            "baseline": {
+              "anyOf": [
+                {
+                  "items": {
+                    "items": {
+                      "minimum": 0,
+                      "type": "number"
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "minItems": 2,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Baseline"
+            },
+            "mask": {
+              "anyOf": [
+                {
+                  "items": {
+                    "items": {
+                      "minimum": 0,
+                      "type": "number"
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "minItems": 3,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Mask"
+            },
+            "region": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Region"
+            },
+            "typology": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Typology"
+            },
+            "external_id": {
+              "anyOf": [
+                {
+                  "maxLength": 128,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "External Id"
+            },
+            "order": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Order"
             }
           },
           "title": "LinePatch",
@@ -2848,7 +2907,7 @@
   {
     "name": "create_region",
     "title": null,
-    "description": "Create a region polygon on region.document_part.",
+    "description": "Create a region polygon with optional typology, external_id and locked.\n\n        Explicit locking requires writable server support. Locked is an editor\n        cutting preference, not a permission lock; API edits remain possible.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -2870,6 +2929,44 @@
           "additionalProperties": false,
           "description": "A page region polygon in image pixels.",
           "properties": {
+            "typology": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Typology"
+            },
+            "external_id": {
+              "anyOf": [
+                {
+                  "maxLength": 128,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "External Id"
+            },
+            "locked": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Locked"
+            },
             "document_part": {
               "exclusiveMinimum": 0,
               "title": "Document Part",
@@ -2888,19 +2985,6 @@
               "minItems": 3,
               "title": "Box",
               "type": "array"
-            },
-            "typology": {
-              "anyOf": [
-                {
-                  "exclusiveMinimum": 0,
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "default": null,
-              "title": "Typology"
             }
           },
           "required": [
@@ -2942,7 +3026,7 @@
   {
     "name": "update_region",
     "title": null,
-    "description": "Edit an existing region's polygon or type.",
+    "description": "Edit a region polygon, typology, external_id or editor locking flag.\n\n        Explicit locked changes probe writable server support before submitting.\n        Locking does not prevent API edits or deletion. Omit unchanged fields;\n        null clears typology/external_id but cannot remove the region polygon.\n        ",
     "inputSchema": {
       "properties": {
         "target": {
@@ -2988,8 +3072,46 @@
         },
         "RegionPatch": {
           "additionalProperties": false,
-          "description": "Edit a region's outline or classification.",
+          "description": "Edit supplied region fields without clearing its required outline.",
           "properties": {
+            "typology": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Typology"
+            },
+            "external_id": {
+              "anyOf": [
+                {
+                  "maxLength": 128,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "External Id"
+            },
+            "locked": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Locked"
+            },
             "box": {
               "anyOf": [
                 {
@@ -3011,19 +3133,6 @@
               ],
               "default": null,
               "title": "Box"
-            },
-            "typology": {
-              "anyOf": [
-                {
-                  "exclusiveMinimum": 0,
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "default": null,
-              "title": "Typology"
             }
           },
           "title": "RegionPatch",
@@ -3061,7 +3170,7 @@
   {
     "name": "delete_line",
     "title": null,
-    "description": "Delete a segmented line and its attached transcription text.",
+    "description": "Delete a segmented line, attached text/history and cascaded relations.",
     "inputSchema": {
       "properties": {
         "target": {
@@ -3277,7 +3386,7 @@
   {
     "name": "reorder_lines",
     "title": null,
-    "description": "Change line reading order within a page.",
+    "description": "Change explicit line reading-order indexes after checking page membership.\n\n        Duplicate IDs are rejected; the native response lists whole-page orders.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -3360,6 +3469,839 @@
         "JsonValue": {}
       },
       "title": "reorder_linesOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_line",
+    "title": null,
+    "description": "Read one segmented line including its detailed transcription records.",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/ElementTarget"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "type": "object",
+      "$defs": {
+        "ElementTarget": {
+          "additionalProperties": false,
+          "description": "Address an existing line or region inside a page.",
+          "properties": {
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            },
+            "element_id": {
+              "exclusiveMinimum": 0,
+              "title": "Element Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "document_id",
+            "page_id",
+            "element_id"
+          ],
+          "title": "ElementTarget",
+          "type": "object"
+        }
+      },
+      "title": "get_lineArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_lineOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_region",
+    "title": null,
+    "description": "Read one region, including locking when supported by the server.",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/ElementTarget"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "type": "object",
+      "$defs": {
+        "ElementTarget": {
+          "additionalProperties": false,
+          "description": "Address an existing line or region inside a page.",
+          "properties": {
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            },
+            "element_id": {
+              "exclusiveMinimum": 0,
+              "title": "Element Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "document_id",
+            "page_id",
+            "element_id"
+          ],
+          "title": "ElementTarget",
+          "type": "object"
+        }
+      },
+      "title": "get_regionArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_regionOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "bulk_create_lines",
+    "title": null,
+    "description": "Create segmented lines and optional nested text in document-owned layers.\n\n        Coordinates are image pixels. A baseline or mask is required. Native\n        creation is atomic on the audited server; preflight is not a lock.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/BulkLineCreate"
+          },
+          "minItems": 1,
+          "title": "Lines",
+          "type": "array"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id",
+        "lines"
+      ],
+      "type": "object",
+      "$defs": {
+        "BulkLineCreate": {
+          "additionalProperties": false,
+          "description": "New line geometry with optional text in document-owned layers.",
+          "properties": {
+            "baseline": {
+              "anyOf": [
+                {
+                  "items": {
+                    "items": {
+                      "minimum": 0,
+                      "type": "number"
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "minItems": 2,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Baseline"
+            },
+            "mask": {
+              "anyOf": [
+                {
+                  "items": {
+                    "items": {
+                      "minimum": 0,
+                      "type": "number"
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "minItems": 3,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Mask"
+            },
+            "region": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Region"
+            },
+            "typology": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Typology"
+            },
+            "external_id": {
+              "anyOf": [
+                {
+                  "maxLength": 128,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "External Id"
+            },
+            "order": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Order"
+            },
+            "transcriptions": {
+              "items": {
+                "$ref": "#/$defs/NestedTranscription"
+              },
+              "title": "Transcriptions",
+              "type": "array"
+            }
+          },
+          "title": "BulkLineCreate",
+          "type": "object"
+        },
+        "CharacterGraph": {
+          "additionalProperties": false,
+          "description": "Optional character, polygon and confidence fields from the server schema.",
+          "properties": {
+            "c": {
+              "anyOf": [
+                {
+                  "maxLength": 1,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "C"
+            },
+            "poly": {
+              "anyOf": [
+                {
+                  "items": {
+                    "items": {
+                      "type": "number"
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "minItems": 3,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Poly"
+            },
+            "confidence": {
+              "anyOf": [
+                {
+                  "maximum": 1,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Confidence"
+            }
+          },
+          "title": "CharacterGraph",
+          "type": "object"
+        },
+        "NestedTranscription": {
+          "additionalProperties": false,
+          "description": "The bulk endpoint assigns the new line ID; only its layer is supplied.",
+          "properties": {
+            "transcription": {
+              "exclusiveMinimum": 0,
+              "title": "Transcription",
+              "type": "integer"
+            },
+            "content": {
+              "default": "",
+              "maxLength": 2048,
+              "title": "Content",
+              "type": "string"
+            },
+            "graphs": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/$defs/CharacterGraph"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Graphs"
+            },
+            "avg_confidence": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Avg Confidence"
+            }
+          },
+          "required": [
+            "transcription"
+          ],
+          "title": "NestedTranscription",
+          "type": "object"
+        }
+      },
+      "title": "bulk_create_linesArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "bulk_create_linesOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "bulk_update_lines",
+    "title": null,
+    "description": "Edit existing segmented lines with one native PUT after scoped preflight.\n\n        A later save failure can leave earlier edits applied. Never retry blindly;\n        re-read affected records. Omitted fields remain, explicit null clears\n        nullable fields. Every final line needs a baseline or mask.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/BulkLinePatch"
+          },
+          "minItems": 1,
+          "title": "Lines",
+          "type": "array"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id",
+        "lines"
+      ],
+      "type": "object",
+      "$defs": {
+        "BulkLinePatch": {
+          "additionalProperties": false,
+          "description": "An existing line identity and supplied changes within the URL page.",
+          "properties": {
+            "baseline": {
+              "anyOf": [
+                {
+                  "items": {
+                    "items": {
+                      "minimum": 0,
+                      "type": "number"
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "minItems": 2,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Baseline"
+            },
+            "mask": {
+              "anyOf": [
+                {
+                  "items": {
+                    "items": {
+                      "minimum": 0,
+                      "type": "number"
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "minItems": 3,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Mask"
+            },
+            "region": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Region"
+            },
+            "typology": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Typology"
+            },
+            "external_id": {
+              "anyOf": [
+                {
+                  "maxLength": 128,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "External Id"
+            },
+            "order": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Order"
+            },
+            "pk": {
+              "exclusiveMinimum": 0,
+              "title": "Pk",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "pk"
+          ],
+          "title": "BulkLinePatch",
+          "type": "object"
+        }
+      },
+      "title": "bulk_update_linesArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "bulk_update_linesOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "bulk_delete_lines",
+    "title": null,
+    "description": "Delete selected geometry, attached text/history and cascaded relations.\n\n        Every selected ID must belong to this page. Returned deleted records are\n        not a complete backup of all cascaded objects. Preflight is not a lock.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        },
+        "line_ids": {
+          "items": {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Line Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id",
+        "line_ids"
+      ],
+      "type": "object",
+      "title": "bulk_delete_linesArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "bulk_delete_linesOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "merge_lines",
+    "title": null,
+    "description": "Replace 2-8 distinct baseline-bearing lines with one merged line.\n\n        Original lines are deleted. The server chooses geometric/text order,\n        region and type; character graphs, confidence and history are not\n        preserved. The mask may need explicit regeneration afterward.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        },
+        "line_ids": {
+          "items": {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          "maxItems": 8,
+          "minItems": 2,
+          "title": "Line Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id",
+        "line_ids"
+      ],
+      "type": "object",
+      "title": "merge_linesArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "merge_linesOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "regenerate_line_masks",
+    "title": null,
+    "description": "Queue mask regeneration for selected lines or all eligible page lines.\n\n        A status ok response means submitted, not completed. The native response\n        has no task ID. Omit line_ids for all lines; an empty list is invalid.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        },
+        "line_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line Ids"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id"
+      ],
+      "type": "object",
+      "title": "regenerate_line_masksArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "regenerate_line_masksOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "recalculate_line_order",
+    "title": null,
+    "description": "Replace manual line ordering using page geometry and document direction.\n\n        This native action runs synchronously and returns whole-page line orders.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id"
+      ],
+      "type": "object",
+      "title": "recalculate_line_orderArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "recalculate_line_orderOutput"
     },
     "icons": null,
     "annotations": {

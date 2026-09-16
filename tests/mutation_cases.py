@@ -109,6 +109,10 @@ RECORD_CASES: Final = (
             "mask": POLYGON,
             "region": 8,
         },
+        preflight=(
+            ("GET", "/api/documents/7/parts/11/"),
+            ("GET", "/api/documents/7/parts/11/blocks/"),
+        ),
     ),
     Case(
         "update_line",
@@ -125,6 +129,10 @@ RECORD_CASES: Final = (
             "baseline": BASELINE,
             "region": None,
         },
+        preflight=(
+            ("GET", "/api/documents/7/parts/11/"),
+            ("GET", "/api/documents/7/parts/11/lines/19/"),
+        ),
     ),
     Case(
         "create_region",
@@ -142,6 +150,7 @@ RECORD_CASES: Final = (
             "box": POLYGON,
             "typology": 4,
         },
+        preflight=(("GET", "/api/documents/7/parts/11/"), ("GET", "/api/documents/7/")),
     ),
     Case(
         "update_region",
@@ -149,6 +158,10 @@ RECORD_CASES: Final = (
         "documents/7/parts/11/blocks/19/",
         "PATCH",
         {"box": POLYGON},
+        preflight=(
+            ("GET", "/api/documents/7/parts/11/"),
+            ("GET", "/api/documents/7/parts/11/blocks/19/"),
+        ),
     ),
     Case(
         "move_page",
@@ -174,6 +187,10 @@ RECORD_CASES: Final = (
                 {"pk": 19, "order": 1},
             ]
         },
+        preflight=(
+            ("GET", "/api/documents/7/parts/11/"),
+            ("GET", "/api/documents/7/parts/11/lines/"),
+        ),
     ),
     Case(
         "request_server_export",

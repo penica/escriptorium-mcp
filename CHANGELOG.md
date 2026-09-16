@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.10.0 — 2026-09-16
+
+### Module 5: Segmentation
+
+Added eight tools, bringing the catalogue to 119: individual line/region reads,
+native bulk line create/update/delete, merging, mask regeneration and automatic
+reading-order recalculation. Existing geometry tools gain mask-only line creation,
+nullable baseline edits, external IDs, line order and supported region locking.
+Explicit locking checks writable metadata to avoid silent ignores on older servers.
+
+Preflight verifies page ownership and every selected line, supplied page region,
+document layer and assigned typology. Nested text receives the newly created line
+ID from the server. Duplicate selections, cross-page moves and edits leaving no
+geometry are rejected. Bulk update uses one native PUT and explains partial
+application on failure; it is never retried automatically.
+
+Merge requires two to eight distinct baseline-bearing lines. The server combines
+text in geometric/script order, deletes originals and does not preserve graphs,
+confidence or history. Bulk line deletion removes attached text/history. Mask
+regeneration reports queued acceptance without inventing a task ID; automatic
+order recalculation returns the synchronous page result. Region locking is an
+editor preference, not access control.
+
+Package, installer, catalogue, skill and documentation are updated together. See
+[docs/SEGMENTATION-API.md](docs/SEGMENTATION-API.md) for contracts and compatibility.
+Live verification remains read-only; no service deployment is included.
+
+
 ## 0.9.0 — 2026-09-16
 
 ### Module 4: Transcriptions

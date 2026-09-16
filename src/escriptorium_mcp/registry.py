@@ -19,6 +19,7 @@ from escriptorium_mcp.ontology_restore import register_snapshots
 from escriptorium_mcp.ontology_tools import register_ontology
 from escriptorium_mcp.record_tools import register_records
 from escriptorium_mcp.segmentation import register_segmentation
+from escriptorium_mcp.segmentation_bulk import register_segmentation_expansion
 from escriptorium_mcp.task_tools import register_task_monitoring
 from escriptorium_mcp.taxonomy_edit import register_taxonomy_edits
 from escriptorium_mcp.taxonomy_merge import register_taxonomy_merges
@@ -37,7 +38,7 @@ def create_server() -> MCPServer:
     """Build tools without making network calls or requiring credentials."""
     server = MCPServer(
         "eScriptorium",
-        version="0.9.0",
+        version="0.10.0",
         instructions=(
             "Use server primary keys, not page numbers. "
             "Write and processing tools change the remote instance. "
@@ -145,6 +146,7 @@ def create_server() -> MCPServer:
     register_text_bulk(server)
     register_text_reads(server)
     register_segmentation(server)
+    register_segmentation_expansion(server)
     register_jobs(server)
     register_models(server)
     register_task_monitoring(server)
