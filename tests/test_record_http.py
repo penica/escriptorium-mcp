@@ -4,23 +4,18 @@ from urllib.parse import parse_qs, urlsplit
 
 import anyio
 import pytest
-from httpx2 import AsyncClient, Timeout
 from mcp import Client
 from mcp.client.streamable_http import streamable_http_client
 
 from tests.record_fixture import DOCUMENT, RecordFixture, record_fixture
-from tests.test_http import TOKEN, running_endpoint
+from tests.test_http import authenticated_client, running_endpoint
 from tests.transcription_fixture import decoded_result
 
 
 async def exercise_http(fixture: RecordFixture) -> None:
     async with (
         running_endpoint() as endpoint,
-        AsyncClient(
-            headers={"Authorization": f"Bearer {TOKEN}"},
-            timeout=Timeout(30, connect=5),
-            follow_redirects=False,
-        ) as http,
+        authenticated_client() as http,
         Client(streamable_http_client(endpoint, http_client=http)) as session,
     ):
         # When modern native records are searched through the authenticated service.

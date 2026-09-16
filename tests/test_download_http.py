@@ -5,7 +5,6 @@ from pathlib import Path
 
 import anyio
 import pytest
-from httpx2 import AsyncClient
 from mcp import Client
 from mcp.client.streamable_http import streamable_http_client
 
@@ -17,14 +16,14 @@ from tests.download_fixture import (
     FP,
     download_fixture,
 )
-from tests.test_http import TOKEN, running_endpoint
+from tests.test_http import authenticated_client, running_endpoint
 from tests.transcription_fixture import decoded_result
 
 
 async def exercise_downloads(destination: Path) -> None:
     async with (
         running_endpoint() as endpoint,
-        AsyncClient(headers={"Authorization": f"Bearer {TOKEN}"}) as http,
+        authenticated_client() as http,
         Client(streamable_http_client(endpoint, http_client=http)) as session,
     ):
         listed = decoded_result(await session.call_tool("list_downloads", {}))

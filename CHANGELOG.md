@@ -32,6 +32,10 @@ request option bounds mutations and diagnostic reads without changing existing
 requests. Version, installer, bundled skill and generated catalogue are updated
 together; release testing does not modify live research content or services.
 
+Release validation correction: authenticated HTTP tests now use the MCP SDK's
+bounded request budget and cover a slow alignment preflight. This fixes a
+five-second test-client timeout on Windows; runtime code and version are unchanged.
+
 ## 0.15.0 — 2026-09-16
 
 ### Module 10: Virtual collections
