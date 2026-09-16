@@ -13,7 +13,7 @@ class ApiRequest(BaseModel):
     """Private request from explicitly registered MCP tools."""
 
     operation: Literal["api"]
-    method: Literal["GET", "POST", "PATCH", "DELETE", "OPTIONS"]
+    method: Literal["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
     route: str = Field(
         regex=r"^(documents|projects|models|scripts|tasks|types)/[a-z0-9_/]*$"
     )

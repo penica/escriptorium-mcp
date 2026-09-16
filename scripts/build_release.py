@@ -42,6 +42,7 @@ BUNDLE_FILES: Final = (
     "ONTOLOGY-COVERAGE.md",
     "docs/MODEL-API.md",
     "docs/TRAINING-API.md",
+    "docs/TRANSCRIPTION-API.md",
     "docs/RELEASING.md",
     "skills/escriptorium/SKILL.md",
     "skills/escriptorium/agents/openai.yaml",

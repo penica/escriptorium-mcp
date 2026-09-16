@@ -398,7 +398,7 @@
   {
     "name": "get_page_transcriptions",
     "title": null,
-    "description": "Read line text, layer IDs, confidence and revision metadata for a page.",
+    "description": "Read page text/confidence/history, optionally filtered to one layer.",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -410,6 +410,19 @@
           "exclusiveMinimum": 0,
           "title": "Page Id",
           "type": "integer"
+        },
+        "transcription_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transcription Id"
         }
       },
       "required": [
@@ -1217,6 +1230,63 @@
       ],
       "type": "object",
       "$defs": {
+        "CharacterGraph": {
+          "additionalProperties": false,
+          "description": "Optional character, polygon and confidence fields from the server schema.",
+          "properties": {
+            "c": {
+              "anyOf": [
+                {
+                  "maxLength": 1,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "C"
+            },
+            "poly": {
+              "anyOf": [
+                {
+                  "items": {
+                    "items": {
+                      "type": "number"
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "minItems": 3,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Poly"
+            },
+            "confidence": {
+              "anyOf": [
+                {
+                  "maximum": 1,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Confidence"
+            }
+          },
+          "title": "CharacterGraph",
+          "type": "object"
+        },
         "LineText": {
           "additionalProperties": false,
           "description": "A line's text in a particular transcription layer.",
@@ -1235,6 +1305,33 @@
               "maxLength": 2048,
               "title": "Content",
               "type": "string"
+            },
+            "graphs": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/$defs/CharacterGraph"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Graphs"
+            },
+            "avg_confidence": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Avg Confidence"
             }
           },
           "required": [
@@ -1277,7 +1374,7 @@
   {
     "name": "update_line_transcription",
     "title": null,
-    "description": "Correct an existing line transcription by its record PK, not its line PK.",
+    "description": "Edit a text record by its PK; changed line/layer links must stay in scope.",
     "inputSchema": {
       "properties": {
         "target": {
@@ -1293,19 +1390,134 @@
       ],
       "type": "object",
       "$defs": {
-        "TextPatch": {
+        "CharacterGraph": {
           "additionalProperties": false,
-          "description": "Correct text without rewriting segmentation or other layers.",
+          "description": "Optional character, polygon and confidence fields from the server schema.",
           "properties": {
-            "content": {
-              "maxLength": 2048,
-              "title": "Content",
-              "type": "string"
+            "c": {
+              "anyOf": [
+                {
+                  "maxLength": 1,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "C"
+            },
+            "poly": {
+              "anyOf": [
+                {
+                  "items": {
+                    "items": {
+                      "type": "number"
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "minItems": 3,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Poly"
+            },
+            "confidence": {
+              "anyOf": [
+                {
+                  "maximum": 1,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Confidence"
             }
           },
-          "required": [
-            "content"
-          ],
+          "title": "CharacterGraph",
+          "type": "object"
+        },
+        "TextPatch": {
+          "additionalProperties": false,
+          "description": "Edit text, character graphs, confidence or scoped line/layer references.",
+          "properties": {
+            "content": {
+              "anyOf": [
+                {
+                  "maxLength": 2048,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Content"
+            },
+            "line": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Line"
+            },
+            "transcription": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Transcription"
+            },
+            "graphs": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/$defs/CharacterGraph"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Graphs"
+            },
+            "avg_confidence": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Avg Confidence"
+            }
+          },
           "title": "TextPatch",
           "type": "object"
         },
@@ -1362,6 +1574,78 @@
       "readOnlyHint": false,
       "destructiveHint": true,
       "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_line_transcription",
+    "title": null,
+    "description": "Read one text record, including graphs, confidence and available history.",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/TextTarget"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "type": "object",
+      "$defs": {
+        "TextTarget": {
+          "additionalProperties": false,
+          "description": "The complete address of one line transcription record.",
+          "properties": {
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            },
+            "line_transcription_id": {
+              "exclusiveMinimum": 0,
+              "title": "Line Transcription Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "document_id",
+            "page_id",
+            "line_transcription_id"
+          ],
+          "title": "TextTarget",
+          "type": "object"
+        }
+      },
+      "title": "get_line_transcriptionArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_line_transcriptionOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
       "openWorldHint": null
     },
     "_meta": null
@@ -1443,7 +1727,7 @@
   {
     "name": "delete_transcription",
     "title": null,
-    "description": "Delete a transcription layer and its line text according to server rules.",
+    "description": "Archive/rename a layer, retaining text; the manual layer is protected.",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -1558,6 +1842,722 @@
       "readOnlyHint": false,
       "destructiveHint": true,
       "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "bulk_create_line_transcriptions",
+    "title": null,
+    "description": "Create line text/graphs in bulk after checking page and layer membership.\n\n        Reject duplicate line/layer pairs. Server normalization is preserved.\n        The native bulk path does not run single-create progress/author hooks.\n        Preflight is not a lock; inspect remote state before retrying a failure.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/LineText"
+          },
+          "minItems": 1,
+          "title": "Lines",
+          "type": "array"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id",
+        "lines"
+      ],
+      "type": "object",
+      "$defs": {
+        "CharacterGraph": {
+          "additionalProperties": false,
+          "description": "Optional character, polygon and confidence fields from the server schema.",
+          "properties": {
+            "c": {
+              "anyOf": [
+                {
+                  "maxLength": 1,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "C"
+            },
+            "poly": {
+              "anyOf": [
+                {
+                  "items": {
+                    "items": {
+                      "type": "number"
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "minItems": 3,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Poly"
+            },
+            "confidence": {
+              "anyOf": [
+                {
+                  "maximum": 1,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Confidence"
+            }
+          },
+          "title": "CharacterGraph",
+          "type": "object"
+        },
+        "LineText": {
+          "additionalProperties": false,
+          "description": "A line's text in a particular transcription layer.",
+          "properties": {
+            "line": {
+              "exclusiveMinimum": 0,
+              "title": "Line",
+              "type": "integer"
+            },
+            "transcription": {
+              "exclusiveMinimum": 0,
+              "title": "Transcription",
+              "type": "integer"
+            },
+            "content": {
+              "maxLength": 2048,
+              "title": "Content",
+              "type": "string"
+            },
+            "graphs": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/$defs/CharacterGraph"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Graphs"
+            },
+            "avg_confidence": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Avg Confidence"
+            }
+          },
+          "required": [
+            "line",
+            "transcription",
+            "content"
+          ],
+          "title": "LineText",
+          "type": "object"
+        }
+      },
+      "title": "bulk_create_line_transcriptionsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "bulk_create_line_transcriptionsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "bulk_update_line_transcriptions",
+    "title": null,
+    "description": "Update existing text-record PKs, checking all page/layer references first.\n\n        This native operation is non-atomic: a failed response can follow saved\n        earlier rows. No automatic retry. Re-read records after any failure.\n        Omit unchanged fields; null clears graphs/average confidence only.\n        Pause concurrent writers during preflight and submission.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/BulkTextPatch"
+          },
+          "minItems": 1,
+          "title": "Lines",
+          "type": "array"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id",
+        "lines"
+      ],
+      "type": "object",
+      "$defs": {
+        "BulkTextPatch": {
+          "additionalProperties": false,
+          "description": "One existing line-transcription record in a bulk update.",
+          "properties": {
+            "content": {
+              "anyOf": [
+                {
+                  "maxLength": 2048,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Content"
+            },
+            "line": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Line"
+            },
+            "transcription": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Transcription"
+            },
+            "graphs": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/$defs/CharacterGraph"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Graphs"
+            },
+            "avg_confidence": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Avg Confidence"
+            },
+            "pk": {
+              "exclusiveMinimum": 0,
+              "title": "Pk",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "pk"
+          ],
+          "title": "BulkTextPatch",
+          "type": "object"
+        },
+        "CharacterGraph": {
+          "additionalProperties": false,
+          "description": "Optional character, polygon and confidence fields from the server schema.",
+          "properties": {
+            "c": {
+              "anyOf": [
+                {
+                  "maxLength": 1,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "C"
+            },
+            "poly": {
+              "anyOf": [
+                {
+                  "items": {
+                    "items": {
+                      "type": "number"
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "minItems": 3,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Poly"
+            },
+            "confidence": {
+              "anyOf": [
+                {
+                  "maximum": 1,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Confidence"
+            }
+          },
+          "title": "CharacterGraph",
+          "type": "object"
+        }
+      },
+      "title": "bulk_update_line_transcriptionsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "bulk_update_line_transcriptionsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "bulk_clear_line_transcriptions",
+    "title": null,
+    "description": "Blank selected text records through native bulk_delete; keep their rows.\n\n        This clears content only. Graphs, confidence and existing history remain;\n        the native action creates no history revision. IDs are text-record PKs,\n        not segmented-line IDs. Preflight checks membership but is not a lock.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        },
+        "line_transcription_ids": {
+          "items": {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Line Transcription Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id",
+        "line_transcription_ids"
+      ],
+      "type": "object",
+      "title": "bulk_clear_line_transcriptionsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "bulk_clear_line_transcriptionsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_transcription",
+    "title": null,
+    "description": "Read a document's transcription layer, comments and archived state.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "transcription_id": {
+          "exclusiveMinimum": 0,
+          "title": "Transcription Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id",
+        "transcription_id"
+      ],
+      "type": "object",
+      "title": "get_transcriptionArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_transcriptionOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_transcription",
+    "title": null,
+    "description": "Edit layer name, archived state, comments or average-confidence metadata.\n\n        Omit unchanged fields; null clears comments/average confidence. Archiving\n        hides a layer but retains its line records. This does not recompute scores.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "transcription_id": {
+          "exclusiveMinimum": 0,
+          "title": "Transcription Id",
+          "type": "integer"
+        },
+        "changes": {
+          "$ref": "#/$defs/LayerPatch"
+        }
+      },
+      "required": [
+        "document_id",
+        "transcription_id",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "LayerPatch": {
+          "additionalProperties": false,
+          "description": "Editable layer settings; archived layers retain their line records.",
+          "properties": {
+            "name": {
+              "anyOf": [
+                {
+                  "maxLength": 512,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Name"
+            },
+            "archived": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Archived"
+            },
+            "avg_confidence": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Avg Confidence"
+            },
+            "comments": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Comments"
+            }
+          },
+          "title": "LayerPatch",
+          "type": "object"
+        }
+      },
+      "title": "update_transcriptionArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_transcriptionOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_transcription_statistics",
+    "title": null,
+    "description": "Return nonempty-line count and stored-character frequencies for a layer.\n\n        Sum the returned frequencies for the stored-character count. Stored\n        markup is included; these are not normalized plain-text/grapheme counts.\n        The server caches statistics for up to one hour. Preserve zero counts.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "transcription_id": {
+          "exclusiveMinimum": 0,
+          "title": "Transcription Id",
+          "type": "integer"
+        },
+        "ordering": {
+          "default": "-frequency",
+          "enum": [
+            "frequency",
+            "-frequency",
+            "char",
+            "-char"
+          ],
+          "title": "Ordering",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id",
+        "transcription_id"
+      ],
+      "type": "object",
+      "title": "get_transcription_statisticsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_transcription_statisticsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "find_transcription_pages_by_character",
+    "title": null,
+    "description": "Locate pages containing one stored Unicode code point in a layer.\n\n        Requires the newer parts_by_char endpoint. A multi-code-point grapheme\n        must be queried by individual code point; stored markup is included.\n        Page IDs and per-page counts come directly from the server.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "transcription_id": {
+          "exclusiveMinimum": 0,
+          "title": "Transcription Id",
+          "type": "integer"
+        },
+        "character": {
+          "maxLength": 1,
+          "minLength": 1,
+          "title": "Character",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id",
+        "transcription_id",
+        "character"
+      ],
+      "type": "object",
+      "title": "find_transcription_pages_by_characterArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "find_transcription_pages_by_characterOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
       "openWorldHint": null
     },
     "_meta": null

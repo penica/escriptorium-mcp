@@ -1,6 +1,6 @@
 # eScriptorium MCP tools
 
-Version 0.8.0: 103 tools.
+Version 0.9.0: 111 tools.
 
 | Tool | Description |
 |---|---|
@@ -13,7 +13,7 @@ Version 0.8.0: 103 tools.
 | `list_lines` | Read segmented lines for a page. |
 | `list_regions` | Read segmented regions for a page. |
 | `list_transcriptions` | List transcription layers and their primary keys. |
-| `get_page_transcriptions` | Read line text, layer IDs, confidence and revision metadata for a page. |
+| `get_page_transcriptions` | Read page text/confidence/history, optionally filtered to one layer. |
 | `create_project` | Create a remote project. Repeating this call may create duplicates. |
 | `create_transcription` | Create an empty transcription layer in an existing document. |
 | `list_scripts` | List writing systems; use their name in create_document.main_script. |
@@ -26,10 +26,18 @@ Version 0.8.0: 103 tools.
 | `delete_project` | Delete a project; its documents may also be removed by the server. |
 | `delete_page` | Delete a page and its segmentation and transcriptions. |
 | `create_line_transcription` | Write text for an existing segmented line in a transcription layer. |
-| `update_line_transcription` | Correct an existing line transcription by its record PK, not its line PK. |
+| `update_line_transcription` | Edit a text record by its PK; changed line/layer links must stay in scope. |
+| `get_line_transcription` | Read one text record, including graphs, confidence and available history. |
 | `rename_transcription` | Rename a transcription layer without rewriting its line text. |
-| `delete_transcription` | Delete a transcription layer and its line text according to server rules. |
+| `delete_transcription` | Archive/rename a layer, retaining text; the manual layer is protected. |
 | `delete_line_transcription` | Delete one line transcription record, keeping its segmented line. |
+| `bulk_create_line_transcriptions` | Create line text/graphs in bulk after checking page and layer membership. Reject duplicate line/layer pairs. Server normalization is preserved. The native bulk path does not run single-create progress/author hooks. Preflight is not a lock; inspect remote state before retrying a failure. |
+| `bulk_update_line_transcriptions` | Update existing text-record PKs, checking all page/layer references first. This native operation is non-atomic: a failed response can follow saved earlier rows. No automatic retry. Re-read records after any failure. Omit unchanged fields; null clears graphs/average confidence only. Pause concurrent writers during preflight and submission. |
+| `bulk_clear_line_transcriptions` | Blank selected text records through native bulk_delete; keep their rows. This clears content only. Graphs, confidence and existing history remain; the native action creates no history revision. IDs are text-record PKs, not segmented-line IDs. Preflight checks membership but is not a lock. |
+| `get_transcription` | Read a document's transcription layer, comments and archived state. |
+| `update_transcription` | Edit layer name, archived state, comments or average-confidence metadata. Omit unchanged fields; null clears comments/average confidence. Archiving hides a layer but retains its line records. This does not recompute scores. |
+| `get_transcription_statistics` | Return nonempty-line count and stored-character frequencies for a layer. Sum the returned frequencies for the stored-character count. Stored markup is included; these are not normalized plain-text/grapheme counts. The server caches statistics for up to one hour. Preserve zero counts. |
+| `find_transcription_pages_by_character` | Locate pages containing one stored Unicode code point in a layer. Requires the newer parts_by_char endpoint. A multi-code-point grapheme must be queried by individual code point; stored markup is included. Page IDs and per-page counts come directly from the server. |
 | `create_line` | Create a segmented line on line.document_part; coordinates are pixels. |
 | `update_line` | Edit an existing line's baseline, mask, region or type. |
 | `create_region` | Create a region polygon on region.document_part. |

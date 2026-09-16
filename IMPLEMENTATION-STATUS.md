@@ -14,8 +14,8 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 ## Current work
 1. **Released and verified:** Tasks and job monitoring (0.6.0).
 2. **Released and verified:** Model management (0.7.0), six new tools and filtered model listing; 102 tools total. Contract evidence and API limits are recorded in docs/MODEL-API.md.
-3. **Locally verified, publication pending:** Training and evaluation (0.8.0), optional tracked submissions and the new `get_training_report`; 103 tools total. API limits are recorded in docs/TRAINING-API.md.
-4. **Pending:** Modules 4–13 in roadmap order.
+3. **Released and verified:** Training and evaluation (0.8.0), optional tracked submissions and the new `get_training_report`; 103 tools total. API limits are recorded in docs/TRAINING-API.md.
+4. **Locally verified, publication pending:** Transcriptions (0.9.0), with a fresh audit of the upgraded development API. Modules 5–13 remain pending in roadmap order.
 
 ## Baseline evidence
 - Initial public commit: 73f08eb (MCP 0.5.0, 89 tools).
@@ -54,13 +54,13 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 - [Compatibility run 35082582284](https://github.com/penica/escriptorium-mcp/actions/runs/35082582284) passed all six jobs: Windows/macOS/Linux with Python 3.11/3.13.
 - [GitHub release v0.7.0](https://github.com/penica/escriptorium-mcp/releases/tag/v0.7.0) published all four artifacts. Uploaded asset digests matched the final local wheel, source distribution, WSL archive and checksum.
 
-### 0.8.0 — Training and evaluation (locally verified; GitHub CI/publication pending)
+### 0.8.0 — Training and evaluation
 
 - Added `get_training_report`: raw model metrics, checkpoint records and optional caller-selected document/group training task summaries. Idle state is not success, model/group attribution is not assumed and no CER/WER or independent evaluation is invented.
 - Existing training tools add optional `track=false` by default for raw-response compatibility. Tracking compares groups before/after one POST and exposes candidates, including initially null methods, with attribution explicitly unconfirmed. Optional monitoring failure preserves acceptance and never resubmits.
 - Selected models must match the training action. Overwrite requires ownership and `training == false`, including requests also containing a model name. Training inputs reject duplicate pages and explicit null model/name options; names support 256 characters. Server submission serializers remain authoritative for document/page/layer membership.
 - Standard server-supported training fields are retained. The audited API has no independent evaluation action or hyperparameter request fields; custom ARC and virtual-collection training remain separate contracts.
-- Full regression: 253 tests passed in 303.18 seconds. All 42 focused training cases also passed, covering STDIO and authenticated HTTP, both training actions, exact request bodies, input/model guards, unconfirmed attribution, monitoring HTTP/parse failures, single submission and raw report metrics. Ruff lint/format, strict Basedpyright for source/tests/scripts, the programming-rule audit and skill validation passed. GitHub CI/publication remain pending.
+- Full regression: 253 tests passed in 303.18 seconds. All 42 focused training cases also passed, covering STDIO and authenticated HTTP, both training actions, exact request bodies, input/model guards, unconfirmed attribution, monitoring HTTP/parse failures, single submission and raw report metrics. Ruff lint/format, strict Basedpyright for source/tests/scripts, the programming-rule audit and skill validation passed.
 - Read-only MCP STDIO checks against ARC passed for model metrics, preserved checkpoint records and a caller-selected document/group report containing 72 visible task reports. The result explicitly retained caller-supplied attribution. No live training jobs were submitted, canceled or modified.
 - Fresh installation and a real 0.7.0-to-0.8.0 upgrade passed in temporary directories, preserving the complete URL/key/token/Books configuration, private backup and 0600 permissions, linked launcher and installed version. The isolated wheel advertised 103 tools and passed raw null/zero-metric reporting and accepted training after a monitoring failure with exactly one fixture POST. No service or live model was changed.
 - Package/server/installer metadata, training documentation, roadmap and bundled skill are updated. Actual STDIO discovery generated the catalogue/schema with 103 tools. Wheel, source distribution and WSL archive built; both new training modules are included. Outer and 18 inner hashes, normalized ownership and private-file exclusion passed.
@@ -68,3 +68,19 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 ### Next release
 
 Module 4: transcriptions, target 0.9.0, after training and evaluation is verified and published.
+- Public commit: `a1aeb813236caca8f8691dc1905b22f52b4f215b`.
+- [Compatibility run 35084887534](https://github.com/penica/escriptorium-mcp/actions/runs/35084887534) passed all six Windows/macOS/Linux and Python 3.11/3.13 jobs.
+- [GitHub release v0.8.0](https://github.com/penica/escriptorium-mcp/releases/tag/v0.8.0) published all four artifacts after the user resumed work. Each GitHub asset's SHA-256 and size matched the previously verified local distribution.
+- Subsequent workflow-only commits updated actions to Node.js 24 and separated caches by Python matrix version. [Run 35087328474](https://github.com/penica/escriptorium-mcp/actions/runs/35087328474) passed all six jobs with zero annotations at `5c54d7eb2c73da73f50db5e9b0920c247da3ece3`.
+
+### 0.9.0 — Transcriptions (locally verified; GitHub CI/publication pending)
+
+- Added eight tools for bulk create/update/clear, individual text/layer reads, layer settings, statistics and character lookup; 111 tools total. Existing page-text reads gain optional layer filtering; single text operations gain graphs/confidence and scoped reference edits.
+- Added page/document membership preflight, pagination, duplicate IDs/pairs and collision rejection. Bulk update uses native PUT with partial-write errors and no retry. Bulk clear preserves rows/history/graphs/confidence. Layer deletion documentation now matches archival semantics.
+- The upgraded development API was audited read-only. Character lookup, native ontology YAML, fonts, downloads, collections and region locking are available. Exact deployed source SHA is unknown; generated OpenAPI bulk metadata is inaccurate, so contracts use source and observed endpoint metadata.
+- Initial regression failures confirmed missing tools before implementation. New tests drive actual STDIO and authenticated HTTP, including foreign-reference rejection, one-PUT partial failure, 204 clearing, nullable fields, Unicode and layer archival.
+- Full regression: 319 tests passed in 398.22 seconds. Ruff lint/format, strict Basedpyright for source/tests/scripts, programming-rule checks, installer syntax and skill validation passed. GitHub CI/publication remain pending.
+- Focused module verification: all 66 transcription tests passed in 105.91 seconds. Structured MCP results preserve empty, single-item and multi-item arrays; test decoding was corrected to read the complete result instead of the first text block.
+- Read-only local MCP STDIO against the development backend verified 111 tools/version 0.9.0, layer/detail reads, 99 page/layer-filtered records, 188 nonempty lines, 70 stored-character entries and matching character lookup frequencies. Existing model training-report reads also passed. No live writes were performed.
+- Package QA passed with 19 inner checksums, the outer checksum, normalized archive ownership, private-file exclusion and all new text modules in the wheel. Fresh 0.9 installation and an actual 0.8-to-0.9 upgrade in temporary paths with spaces preserved URL/key/token/Books settings, 0600 configuration/backup permissions and the command launcher. No systemd service was touched.
+- The isolated installed interpreter (`-I`) discovered version 0.9.0 and 111 tools, returned both records from a bulk update, preserved zero statistics/lookup values and cleared text without deleting rows/history against isolated fixtures. Final artifacts are rebuilt after this ledger update before publication.

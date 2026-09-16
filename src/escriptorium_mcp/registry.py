@@ -7,6 +7,7 @@ from mcp_types import ToolAnnotations
 from pydantic import JsonValue
 
 from escriptorium_mcp.annotation_tools import register_annotations
+from escriptorium_mcp.api import ApiRequest, invoke
 from escriptorium_mcp.bridge import Identifier, Name, Request, call
 from escriptorium_mcp.file_tools import register_files
 from escriptorium_mcp.instance_tools import register_instances
@@ -21,6 +22,8 @@ from escriptorium_mcp.segmentation import register_segmentation
 from escriptorium_mcp.task_tools import register_task_monitoring
 from escriptorium_mcp.taxonomy_edit import register_taxonomy_edits
 from escriptorium_mcp.taxonomy_merge import register_taxonomy_merges
+from escriptorium_mcp.text_bulk import register_text_bulk
+from escriptorium_mcp.text_reads import register_text_reads
 from escriptorium_mcp.text_tools import register_text
 from escriptorium_mcp.training_tools import register_training
 
@@ -34,7 +37,7 @@ def create_server() -> MCPServer:
     """Build tools without making network calls or requiring credentials."""
     server = MCPServer(
         "eScriptorium",
-        version="0.8.0",
+        version="0.9.0",
         instructions=(
             "Use server primary keys, not page numbers. "
             "Write and processing tools change the remote instance. "
@@ -100,8 +103,21 @@ def create_server() -> MCPServer:
     async def get_page_transcriptions(
         document_id: Identifier,
         page_id: Identifier,
+        transcription_id: Identifier | None = None,
     ) -> JsonValue:
-        """Read line text, layer IDs, confidence and revision metadata for a page."""
+        """Read page text/confidence/history, optionally filtered to one layer."""
+        if transcription_id is not None:
+            _ = await invoke(
+                "GET", f"documents/{document_id}/transcriptions/{transcription_id}/"
+            )
+            return await call(
+                ApiRequest(
+                    method="GET",
+                    route=f"documents/{document_id}/parts/{page_id}/transcriptions/",
+                    query={"transcription": str(transcription_id)},
+                    paginate=True,
+                )
+            )
         return await call(
             Request(
                 operation="get_page_transcriptions",
@@ -126,6 +142,8 @@ def create_server() -> MCPServer:
 
     register_records(server)
     register_text(server)
+    register_text_bulk(server)
+    register_text_reads(server)
     register_segmentation(server)
     register_jobs(server)
     register_models(server)

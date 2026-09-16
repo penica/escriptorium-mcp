@@ -32,7 +32,7 @@ class ApiRequest(Input):
     """Internal request; callers cannot choose arbitrary URLs through MCP."""
 
     operation: Literal["api"] = "api"
-    method: Literal["GET", "POST", "PATCH", "DELETE", "OPTIONS"]
+    method: Literal["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
     route: str
     body_json: str = "{}"
     file_path: FilePath | None = None
@@ -42,7 +42,7 @@ class ApiRequest(Input):
 
 
 async def invoke(
-    method: Literal["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    method: Literal["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     route: str,
     body: BaseModel | None = None,
 ) -> JsonValue:

@@ -1,5 +1,35 @@
 # Changelog
 
+## 0.9.0 — 2026-09-16
+
+### Module 4: Transcriptions
+
+Added eight tools, bringing the catalogue to 111: native bulk create/update/clear
+for line transcriptions, individual line-text and layer retrieval, layer settings,
+stored-character statistics and character-to-page lookup. Page-text listing adds
+an optional layer filter. Line creation and edits expose nullable graphs and
+average confidence; reference-changing edits validate page/document membership.
+
+Bulk preflight follows pagination and verifies page, line, layer and record scope,
+rejecting duplicate IDs/pairs and reference changes that collide with unchanged
+records. Native update uses PUT once and reports possible partial application on
+failure. Native clear blanks content only, retaining rows, graphs, confidence and
+existing history without adding a revision. The existing layer deletion tool's
+description now accurately states archive/rename semantics and manual protection.
+
+Statistics preserve server counts/order and Unicode. Counts include stored markup
+and can be cached for one hour. Character lookup requires one Unicode code point,
+verifies the parent layer first and distinguishes unavailable/hidden endpoints
+from permission failures. Server normalization, explicit nulls and omitted fields
+are preserved. No live transcriptions were modified during verification.
+
+Re-audited the upgraded development deployment: character lookup, native ontology
+YAML, fonts, downloads, virtual collections and region locking are now available.
+Other modules retain their roadmap order; Python runtime migration is separate.
+Package, installer, skill and API documentation are updated together. See
+[docs/TRANSCRIPTION-API.md](docs/TRANSCRIPTION-API.md) for source contracts,
+non-atomic behavior, schema limitations and compatibility details.
+
 ## 0.8.0 — 2026-09-16
 
 ### Module 3: Training and evaluation

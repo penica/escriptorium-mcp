@@ -20,6 +20,12 @@ Read the relevant page's lines and transcription records before writing correcti
 
 Geometry is in image pixels: baselines need at least two points and polygons at least three. For PATCH tools, omit fields that should remain unchanged; explicit `null` clears a nullable field. Deleting a segmented line can also remove its transcription text.
 
+Use `get_line_transcription` to inspect a text record including history. Line text creation/edits accept character graphs and average-confidence metadata. `get_transcription` and `update_transcription` read/edit layer settings; `get_page_transcriptions` optionally filters by `transcription_id`. Layer `delete_transcription` archives/renames while retaining text, and the default manual layer is protected.
+
+Bulk text tools check page/document membership before writing, including paginated records. Supply text-record PKs to bulk update/clear and segmented-line PKs with layer IDs to bulk create. Bulk updates are non-atomic: after any failure, re-read affected records before retrying. Pause concurrent writers; preflight is not a lock. Bulk clear blanks only content, preserving rows, graphs, confidence and old history without creating a revision. Bulk create does not run the single-create progress/author hooks.
+
+`get_transcription_statistics` returns nonempty-line counts and stored-character frequencies; sum frequencies for the stored-character total. Results include stored markup and can be cached for one hour. `find_transcription_pages_by_character` queries one Unicode code point on supported servers. Do not treat these counts as normalized text/grapheme counts, or an unavailable/denied lookup as an empty successful result.
+
 Apply changes within the user's authorized scope. Existing authorization carries forward; ask only when the intended target or a destructive replacement falls outside that scope. A read or export request does not authorize editing the source.
 
 ## Run OCR, imports and training

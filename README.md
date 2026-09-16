@@ -1,6 +1,6 @@
 # eScriptorium MCP server
 
-Version 0.8.0 exposes **103 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
+Version 0.9.0 exposes **111 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
 
 ## Capabilities
 
@@ -48,7 +48,7 @@ For a standalone installation, from this directory:
 uv tool install --python 3.11 .
 ```
 
-Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.8.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
+Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.9.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
 
 ## Credentials and paths
 
@@ -82,7 +82,7 @@ The supplied key remains in the ignored checkout `.env`; package and client exam
 
 ## Transport choice (checked 16 September 2026)
 
-**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 103 tools in either transport.
+**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 111 tools in either transport.
 
 STDIO is the default and needs no listening port. To run HTTP, first generate a separate service token:
 
@@ -148,6 +148,16 @@ Both tools accept optional `track: true`. The default preserves the raw submissi
 `get_training_report` presents raw model validation scores and checkpoint metadata alongside optional caller-selected document/group task summaries. A group requires its document ID. Task/model attribution is explicitly caller-supplied, and document-only summaries include historical training reports. Idle state does not prove success, missing metrics are not zero, and an advertised checkpoint may no longer exist. Use `download_model` to verify its bytes.
 
 The audited standard API has no independent evaluation action or request fields for epochs, learning rate, optimizer, batch size, precision, device or validation split. The MCP exposes available server metrics without converting them into invented CER/WER values. Custom ARC controls need their own API contract. See [docs/TRAINING-API.md](docs/TRAINING-API.md) for the detailed audit and attribution limits.
+
+## Transcriptions (0.9.0)
+
+Use `get_line_transcription` for a text record and `get_transcription` / `update_transcription` for layer settings. Page-text listing accepts an optional `transcription_id`. Line creation and updates support character graphs and average-confidence metadata; omit unchanged fields and use null only for nullable values.
+
+`bulk_create_line_transcriptions`, `bulk_update_line_transcriptions` and `bulk_clear_line_transcriptions` use the native bulk endpoints. Before writing, the MCP checks that records, segmented lines and layers belong to the selected page/document, including paginated results. These checks are observations, not locks: pause concurrent edits. Bulk update can partially apply before returning an error; the MCP never retries it automatically. Re-read records before deciding what to submit next.
+
+Bulk clear only blanks content. It retains rows, graphs, confidence and existing history, and creates no history revision. Individual line-transcription deletion removes a row. The existing `delete_transcription` tool archives/renames a layer and retains its text; the default manual layer is protected.
+
+`get_transcription_statistics` returns nonempty-line count and stored-character frequencies. Sum frequencies for the stored-character total; stored markup is included, and server results can be cached for one hour. `find_transcription_pages_by_character` locates pages by one Unicode code point on newer servers. Permission failures remain errors; an absent or hidden endpoint is not interpreted as an empty result. See [docs/TRANSCRIPTION-API.md](docs/TRANSCRIPTION-API.md).
 
 ## Ontology and annotations (0.5.0)
 

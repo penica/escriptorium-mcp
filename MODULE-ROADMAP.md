@@ -8,8 +8,8 @@ Implementation authorized on 2026-09-16. Ontology is complete for the audited AP
 |---|---|---|---|
 | 1 | Released (0.6.0) | Tasks and job monitoring | Document task groups, document-level progress, filtering, import status/cancellation, and clearer completion/failure reporting. |
 | 2 | Released (0.7.0) | Model management | Rename/update/delete models, manage document associations, download model files and available checkpoints. Listing, uploading and basic inspection already exist. |
-| 3 | Implemented (0.8.0), release validation | Training and evaluation | Expose remaining server-supported training options, connect submissions to task groups, and provide consistent checkpoint/result reporting. |
-| 4 | Pending | Transcriptions | Bulk create/update/delete line text, transcription statistics and character counts. Character-to-page lookup requires newer eScriptorium. |
+| 3 | Released (0.8.0) | Training and evaluation | Expose remaining server-supported training options, connect submissions to task groups, and provide consistent checkpoint/result reporting. |
+| 4 | Implemented (0.9.0), release validation | Transcriptions | Bulk create/update/clear line text, transcription statistics and character counts, character-to-page lookup and layer settings. |
 | 5 | Pending | Segmentation | Bulk line operations, line merging, individual region/line retrieval, mask regeneration and automatic reading-order recalculation. Region locking requires newer support. |
 | 6 | Pending | Pages and image operations | Rotation, cropping, lookup by page order, bulk page moves and server-side filtering. Basic upload/edit/delete/reorder already exist. |
 | 7 | Pending | Imports | IIIF manifests, METS files/URLs, explicit import modes and target transcription layers, plus status and cancellation. |
@@ -24,6 +24,6 @@ Implementation authorized on 2026-09-16. Ontology is complete for the audited AP
 
 - Follow the priority order unless the user changes it.
 - Verify each module's endpoints and editable fields against the deployed API before implementation.
-- Most expansion does not require the development branch. Use stable v26.07 for newer features and detect optional capabilities at runtime.
+- The user upgraded the deployment to a development image and resumed work on 2026-09-16. Recheck deployed endpoints; keep optional capability detection for older servers.
 - Keep custom ARC training controls separate from the standard eScriptorium API.
 - Implement and publish modules sequentially with versioned commits and validation evidence. Live deployment upgrades remain separate.

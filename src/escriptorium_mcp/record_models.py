@@ -6,6 +6,7 @@ from pydantic import Field, FilePath, model_validator
 
 from escriptorium_mcp.api import Input
 from escriptorium_mcp.bridge import Identifier, Name
+from escriptorium_mcp.text_models import CharacterGraph, Score, TextChanges
 
 
 class DocumentCreate(Input):
@@ -76,9 +77,9 @@ class LineText(Input):
     line: Identifier
     transcription: Identifier
     content: Annotated[str, Field(max_length=2048)]
+    graphs: list[CharacterGraph] | None = None
+    avg_confidence: Score | None = None
 
 
-class TextPatch(Patch):
-    """Correct text without rewriting segmentation or other layers."""
-
-    content: Annotated[str, Field(max_length=2048)]
+class TextPatch(TextChanges):
+    """Edit text, character graphs, confidence or scoped line/layer references."""
