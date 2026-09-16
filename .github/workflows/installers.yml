@@ -21,6 +21,7 @@ jobs:
       - run: sh -n install.sh && sh -n install-skills.sh && bash scripts/test_skills.sh
   powershell-skills:
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: windows-latest

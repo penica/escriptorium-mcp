@@ -35,7 +35,7 @@ try {
     $failed = $false
     try { Invoke-Expression $script } catch { $failed = $true }
     if (-not $failed -or -not (Test-Path -LiteralPath $lock)) { throw 'Concurrent install not refused.' }
-    Remove-Item -LiteralPath $lock
+    Remove-Item -LiteralPath $lock -Force
     Write-Host 'PASS: concurrent install refused without removing another lock'
 }
 finally {
