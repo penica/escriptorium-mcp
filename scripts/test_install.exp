@@ -1,0 +1,33 @@
+#!/usr/bin/expect -f
+set timeout 180
+set repo [file normalize [file join [file dirname [info script]] ..]]
+set temporary [exec mktemp -d /tmp/escriptorium-bootstrap.XXXXXX]
+set env(ESCRIPTORIUM_INSTALL_DIR) [file join $temporary "installed MCP"]
+set env(ESCRIPTORIUM_INSTALL_BIN_DIR) [file join $temporary commands]
+set env(BOOTSTRAP_TEST_SCRIPT) [file join $repo install.sh]
+set exit_code 1
+spawn bash -c {cat "$BOOTSTRAP_TEST_SCRIPT" | sh -s -- 0.18.0}
+expect {
+    -exact "eScriptorium URL" { send -- "http://127.0.0.1:12345/\r" }
+    timeout { puts stderr "URL prompt did not appear"; exit 1 }
+    eof { puts stderr "Installer exited before its URL prompt"; exit 1 }
+}
+expect -exact "API key"
+send -- "synthetic-bootstrap-key\r"
+expect -exact "Transport:"
+send -- "2\r"
+expect eof
+set result [wait]
+if {[lindex $result 3] != 0} { puts stderr "Bootstrap failed: $result"; exit 1 }
+set python [file join $env(ESCRIPTORIUM_INSTALL_DIR) .venv bin python]
+set version [exec $python -I -c {from importlib.metadata import version; print(version("escriptorium-mcp"))}]
+if {$version ne "0.18.0"} { error "Wrong installed version: $version" }
+exec [file join $env(ESCRIPTORIUM_INSTALL_DIR) bin escriptorium-mcp] --help
+puts "PASS: piped first install reads terminal prompts and installs real 0.18.0"
+spawn bash -c {cat "$BOOTSTRAP_TEST_SCRIPT" | sh -s -- 0.18.0}
+expect -exact "An installation already exists"
+expect eof
+set result [wait]
+if {[lindex $result 3] == 0} { error "Existing installation was not refused" }
+puts "PASS: first-install command refuses existing installation"
+file delete -force $temporary

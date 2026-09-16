@@ -1,0 +1,44 @@
+name: Installation scripts
+
+on:
+  push:
+    paths: [install.sh, install-skills.sh, install-skills.ps1, scripts/test_skills.sh, scripts/test_skills.ps1, scripts/test_install.exp, .github/workflows/installers.yml]
+  pull_request:
+    paths: [install.sh, install-skills.sh, install-skills.ps1, scripts/test_skills.sh, scripts/test_skills.ps1, scripts/test_install.exp, .github/workflows/installers.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shell-skills:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - run: sh -n install.sh && sh -n install-skills.sh && bash scripts/test_skills.sh
+  powershell-skills:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            shell: powershell
+          - os: windows-latest
+            shell: pwsh
+          - os: ubuntu-latest
+            shell: pwsh
+          - os: macos-latest
+            shell: pwsh
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - run: ./scripts/test_skills.ps1
+        shell: ${{ matrix.shell }}
+  server-bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - run: sudo apt-get update -qq && sudo apt-get install -y expect
+      - run: expect scripts/test_install.exp

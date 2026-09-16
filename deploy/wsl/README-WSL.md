@@ -1,5 +1,15 @@
 # eScriptorium MCP 0.18.0: WSL transfer bundle
 
+For a first installation directly from GitHub:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/penica/escriptorium-mcp/main/install.sh | sh
+```
+
+Run as your normal WSL user without sudo. The script verifies the release,
+installs uv if needed, and prompts for URL, hidden API key, transport and service.
+For client-side skills, see the [Windows/macOS/Linux skill commands](https://github.com/penica/escriptorium-mcp/blob/main/docs/INSTALLATION-SCRIPTS.md).
+
 Transfer `escriptorium-mcp-0.18.0-wsl.tar.gz` to the Windows computer, then extract it **inside WSL's Linux home directory**. The bundle includes the wheel, locked dependency hashes, installer, private configuration template, optional user service, full documentation and the agent skill. Internet access is needed for uv, Python and dependencies; this is not an offline installer. No API key is included.
 
 ## Upgrade directly from GitHub

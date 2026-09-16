@@ -2,6 +2,14 @@
 
 ## Deployment tooling — 2026-09-16
 
+Added `install.sh` for a piped first-time WSL/Linux installation, with terminal
+prompts and uv bootstrapping. Added `install-skills.sh` and `install-skills.ps1`
+for release-matched skill installation and updates on macOS/Linux and Windows.
+Skill updates include referenced guides, preserve previous copies outside scanned
+skill directories, retain a pre-existing legacy destination, and leave MCP
+connection settings untouched. These are standalone repository scripts; the
+published 0.18.0 package is unchanged.
+
 Added the standalone `update.sh` GitHub entry point for one-command updates of
 existing WSL/Linux HTTP user services. It finds the latest stable release (or an
 explicit version), verifies outer and inner checksums before stopping the service,

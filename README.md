@@ -2,6 +2,16 @@
 
 Version 0.18.0 exposes **175 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
 
+For a first installation on WSL/Linux, run without sudo:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/penica/escriptorium-mcp/main/install.sh | sh
+```
+
+For skill installation or updates on the Codex computer, use
+`install-skills.sh` on macOS/Linux or `install-skills.ps1` on Windows.
+See [one-command installation and skill setup](https://github.com/penica/escriptorium-mcp/blob/main/docs/INSTALLATION-SCRIPTS.md).
+
 To update an existing WSL/Linux HTTP user service, run as its owning Linux user
 (without sudo):
 
