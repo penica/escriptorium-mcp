@@ -21,6 +21,7 @@ jobs:
       - uses: astral-sh/setup-uv@v10.1.0
         with:
           enable-cache: true
+          cache-suffix: python-${{ matrix.python }}
       - name: Install server and legacy worker Python runtimes
         run: uv python install ${{ matrix.python }} 3.11
       - name: Install locked dependencies
