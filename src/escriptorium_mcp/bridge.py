@@ -100,6 +100,10 @@ async def call(request: BaseModel, *, timeout_seconds: float = 120) -> JsonValue
             "FileNotFoundError": "Source file or destination mount is unavailable.",
             "PermissionError": "File or NAS permissions prevent this operation.",
             "ArchiveError": "Acquisition stopped; check NAS and partial manifest.",
+            "PageOrderLookupError": (
+                "Page lookup did not return a page; check the document "
+                "and zero-based page order."
+            ),
         }
         msg = messages.get(
             failure.error_type,

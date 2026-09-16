@@ -17,6 +17,8 @@ from escriptorium_mcp.ontology_native import register_native
 from escriptorium_mcp.ontology_repair import register_repairs
 from escriptorium_mcp.ontology_restore import register_snapshots
 from escriptorium_mcp.ontology_tools import register_ontology
+from escriptorium_mcp.page_models import PageFilters
+from escriptorium_mcp.page_tools import list_filtered_pages, register_page_operations
 from escriptorium_mcp.record_tools import register_records
 from escriptorium_mcp.segmentation import register_segmentation
 from escriptorium_mcp.segmentation_bulk import register_segmentation_expansion
@@ -38,7 +40,7 @@ def create_server() -> MCPServer:
     """Build tools without making network calls or requiring credentials."""
     server = MCPServer(
         "eScriptorium",
-        version="0.10.0",
+        version="0.11.0",
         instructions=(
             "Use server primary keys, not page numbers. "
             "Write and processing tools change the remote instance. "
@@ -68,8 +70,12 @@ def create_server() -> MCPServer:
         return await call(Request(operation="get_document", document_id=document_id))
 
     @server.tool(annotations=READ)
-    async def list_pages(document_id: Identifier) -> JsonValue:
-        """List available scanned parts of a document."""
+    async def list_pages(
+        document_id: Identifier, filters: PageFilters | None = None
+    ) -> JsonValue:
+        """List pages, optionally filtering names/filenames and sorting server-side."""
+        if filters is not None:
+            return await list_filtered_pages(document_id, filters)
         return await call(Request(operation="list_pages", document_id=document_id))
 
     @server.tool(annotations=READ)
@@ -142,6 +148,7 @@ def create_server() -> MCPServer:
         )
 
     register_records(server)
+    register_page_operations(server)
     register_text(server)
     register_text_bulk(server)
     register_text_reads(server)

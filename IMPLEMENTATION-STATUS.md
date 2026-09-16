@@ -16,7 +16,8 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 2. **Released and verified:** Model management (0.7.0), six new tools and filtered model listing; 102 tools total. Contract evidence and API limits are recorded in docs/MODEL-API.md.
 3. **Released and verified:** Training and evaluation (0.8.0), optional tracked submissions and the new `get_training_report`; 103 tools total. API limits are recorded in docs/TRAINING-API.md.
 4. **Released and verified:** Transcriptions (0.9.0), eight new tools; 111 total.
-5. **Locally verified, publication pending:** Segmentation (0.10.0), eight new tools; 119 total. Modules 6–13 remain pending in roadmap order.
+5. **Released and verified:** Segmentation (0.10.0), eight new tools; 119 total.
+6. **Locally verified, GitHub regression pending:** Pages and image operations (0.11.0), five new tools; 124 total. Modules 7–13 remain pending in roadmap order.
 
 ## Baseline evidence
 - Initial public commit: 73f08eb (MCP 0.5.0, 89 tools).
@@ -87,14 +88,32 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 - [Compatibility run 35092809099](https://github.com/penica/escriptorium-mcp/actions/runs/35092809099) passed all six Windows/macOS/Linux and Python 3.11/3.13 jobs with zero annotations.
 - [GitHub release v0.9.0](https://github.com/penica/escriptorium-mcp/releases/tag/v0.9.0) published all four artifacts. Uploaded SHA-256 digests and sizes matched verified local files.
 
-### 0.10.0 — Segmentation (release validation)
+### 0.10.0 — Segmentation
 
 - Added eight tools for detailed line/region reads, native bulk line creation/update/deletion, merging, mask regeneration and automatic reading order; 119 tools total. Existing edits gain nullable geometry, external IDs, line order and supported region locking.
 - Scoped preflight verifies parent pages, complete line selections, page regions, document layers and assigned types. Mask-only lines are supported; edits must retain geometry. Explicit locking checks writable metadata and remains an editor preference, not access control.
 - Bulk update uses one PUT and reports possible partial application. Merge deletes original lines and does not preserve graphs, confidence or history. Masks return asynchronous acceptance without a task ID; automatic ordering returns synchronous page results.
 - Initial actual-STDIO regression failed with unknown `get_line`. Wire tests then caught unwanted JSON bodies for mask/order actions; corrected to bodyless POSTs before release.
-- All 72 focused segmentation tests passed in 110.20 seconds, covering actual STDIO and authenticated Streamable HTTP. All 42 existing mutation cases also passed with explicit new preflight expectations. Full regression: 391 tests passed in 519.89 seconds. GitHub CI/publication remain pending.
+- All 72 focused segmentation tests passed in 110.20 seconds, covering actual STDIO and authenticated Streamable HTTP. All 42 existing mutation cases also passed with explicit new preflight expectations. Full regression: 391 tests passed in 519.89 seconds.
 - Ruff lint/format, strict Basedpyright for source/tests/scripts, installer syntax and skill validation passed. Programming-rule checks passed for all 17 changed Python files. A broad audit also reports a pre-existing mutable `SnapshotAPI` test fixture in `tests/snapshot_fixture.py`; unrelated snapshot behavior was left unchanged.
 - Read-only live STDIO verified version 0.10.0, 119 tools, detailed line retrieval including text and region retrieval including the development API's locked field. No live geometry, text or jobs were changed.
 - Fresh 0.10 installation and real 0.9-to-0.10 upgrade passed in temporary paths with spaces, retaining URL/key/token/Books settings, configuration/backup 0600 permissions, command launcher and help. The isolated installed interpreter (`-I`) exercised two-row bulk updates, queued masks with a bodyless selected request, merge replacement/deletion and invalid selection rejection.
-- Artifacts passed 20 inner checksums, the outer checksum, normalized ownership and private-file exclusion. Final distributions are rebuilt after this ledger update; the wheel must match the isolated installed QA hash. No service was installed or changed; actual WSL/systemd execution remains deployment verification.
+- Artifacts passed 20 inner checksums, the outer checksum, normalized ownership and private-file exclusion. The final wheel matched the isolated installed QA hash; rebuilt archives passed all content and checksum checks. No service was installed or changed; actual WSL/systemd execution remains deployment verification.
+
+- Public commit: `7c0c3db5638ee9925cdfa2e7f93e2ccf3f00922b`.
+- [Compatibility run 35095940176](https://github.com/penica/escriptorium-mcp/actions/runs/35095940176) passed all six Windows/macOS/Linux and Python 3.11/3.13 jobs with zero annotations.
+- [GitHub release v0.10.0](https://github.com/penica/escriptorium-mcp/releases/tag/v0.10.0) published all four artifacts. Uploaded SHA-256 digests and sizes matched verified local files.
+
+### 0.11.0 — Pages and image operations (release validation)
+
+- Added five tools for zero-based page-order lookup, rotation, cropping, bulk moves and explicit image replacement; 124 tools total. Page listing gains name/original-filename substring filtering and supported ordering. Metadata gains original filename and stored confidence summary with native limits/null semantics and document type checks.
+- Read-only endpoint and field audit completed; public source pinned to `5f17889fe571d8fa25feb5deebec4221d9485d32`. The exact deployed commit remains unverified.
+- Lookup follows only one same-origin/same-document redirect inside the configured API prefix and verifies the returned page identity. Native 200 error objects become lookup errors. Page pagination rejects foreign origins, redirects and loops, preserves the existing unfiltered envelope and retains newer page/region fields.
+- Crop/rotation use scoped preflight and one request with partial-effect error context. Crop is bounded to current image dimensions; rotation uses nonzero integer degrees. Source-backed documentation states pixel loss, unmodified character graphs, crop annotation/thumbnail limits and unclipped outside geometry. Bulk moves verify all IDs and preserve existing relative-order semantics.
+- Explicit replacement sends the actual file bytes and computed size. Upload's duplicate-filename replacement behavior is now documented and its MCP annotation corrected to potentially destructive/non-idempotent.
+- Initial actual-STDIO test failed with unknown lookup tool. A later failing identity-mismatch case added the redirect-result PK guard. Existing 42 mutation tests passed in 59.16 seconds, and three existing STDIO/retry/catalogue checks passed. All 95 new cases passed together in 74.02 seconds. The full 486-test regression suite runs in all six GitHub platform/Python jobs before publication.
+- Read-only live STDIO confirmed version 0.11.0, 124 tools, order-zero lookup, descending page order, empty name search and correct handling of native 200 out-of-bounds errors. No live images, geometry, text or jobs were changed.
+- Fresh 0.11 installation and real 0.10-to-0.11 upgrade passed in temporary paths with spaces, retaining URL/key/token/Books settings, 0600 config/backup permissions and command launcher/help. The isolated installed interpreter (`-I`) exercised lookup, full paginated filtering, rotation/crop one-write status, invalid crop rejection, bulk relative order and exact multipart replacement bytes/size against fixtures.
+- Packages passed 21 inner checksums, the outer checksum, normalized ownership, private-file exclusion and bundled worker byte equivalence. Final packages are rebuilt after this ledger update; the wheel must match the installer-tested hash. No systemd service was touched; actual WSL/service execution remains deployment verification.
+
+- Ruff lint/format, strict Basedpyright for source/tests/scripts, shell syntax and skill validation passed. Changed production/worker/release files passed the programming-rule audit. Local scope deliberately avoids duplicating the full cross-platform CI regression before its exact-commit run.

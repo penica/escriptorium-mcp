@@ -1,13 +1,13 @@
 # eScriptorium MCP server
 
-Version 0.10.0 exposes **119 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
+Version 0.11.0 exposes **124 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
 
 ## Capabilities
 
 | Area | Available operations |
 |---|---|
 | Projects and documents | Browse; create; rename; move a document between project slugs; delete |
-| Pages | Upload an image; import PDF/image archives; edit metadata; reorder within a document; delete |
+| Pages | Filter/read/order lookup; upload/replace images; rotate/crop; metadata; single/bulk moves; delete |
 | Transcriptions | Create/rename/delete layers; write/correct/delete line text |
 | Segmentation | Read/edit lines and regions; bulk line operations and merging; masks and reading order; supported region locking |
 | Ontology and annotations | Manage types, components and taxonomies; edit image/text annotation instances; preview repairs/merges; portable schema snapshots; capability-gated native ontology files and project templates |
@@ -48,7 +48,7 @@ For a standalone installation, from this directory:
 uv tool install --python 3.11 .
 ```
 
-Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.10.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
+Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.11.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
 
 ## Credentials and paths
 
@@ -82,7 +82,7 @@ The supplied key remains in the ignored checkout `.env`; package and client exam
 
 ## Transport choice (checked 16 September 2026)
 
-**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 119 tools in either transport.
+**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 124 tools in either transport.
 
 STDIO is the default and needs no listening port. To run HTTP, first generate a separate service token:
 
@@ -158,6 +158,18 @@ Use `get_line_transcription` for a text record and `get_transcription` / `update
 Bulk clear only blanks content. It retains rows, graphs, confidence and existing history, and creates no history revision. Individual line-transcription deletion removes a row. The existing `delete_transcription` tool archives/renames a layer and retains its text; the default manual layer is protected.
 
 `get_transcription_statistics` returns nonempty-line count and stored-character frequencies. Sum frequencies for the stored-character total; stored markup is included, and server results can be cached for one hour. `find_transcription_pages_by_character` locates pages by one Unicode code point on newer servers. Permission failures remain errors; an absent or hidden endpoint is not interpreted as an empty result. See [docs/TRANSCRIPTION-API.md](docs/TRANSCRIPTION-API.md).
+
+## Pages and images (0.11.0)
+
+`list_pages` accepts optional name and ordering filters. Name searches both page names and original filenames. `get_page_by_order` uses a zero-based position and safely follows the native page-detail redirect; page order and page ID are different values. Native extra page/region fields remain available.
+
+`rotate_page` accepts a nonzero integer angle from -359 to 359; positive is clockwise. `crop_page` takes integer corners within the current image bounds. Both perform synchronous image work and can partially change files/rows before failing. Re-read after errors instead of retrying blindly.
+
+Cropping overwrites the image. It translates line/region geometry without clipping it, leaves image annotations and character graphs unchanged, and does not refresh thumbnails. Rotation transforms line/region/image-annotation geometry but also leaves character graphs unchanged. Neither operation promises complete preservation of every coordinate-based annotation.
+
+`bulk_move_pages` verifies all selected page IDs. The server retains their existing relative order; `move.index: -1` appends, and other indexes refer to the original page order. `update_page` adds original filename and stored confidence-summary metadata, with document typology checks.
+
+`replace_page_image` targets an existing page and records uploaded bytes. It retains segmentation/text without resizing their coordinates and does not run upload's thumbnail/conversion hooks. Ordinary `upload_page` can replace a page with the same original filename. See [docs/PAGES-API.md](docs/PAGES-API.md) for full contracts and limitations.
 
 ## Segmentation (0.10.0)
 

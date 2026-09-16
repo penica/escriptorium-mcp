@@ -3,8 +3,9 @@
 from mcp.server import MCPServer
 from pydantic import JsonValue
 
-from escriptorium_mcp.api import CHANGE, CREATE, DELETE, READ, ApiRequest, invoke
+from escriptorium_mcp.api import CHANGE, CREATE, DELETE, JOB, READ, ApiRequest, invoke
 from escriptorium_mcp.bridge import Identifier, Name, call
+from escriptorium_mcp.page_scope import require_part_type
 from escriptorium_mcp.record_models import (
     DocumentCreate,
     DocumentPatch,
@@ -13,6 +14,7 @@ from escriptorium_mcp.record_models import (
     PageUpload,
     Rename,
 )
+from escriptorium_mcp.text_scope import require_page
 
 
 def register_records(server: MCPServer) -> None:
@@ -40,9 +42,13 @@ def register_records(server: MCPServer) -> None:
         """Rename a project while preserving its sharing settings."""
         return await invoke("PATCH", f"projects/{project_id}/", Rename(name=name))
 
-    @server.tool(annotations=CREATE)
+    @server.tool(annotations=JOB)
     async def upload_page(document_id: Identifier, image: PageUpload) -> JsonValue:
-        """Upload one local image into a document; conversion may run asynchronously."""
+        """Upload an image; a matching original filename can replace an existing page.
+
+        Generates a card thumbnail and queues conversion. Use a unique filename
+        when a new page is required; do not assume every upload creates a page.
+        """
         metadata = PageMetadata(name=image.name, source=image.source)
         return await call(
             ApiRequest(
@@ -60,10 +66,16 @@ def register_records(server: MCPServer) -> None:
         page_id: Identifier,
         changes: PagePatch,
     ) -> JsonValue:
-        """Rename a page or edit its source, comments and typology."""
-        return await invoke(
-            "PATCH", f"documents/{document_id}/parts/{page_id}/", changes
-        )
+        """Edit page metadata, including document-enabled typology.
+
+        original_filename changes stored metadata, not the image path.
+        max_avg_confidence is a stored summary, not a confidence computation.
+        Image replacement and ordering use their separate tools.
+        """
+        route = await require_page(document_id, page_id)
+        if changes.typology is not None:
+            await require_part_type(document_id, changes.typology)
+        return await invoke("PATCH", route, changes)
 
     @server.tool(annotations=DELETE)
     async def delete_document(document_id: Identifier) -> JsonValue:

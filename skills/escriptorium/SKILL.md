@@ -14,6 +14,18 @@ Use the connected `escriptorium` MCP tools. Read their current input schemas ins
 - Creating or moving a document uses a project **slug**; choosing its writing system uses a script **name** from `list_scripts`.
 - `move_page` uses a **zero-based index**. Line ordering is separate from page ordering.
 
+## Pages and images
+
+Use `list_pages` filters for name/original-filename substring search and supported sort fields. `get_page_by_order` takes a zero-based position and returns a page record; use its primary key for subsequent edits. Page-order lookup errors do not mean an empty document.
+
+`bulk_move_pages` takes `move.page_ids` and `move.index`. Every page must belong to the document. Selected pages retain current relative order, regardless of caller ID order. Index refers to the original order; -1 appends. Pause concurrent page moves because preflight is not a lock.
+
+`rotate_page` accepts nonzero integer angles from -359 to 359; positive rotates clockwise. `crop_page` takes in-bounds integer corners. Cropping overwrites discarded pixels and translates line/region geometry without clipping it. It leaves image annotations and character graphs unchanged and does not refresh thumbnails. Rotation transforms image annotations but leaves character graphs unchanged. These operations can partially apply on failure; inspect before retrying, and do not report a queued thumbnail as complete.
+
+`replace_page_image` explicitly targets an existing page, preserving segmentation/text without resizing coordinates or running upload's thumbnail/conversion hooks. Ordinary `upload_page` can replace an existing image with the same original filename. Ensure destructive image changes are within the user's authorized scope; read/export authorization alone does not cover them. Local image paths belong to the MCP host.
+
+Page metadata accepts original filename and stored confidence summary. A filename metadata edit does not rename the actual image file, and changing a summary does not recompute confidence. Use the returned document-assigned typology IDs.
+
 ## Correct text and geometry
 
 Read the relevant page's lines and transcription records before writing corrections. `create_line_transcription` takes a segmented line ID and a layer ID. `update_line_transcription` and `delete_line_transcription` take the **line transcription record ID**, which is different from the line ID.

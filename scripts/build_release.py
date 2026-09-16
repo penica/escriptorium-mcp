@@ -44,6 +44,7 @@ BUNDLE_FILES: Final = (
     "docs/TRAINING-API.md",
     "docs/TRANSCRIPTION-API.md",
     "docs/SEGMENTATION-API.md",
+    "docs/PAGES-API.md",
     "docs/RELEASING.md",
     "skills/escriptorium/SKILL.md",
     "skills/escriptorium/agents/openai.yaml",

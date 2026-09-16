@@ -59,6 +59,7 @@ RECORD_CASES: Final = (
         "documents/7/parts/11/",
         "PATCH",
         {"name": "Folio 1", "typology": None},
+        preflight=(("GET", "/api/documents/7/parts/11/"),),
     ),
     Case(
         "create_line_transcription",

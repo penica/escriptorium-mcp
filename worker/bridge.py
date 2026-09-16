@@ -20,7 +20,7 @@ from exports import (
     export_transcriptions,
 )
 from ontology_native import NativeRequest, execute_native
-from pages import read_pages, read_regions
+from pages import PagesByOrderRequest, read_page_by_order, read_pages, read_regions
 from pydantic import BaseModel, ValidationError
 from pydantic.json import pydantic_encoder
 from requests.exceptions import RequestException
@@ -109,6 +109,7 @@ class Envelope(BaseModel):
             "export_transcriptions",
             "download_export",
             "ontology_native",
+            "page_by_order",
         ]
     )
 
@@ -116,16 +117,18 @@ class Envelope(BaseModel):
 def dispatch(client: EscriptoriumConnector, raw: str) -> str:
     """Parse a request using its operation-specific model."""
     match Envelope.parse_raw(raw).operation:
+        case "page_by_order":
+            result = read_page_by_order(client, PagesByOrderRequest.parse_raw(raw))
         case "ontology_native":
-            return execute_native(client, NativeRequest.parse_raw(raw))
+            result = execute_native(client, NativeRequest.parse_raw(raw))
         case "api":
-            return execute_api(client, ApiRequest.parse_raw(raw))
+            result = execute_api(client, ApiRequest.parse_raw(raw))
         case "download_register":
-            return download_register(client, ArchiveRequest.parse_raw(raw))
+            result = download_register(client, ArchiveRequest.parse_raw(raw))
         case "export_transcriptions":
-            return export_transcriptions(client, ExportRequest.parse_raw(raw))
+            result = export_transcriptions(client, ExportRequest.parse_raw(raw))
         case "download_export":
-            return download_export(client, DownloadRequest.parse_raw(raw))
+            result = download_export(client, DownloadRequest.parse_raw(raw))
         case (
             "list_projects"
             | "get_project"
@@ -140,9 +143,10 @@ def dispatch(client: EscriptoriumConnector, raw: str) -> str:
             | "create_project"
             | "create_transcription"
         ):
-            return execute(client, Request.parse_raw(raw))
+            result = execute(client, Request.parse_raw(raw))
         case unreachable:
             assert_never(unreachable)
+    return result
 
 
 def main() -> None:

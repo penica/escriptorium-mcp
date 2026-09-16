@@ -160,19 +160,78 @@
   {
     "name": "list_pages",
     "title": null,
-    "description": "List available scanned parts of a document.",
+    "description": "List pages, optionally filtering names/filenames and sorting server-side.",
     "inputSchema": {
       "properties": {
         "document_id": {
           "exclusiveMinimum": 0,
           "title": "Document Id",
           "type": "integer"
+        },
+        "filters": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PageFilters"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
         "document_id"
       ],
       "type": "object",
+      "$defs": {
+        "PageFilters": {
+          "additionalProperties": false,
+          "description": "Native name/filename substring search and ordered sort fields.",
+          "properties": {
+            "name": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Name"
+            },
+            "ordering": {
+              "anyOf": [
+                {
+                  "items": {
+                    "enum": [
+                      "order",
+                      "-order",
+                      "name",
+                      "-name",
+                      "original_filename",
+                      "-original_filename",
+                      "updated_at",
+                      "-updated_at"
+                    ],
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Ordering"
+            }
+          },
+          "title": "PageFilters",
+          "type": "object"
+        }
+      },
       "title": "list_pagesArguments"
     },
     "execution": null,
@@ -879,7 +938,7 @@
   {
     "name": "upload_page",
     "title": null,
-    "description": "Upload one local image into a document; conversion may run asynchronously.",
+    "description": "Upload an image; a matching original filename can replace an existing page.\n\n        Generates a card thumbnail and queues conversion. Use a unique filename\n        when a new page is required; do not assume every upload creates a page.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -908,11 +967,13 @@
             },
             "name": {
               "default": "",
+              "maxLength": 512,
               "title": "Name",
               "type": "string"
             },
             "source": {
               "default": "",
+              "maxLength": 1024,
               "title": "Source",
               "type": "string"
             }
@@ -946,7 +1007,7 @@
     "annotations": {
       "title": null,
       "readOnlyHint": false,
-      "destructiveHint": false,
+      "destructiveHint": true,
       "idempotentHint": false,
       "openWorldHint": null
     },
@@ -955,7 +1016,7 @@
   {
     "name": "update_page",
     "title": null,
-    "description": "Rename a page or edit its source, comments and typology.",
+    "description": "Edit page metadata, including document-enabled typology.\n\n        original_filename changes stored metadata, not the image path.\n        max_avg_confidence is a stored summary, not a confidence computation.\n        Image replacement and ordering use their separate tools.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -986,6 +1047,7 @@
             "name": {
               "anyOf": [
                 {
+                  "maxLength": 512,
                   "type": "string"
                 },
                 {
@@ -998,6 +1060,7 @@
             "source": {
               "anyOf": [
                 {
+                  "maxLength": 1024,
                   "type": "string"
                 },
                 {
@@ -1031,6 +1094,31 @@
               ],
               "default": null,
               "title": "Typology"
+            },
+            "original_filename": {
+              "anyOf": [
+                {
+                  "maxLength": 1024,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Original Filename"
+            },
+            "max_avg_confidence": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Max Avg Confidence"
             }
           },
           "title": "PagePatch",
@@ -1199,6 +1287,335 @@
       "readOnlyHint": false,
       "destructiveHint": true,
       "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_page_by_order",
+    "title": null,
+    "description": "Read a page by zero-based order, distinct from its page ID.\n\n        Follows only one same-origin redirect to this document's page detail.\n        Missing/out-of-bounds order and unexpected redirect targets are errors.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "order": {
+          "minimum": 0,
+          "title": "Order",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id",
+        "order"
+      ],
+      "type": "object",
+      "title": "get_page_by_orderArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_page_by_orderOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "rotate_page",
+    "title": null,
+    "description": "Rotate clockwise by a nonzero integer from -359 through 359 degrees.\n\n        Expands the canvas and transforms lines, regions and image annotations;\n        transcription character graphs stay unchanged. Returns synchronous done,\n        not a job ID; remaining thumbnails may still be queued. Files/rows can\n        change partially on failure: inspect before retrying. Never auto-retries.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        },
+        "angle": {
+          "maximum": 359,
+          "minimum": -359,
+          "title": "Angle",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id",
+        "angle"
+      ],
+      "type": "object",
+      "title": "rotate_pageArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "rotate_pageOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "crop_page",
+    "title": null,
+    "description": "Destructively crop within current image bounds using integer corners.\n\n        Overwrites the image and translates line/region geometry without clipping\n        outside coordinates. Image annotations and character graphs are unchanged.\n        Does not refresh thumbnails, file size or reading order. Returns native\n        done, without a job ID. Failures can leave partial changes; inspect before\n        retrying. No automatic retry or recovery of discarded pixels is provided.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        },
+        "box": {
+          "$ref": "#/$defs/CropBox"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id",
+        "box"
+      ],
+      "type": "object",
+      "$defs": {
+        "CropBox": {
+          "additionalProperties": false,
+          "description": "Integer corners in the current image, with a strictly positive area.",
+          "properties": {
+            "x1": {
+              "minimum": 0,
+              "title": "X1",
+              "type": "integer"
+            },
+            "y1": {
+              "minimum": 0,
+              "title": "Y1",
+              "type": "integer"
+            },
+            "x2": {
+              "minimum": 0,
+              "title": "X2",
+              "type": "integer"
+            },
+            "y2": {
+              "minimum": 0,
+              "title": "Y2",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "x1",
+            "y1",
+            "x2",
+            "y2"
+          ],
+          "title": "CropBox",
+          "type": "object"
+        }
+      },
+      "title": "crop_pageArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "crop_pageOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "bulk_move_pages",
+    "title": null,
+    "description": "Move a complete page selection at an original-order insertion index.\n\n        Index -1 appends; otherwise use 0 through the current page count. Selected\n        pages retain their current relative order, irrespective of supplied ID\n        order. Preflight checks every ID but does not lock concurrent edits.\n        Returns the native moved status; no updated list or job ID is invented.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "move": {
+          "$ref": "#/$defs/BulkPageMove"
+        }
+      },
+      "required": [
+        "document_id",
+        "move"
+      ],
+      "type": "object",
+      "$defs": {
+        "BulkPageMove": {
+          "additionalProperties": false,
+          "description": "A complete distinct selection and insertion position; -1 appends.",
+          "properties": {
+            "page_ids": {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "minItems": 1,
+              "title": "Page Ids",
+              "type": "array"
+            },
+            "index": {
+              "minimum": -1,
+              "title": "Index",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "page_ids",
+            "index"
+          ],
+          "title": "BulkPageMove",
+          "type": "object"
+        }
+      },
+      "title": "bulk_move_pagesArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "bulk_move_pagesOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "replace_page_image",
+    "title": null,
+    "description": "Replace a page image from an existing file on the MCP server machine.\n\n        Sends multipart image plus its measured byte count. Existing geometry and\n        text are not resized or reprojected. PATCH does not run upload conversion,\n        thumbnail or duplicate-filename hooks. Arbitrary image_file_size edits are\n        not exposed; original_filename can be changed separately with update_page.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        },
+        "image_path": {
+          "format": "file-path",
+          "title": "Image Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id",
+        "image_path"
+      ],
+      "type": "object",
+      "title": "replace_page_imageArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "replace_page_imageOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
       "openWorldHint": null
     },
     "_meta": null

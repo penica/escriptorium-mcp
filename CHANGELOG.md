@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.11.0 — 2026-09-16
+
+### Module 6: Pages and image operations
+
+Added five tools, bringing the catalogue to 124: page lookup by zero-based order,
+rotation, cropping, bulk page moves and explicit image replacement. Page listing
+adds server-side name/original-filename substring filtering and ordering. Page
+metadata adds original_filename and max_avg_confidence with native null/length
+constraints and document-assigned typology checks.
+
+Lookup permits one validated same-origin, same-document redirect and treats native
+200 error objects as failed lookups. Page pagination rejects foreign origins,
+redirects and loops while preserving the existing unfiltered result shape and
+new native fields. Generic REST redirects remain refused.
+
+Image operations check current page scope/bounds and send one native mutation.
+Rotation accepts nonzero integer angles from -359 through 359. Crop requires an
+in-bounds integer rectangle. Partial failures are reported without automatic retry.
+Crop overwrites pixels and leaves annotations/character graphs unchanged; rotation
+transforms image annotations but leaves character graphs. These limits and native
+thumbnail behavior are documented, without inventing corrective background jobs.
+
+Bulk moves reject incomplete or duplicate selections and preserve native relative
+ordering/index semantics. Image replacement records real uploaded byte size and
+keeps existing text/geometry without reprojection. Upload documentation now states
+that a matching original filename may replace an existing page; its MCP annotation
+now correctly marks upload as potentially destructive and non-idempotent.
+
+Version, installer, catalogue/schema, skill and contract documentation are updated.
+See [docs/PAGES-API.md](docs/PAGES-API.md) for pinned upstream evidence and limits.
+No live images or running service are changed during release verification.
+
+
 ## 0.10.0 — 2026-09-16
 
 ### Module 5: Segmentation

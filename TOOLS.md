@@ -1,6 +1,6 @@
 # eScriptorium MCP tools
 
-Version 0.10.0: 119 tools.
+Version 0.11.0: 124 tools.
 
 | Tool | Description |
 |---|---|
@@ -8,7 +8,7 @@ Version 0.10.0: 119 tools.
 | `get_project` | Read project metadata by primary key. |
 | `list_documents` | List all accessible documents; follows the connector's pagination. |
 | `get_document` | Read document metadata and its available transcription layers. |
-| `list_pages` | List available scanned parts of a document. |
+| `list_pages` | List pages, optionally filtering names/filenames and sorting server-side. |
 | `get_page` | Read a page's metadata, image references and processing state. |
 | `list_lines` | Read segmented lines for a page. |
 | `list_regions` | Read segmented regions for a page. |
@@ -20,11 +20,16 @@ Version 0.10.0: 119 tools.
 | `create_document` | Create an empty document; project is a slug, main_script a script name. |
 | `update_document` | Rename a document, move it to another project slug, or change metadata. |
 | `rename_project` | Rename a project while preserving its sharing settings. |
-| `upload_page` | Upload one local image into a document; conversion may run asynchronously. |
-| `update_page` | Rename a page or edit its source, comments and typology. |
+| `upload_page` | Upload an image; a matching original filename can replace an existing page. Generates a card thumbnail and queues conversion. Use a unique filename when a new page is required; do not assume every upload creates a page. |
+| `update_page` | Edit page metadata, including document-enabled typology. original_filename changes stored metadata, not the image path. max_avg_confidence is a stored summary, not a confidence computation. Image replacement and ordering use their separate tools. |
 | `delete_document` | Permanently delete a document, its pages and transcriptions. |
 | `delete_project` | Delete a project; its documents may also be removed by the server. |
 | `delete_page` | Delete a page and its segmentation and transcriptions. |
+| `get_page_by_order` | Read a page by zero-based order, distinct from its page ID. Follows only one same-origin redirect to this document's page detail. Missing/out-of-bounds order and unexpected redirect targets are errors. |
+| `rotate_page` | Rotate clockwise by a nonzero integer from -359 through 359 degrees. Expands the canvas and transforms lines, regions and image annotations; transcription character graphs stay unchanged. Returns synchronous done, not a job ID; remaining thumbnails may still be queued. Files/rows can change partially on failure: inspect before retrying. Never auto-retries. |
+| `crop_page` | Destructively crop within current image bounds using integer corners. Overwrites the image and translates line/region geometry without clipping outside coordinates. Image annotations and character graphs are unchanged. Does not refresh thumbnails, file size or reading order. Returns native done, without a job ID. Failures can leave partial changes; inspect before retrying. No automatic retry or recovery of discarded pixels is provided. |
+| `bulk_move_pages` | Move a complete page selection at an original-order insertion index. Index -1 appends; otherwise use 0 through the current page count. Selected pages retain their current relative order, irrespective of supplied ID order. Preflight checks every ID but does not lock concurrent edits. Returns the native moved status; no updated list or job ID is invented. |
+| `replace_page_image` | Replace a page image from an existing file on the MCP server machine. Sends multipart image plus its measured byte count. Existing geometry and text are not resized or reprojected. PATCH does not run upload conversion, thumbnail or duplicate-filename hooks. Arbitrary image_file_size edits are not exposed; original_filename can be changed separately with update_page. |
 | `create_line_transcription` | Write text for an existing segmented line in a transcription layer. |
 | `update_line_transcription` | Edit a text record by its PK; changed line/layer links must stay in scope. |
 | `get_line_transcription` | Read one text record, including graphs, confidence and available history. |
