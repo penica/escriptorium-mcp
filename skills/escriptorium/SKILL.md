@@ -68,6 +68,14 @@ Apply changes within the user's authorized scope. Existing authorization carries
 - `list_tasks` supports document/group/date ordering and local state/exact-method filters. `get_import_status` reads import task history and messages, optionally within a caller-selected `group_id`; it cannot provide native import processed/total counts. Import `track=true` also returns only unconfirmed candidates. No visible reports does not prove no import exists. Check finished reports for skipped-file warnings and separately queued image conversion.
 - Prefer dedicated page, model or `cancel_document_import` actions for their respective jobs. **`cancel_task` has document-wide side effects:** even when given one report ID, the server also marks all document training models and imports canceled. `cancel_document_tasks` explicitly cancels all queued/running document work. The import action targets the latest import, not an arbitrary report; it does not roll back pages and may miss queued work before report attachment. If a submission times out, inspect remote state before retrying: the original write may already have succeeded.
 
+## Virtual collections
+
+Use collection tools for reusable page/layer selections spanning documents. A collection uses `id`, while source pages/layers use `pk`. Each member supplies `document_id`, `page_id` and `transcription_id`; every reference must be readable within that document. Updating `items` replaces all members, `[]` clears them and omission preserves them. `default_transcriptions` maps document IDs as strings to layer IDs and does not supply missing training membership. Deleting a collection preserves source pages/text but removes its grouping; it does not cancel queued work.
+
+`train_collection_recognizer` needs at least one page; `train_collection_segmenter` needs two distinct pages. Both accept a starting model and/or name plus override. Overwrite requires an owned idle model; a supplied name does not rename it. Membership is read when the server executes training, so keep selections stable while queued. D-FINE finetuning is unsupported upstream and its failure path can delete the target model, including an overwrite target; do not use this flow for D-FINE.
+
+Acceptance can include a confirmed `model_id`, but no task/group ID. Use `get_training_report` and `list_model_versions` for that model. The audited server has no collection task-group route; do not pass a collection ID as a document ID or invent task attribution. Collection writes and submissions can partially apply; inspect before retrying.
+
 ## Manage model files
 
 - Filter `list_models` by document/job and inspect `get_model` before editing. `update_model` accepts name, numeric job or storage-size metadata; omit unchanged fields and do not pass nulls. Changing job metadata does not convert weights.

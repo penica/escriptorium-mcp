@@ -9,6 +9,8 @@ from pydantic import JsonValue
 from escriptorium_mcp.annotation_tools import register_annotations
 from escriptorium_mcp.api import ApiRequest, invoke
 from escriptorium_mcp.bridge import Identifier, Name, Request, call
+from escriptorium_mcp.collection_tools import register_collections
+from escriptorium_mcp.collection_training import register_collection_training
 from escriptorium_mcp.download_tools import register_downloads
 from escriptorium_mcp.file_tools import register_files
 from escriptorium_mcp.import_tools import register_imports
@@ -52,7 +54,7 @@ def create_server() -> MCPServer:
     """Build tools without making network calls or requiring credentials."""
     server = MCPServer(
         "eScriptorium",
-        version="0.14.0",
+        version="0.15.0",
         instructions=(
             "Use server primary keys, not page numbers. "
             "Write and processing tools change the remote instance. "
@@ -183,6 +185,8 @@ def _register_extensions(server: MCPServer) -> None:
         register_record_expansion,
         register_metadata,
         register_tags,
+        register_collections,
+        register_collection_training,
         register_page_operations,
         register_text,
         register_text_bulk,

@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.15.0 — 2026-09-16
+
+### Module 10: Virtual collections
+
+Added eight collection tools, bringing the catalogue to 152: owned collection
+listing/detail/creation/update/deletion, complete membership reads, recognition
+training and segmentation training across documents. Typed memberships validate
+each page and layer in its supplied document. Default transcription preferences
+remain separate from membership. Omitted selections are preserved; empty arrays
+or maps explicitly clear them. No per-item delta operation is invented.
+
+Collection pagination follows every page within the original route, rejects
+redirects and unsafe next links, and preserves native response fields. These
+strict transport checks are opt-in, preserving existing worker requests.
+
+Training validates all current members, model identity/job and owned idle
+overwrite targets. Recognition requires one page; segmentation requires two.
+Native acceptance and model IDs are preserved without inventing task-group links
+or completion. Membership is resolved again at execution time. Partial-write and
+uncertain-submission errors never cause an automatic mutation retry.
+
+The collection guide explains native non-atomic writes, deletion scope, model
+clone/overwrite behavior, missing collection task-group routes and unsupported
+D-FINE finetuning. Version, installer, bundled skill and catalogue/schema are
+updated together. Live checks remain read-only; mutations use isolated fixtures.
+
 ## 0.14.0 — 2026-09-16
 
 ### Module 9: Projects, documents and metadata

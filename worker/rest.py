@@ -1,6 +1,7 @@
 """Additional REST actions through the connector's authenticated HTTP session."""
 
 import json
+from http import HTTPStatus
 from pathlib import Path
 from typing import Literal
 from urllib.parse import urljoin, urlsplit
@@ -15,12 +16,13 @@ class ApiRequest(BaseModel):
     operation: Literal["api"]
     method: Literal["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
     route: str = Field(
-        regex=r"^(documents|projects|models|scripts|tasks|types|tags)/[a-z0-9_/]*$"
+        regex=r"^(documents|projects|models|scripts|tasks|types|tags|collections)/[a-z0-9_/]*$"
     )
     body_json: str = "{}"
     file_path: Path | None = None
     file_field: Literal["image", "file", "upload_file"] = "image"
     paginate: bool = False
+    strict_pagination: bool = False
     query: dict[str, str] = Field(default_factory=dict)
 
     class Config:
@@ -37,6 +39,28 @@ def same_origin(client: EscriptoriumConnector, url: str) -> str:
     actual = urlsplit(absolute)
     if (actual.scheme, actual.netloc) != (expected.scheme, expected.netloc):
         msg = "Cross-origin authenticated URL refused."
+        raise ValueError(msg)
+    return absolute
+
+
+def scoped_next_url(
+    client: EscriptoriumConnector, initial_url: str, next_url: str
+) -> str:
+    """Keep strict pagination inside the original authenticated collection route."""
+    supplied = urlsplit(next_url)
+    absolute = same_origin(client, urljoin(initial_url, next_url))
+    parsed = urlsplit(absolute)
+    if (
+        any(char <= " " for char in next_url)
+        or "\\" in next_url
+        or "#" in next_url
+        or "%" in supplied.path
+        or any(segment in {".", ".."} for segment in supplied.path.split("/"))
+        or parsed.username is not None
+        or parsed.password is not None
+        or parsed.path != urlsplit(initial_url).path
+    ):
+        msg = "Pagination leaves the original collection route."
         raise ValueError(msg)
     return absolute
 
@@ -67,9 +91,14 @@ def execute_api(client: EscriptoriumConnector, request: ApiRequest) -> str:
             params=request.query,
             allow_redirects=False,
         )
-    if response.is_redirect:
+    if response.is_redirect or (
+        request.strict_pagination
+        and HTTPStatus.MULTIPLE_CHOICES <= response.status_code < HTTPStatus.BAD_REQUEST
+    ):
         msg = "Unexpected API redirect."
         raise ValueError(msg)
+    if request.strict_pagination:
+        response.raise_for_status()
     if not response.content:
         return json.dumps({"status": "success", "http_status": response.status_code})
     if request.paginate:
@@ -77,14 +106,26 @@ def execute_api(client: EscriptoriumConnector, request: ApiRequest) -> str:
         if isinstance(data, list):
             return json.dumps(data, ensure_ascii=False)
         next_url = data.get("next")
-        visited = {url}
+        visited = {response.url} if request.strict_pagination else {url}
         while next_url:
-            absolute = same_origin(client, next_url)
+            absolute = (
+                scoped_next_url(client, url, next_url)
+                if request.strict_pagination
+                else same_origin(client, next_url)
+            )
             if absolute in visited:
                 msg = "Pagination loop detected."
                 raise ValueError(msg)
             visited.add(absolute)
             following = client.http.get(absolute, allow_redirects=False)
+            if (
+                request.strict_pagination
+                and HTTPStatus.MULTIPLE_CHOICES
+                <= following.status_code
+                < HTTPStatus.BAD_REQUEST
+            ):
+                msg = "Unexpected pagination redirect."
+                raise ValueError(msg)
             following.raise_for_status()
             page = following.json()
             data["results"].extend(page["results"])

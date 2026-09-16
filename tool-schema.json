@@ -3244,6 +3244,612 @@
     "_meta": null
   },
   {
+    "name": "list_collections",
+    "title": null,
+    "description": "List all collections owned by the current user, with full pagination.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object",
+      "title": "list_collectionsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_collectionsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_collection",
+    "title": null,
+    "description": "Read owned collection metadata; default layers are not membership.",
+    "inputSchema": {
+      "properties": {
+        "collection_id": {
+          "exclusiveMinimum": 0,
+          "title": "Collection Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "collection_id"
+      ],
+      "type": "object",
+      "title": "get_collectionArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_collectionOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "create_collection",
+    "title": null,
+    "description": "Create an owned collection and optionally its initial page/layer pairs.\n\n        Default transcriptions are UI selections and do not add/change members.\n        The native operation is not atomic: failure may leave partial records.\n        ",
+    "inputSchema": {
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/CollectionCreate"
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "type": "object",
+      "$defs": {
+        "CollectionCreate": {
+          "additionalProperties": false,
+          "description": "Create a named collection with optional defaults and initial members.",
+          "properties": {
+            "default_transcriptions": {
+              "anyOf": [
+                {
+                  "patternProperties": {
+                    "^[1-9][0-9]*$": {
+                      "exclusiveMinimum": 0,
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Default Transcriptions"
+            },
+            "items": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/$defs/CollectionMember"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Items"
+            },
+            "name": {
+              "maxLength": 512,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "title": "CollectionCreate",
+          "type": "object"
+        },
+        "CollectionMember": {
+          "additionalProperties": false,
+          "description": "A page/layer pair with document context used only for scope preflight.",
+          "properties": {
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            },
+            "transcription_id": {
+              "exclusiveMinimum": 0,
+              "title": "Transcription Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "document_id",
+            "page_id",
+            "transcription_id"
+          ],
+          "title": "CollectionMember",
+          "type": "object"
+        }
+      },
+      "title": "create_collectionArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "create_collectionOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_collection",
+    "title": null,
+    "description": "Update metadata or replace all page/layer pairs in one native PATCH.\n\n        Omitted items preserve membership; [] clears it. Default-layer changes\n        do not alter members. Changes can affect already queued training because\n        workers read membership at execution. No snapshot, lock or atomicity is\n        provided; failure may leave partial changes. Do not automatically retry.\n        ",
+    "inputSchema": {
+      "properties": {
+        "collection_id": {
+          "exclusiveMinimum": 0,
+          "title": "Collection Id",
+          "type": "integer"
+        },
+        "changes": {
+          "$ref": "#/$defs/CollectionPatch"
+        }
+      },
+      "required": [
+        "collection_id",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "CollectionMember": {
+          "additionalProperties": false,
+          "description": "A page/layer pair with document context used only for scope preflight.",
+          "properties": {
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            },
+            "transcription_id": {
+              "exclusiveMinimum": 0,
+              "title": "Transcription Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "document_id",
+            "page_id",
+            "transcription_id"
+          ],
+          "title": "CollectionMember",
+          "type": "object"
+        },
+        "CollectionPatch": {
+          "additionalProperties": false,
+          "description": "Edit metadata and optionally replace the entire collection membership.",
+          "properties": {
+            "default_transcriptions": {
+              "anyOf": [
+                {
+                  "patternProperties": {
+                    "^[1-9][0-9]*$": {
+                      "exclusiveMinimum": 0,
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Default Transcriptions"
+            },
+            "items": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/$defs/CollectionMember"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Items"
+            },
+            "name": {
+              "anyOf": [
+                {
+                  "maxLength": 512,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Name"
+            }
+          },
+          "title": "CollectionPatch",
+          "type": "object"
+        }
+      },
+      "title": "update_collectionArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_collectionOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "delete_collection",
+    "title": null,
+    "description": "Delete the collection and links, preserving source pages, text and models.\n\n        Deletion can remove task-group history and make queued training fail;\n        it does not cancel jobs. Check uncertain failures before retrying.\n        ",
+    "inputSchema": {
+      "properties": {
+        "collection_id": {
+          "exclusiveMinimum": 0,
+          "title": "Collection Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "collection_id"
+      ],
+      "type": "object",
+      "title": "delete_collectionArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "delete_collectionOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_collection_items",
+    "title": null,
+    "description": "Read all current page/layer pairs, preserving native item metadata.",
+    "inputSchema": {
+      "properties": {
+        "collection_id": {
+          "exclusiveMinimum": 0,
+          "title": "Collection Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "collection_id"
+      ],
+      "type": "object",
+      "title": "list_collection_itemsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_collection_itemsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "train_collection_recognizer",
+    "title": null,
+    "description": "Queue recognition training from every saved collection page/layer pair.\n\n        The collection must be nonempty and all sources currently readable. Source\n        text must supply usable ground truth; acceptance does not prove sufficiency.\n        Omit model and supply model_name to create one; override=false clones a base.\n        Overwrite requires an owned, stopped model even with model_name; that name\n        does not rename an overwritten model. Failure can delete the target model.\n        Membership is read at execution, so later edits can change the dataset.\n        The native model_id identifies the target, not completion. Use model reports\n        and checkpoints; collection task/group attribution is unavailable. No retry,\n        per-request hyperparameters, global transcription or page subset is offered.\n        ",
+    "inputSchema": {
+      "properties": {
+        "collection_id": {
+          "exclusiveMinimum": 0,
+          "title": "Collection Id",
+          "type": "integer"
+        },
+        "job": {
+          "$ref": "#/$defs/CollectionTraining"
+        }
+      },
+      "required": [
+        "collection_id",
+        "job"
+      ],
+      "type": "object",
+      "$defs": {
+        "CollectionTraining": {
+          "additionalProperties": false,
+          "description": "Training uses saved collection membership, without per-request page filters.",
+          "properties": {
+            "model": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Model"
+            },
+            "model_name": {
+              "anyOf": [
+                {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Model Name"
+            },
+            "override": {
+              "default": false,
+              "title": "Override",
+              "type": "boolean"
+            }
+          },
+          "title": "CollectionTraining",
+          "type": "object"
+        }
+      },
+      "title": "train_collection_recognizerArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "train_collection_recognizerOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "train_collection_segmenter",
+    "title": null,
+    "description": "Queue segmentation training from all saved collection pages' geometry.\n\n        Requires at least two distinct readable pages for training/validation.\n        Saved layer references are checked, though segmentation uses geometry.\n        Equal region/line type names across documents are combined; line offset\n        comes from the first page. D-FINE fine-tuning is unsupported upstream.\n        Omit model and supply model_name to create one; override=false clones a base.\n        Overwrite requires an owned, stopped model regardless of model_name, which\n        does not rename it. Failure can delete the target. Membership is not frozen.\n        Native model_id confirms the target only; inspect model reports/checkpoints.\n        No collection task/group attribution or automatic retry is available.\n        ",
+    "inputSchema": {
+      "properties": {
+        "collection_id": {
+          "exclusiveMinimum": 0,
+          "title": "Collection Id",
+          "type": "integer"
+        },
+        "job": {
+          "$ref": "#/$defs/CollectionTraining"
+        }
+      },
+      "required": [
+        "collection_id",
+        "job"
+      ],
+      "type": "object",
+      "$defs": {
+        "CollectionTraining": {
+          "additionalProperties": false,
+          "description": "Training uses saved collection membership, without per-request page filters.",
+          "properties": {
+            "model": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Model"
+            },
+            "model_name": {
+              "anyOf": [
+                {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Model Name"
+            },
+            "override": {
+              "default": false,
+              "title": "Override",
+              "type": "boolean"
+            }
+          },
+          "title": "CollectionTraining",
+          "type": "object"
+        }
+      },
+      "title": "train_collection_segmenterArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "train_collection_segmenterOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
     "name": "get_page_by_order",
     "title": null,
     "description": "Read a page by zero-based order, distinct from its page ID.\n\n        Follows only one same-origin redirect to this document's page detail.\n        Missing/out-of-bounds order and unexpected redirect targets are errors.\n        ",
