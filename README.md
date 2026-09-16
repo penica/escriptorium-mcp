@@ -1,6 +1,6 @@
 # eScriptorium MCP server
 
-Version 0.12.0 exposes **125 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
+Version 0.13.0 exposes **129 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
 
 ## Capabilities
 
@@ -48,7 +48,7 @@ For a standalone installation, from this directory:
 uv tool install --python 3.11 .
 ```
 
-Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.12.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
+Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.13.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
 
 ## Credentials and paths
 
@@ -82,7 +82,7 @@ The supplied key remains in the ignored checkout `.env`; package and client exam
 
 ## Transport choice (checked 16 September 2026)
 
-**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 125 tools in either transport.
+**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 129 tools in either transport.
 
 STDIO is the default and needs no listening port. To run HTTP, first generate a separate service token:
 
@@ -255,7 +255,13 @@ Task report states: **0 queued, 1 running, 2 crashed, 3 finished, 4 canceled**. 
 
 `export_transcriptions` directly saves one layer as text or JSON to a new local file. It covers all pages by default, or explicit `parts`, and sorts pages and lines in reading order. JSON retains IDs and available revision/confidence metadata. The result includes path, byte count and SHA-256.
 
-For server-generated ALTO/PAGE XML/text archives, use `request_server_export`, then pass the completed link from the eScriptorium notification to `download_export`. **This installed server returns 404 for `/api/downloads/`**, so automatic discovery of server-created export links is unavailable here. Direct text/JSON export does not depend on that endpoint.
+`request_server_export` supports native ALTO, PAGE XML, text and JSON document archives, plus OpenITI Markdown/TEI XML when enabled on the server. It accepts image inclusion and JSON options for metadata, annotations, all layers and ZIP/tar.gz containers. It checks the active layer, selected pages and region types before submitting. Omitted pages/region types mean all; an explicit subset remains a subset.
+
+The development API exposes generated downloads. Use `list_downloads`, optionally filtered by `task_report_id`, then `get_download` and `download_generated_export` with the artifact fingerprint. File retrieval verifies identity and byte size through a fixed authenticated route; the advertised URL cannot redirect the request. `delete_download` removes its record and requests file removal, without deleting source documents. Older servers may lack this API; `download_export` still accepts completed same-server notification URLs.
+
+Native JSON archives can include geometry, text/revisions, annotations and available images. They contain model metadata rather than weights and are not lossless database backups. Missing images may be skipped, all-layer exports include archived layers, and anonymization only changes selected author fields. There is no native JSON archive restore. Direct `export_transcriptions` JSON remains a separate single-layer export. See [docs/EXPORTS-API.md](docs/EXPORTS-API.md) for the full-document request example and limitations.
+
+Acceptance returns no report/download ID. Inspect export task reports and warnings before declaring completion. An artifact's `task_report_id` links it to a report, but newly appearing records are not proof of submission attribution. Registration can fail after file creation, so a missing download row is not a reason to resubmit blindly.
 
 Exports never overwrite existing files and stay outside the NAS Books tree. Export downloads accept only URLs on the configured server and refuse redirects. A failed transfer leaves a `.part` file for diagnosis; choose a fresh destination after resolving it.
 

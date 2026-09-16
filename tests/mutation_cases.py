@@ -205,6 +205,11 @@ RECORD_CASES: Final = (
             },
         },
         "documents/7/export/",
+        preflight=(
+            ("GET", "/api/documents/7/"),
+            ("GET", "/api/documents/7/transcriptions/5/"),
+            ("GET", "/api/documents/7/parts/"),
+        ),
         payload={
             "transcription": 5,
             "file_format": "pagexml",

@@ -5,6 +5,7 @@ from pydantic import JsonValue
 
 from escriptorium_mcp.api import CREATE, JOB, ApiRequest
 from escriptorium_mcp.bridge import Identifier, call
+from escriptorium_mcp.export_submission import submit_export
 from escriptorium_mcp.file_models import (
     DocumentImport,
     ExportDownload,
@@ -32,7 +33,8 @@ def register_files(server: MCPServer) -> None:
         """Save a layer as UTF-8 text or JSON locally in page/line order.
 
         Works with API-token authentication without waiting for server notifications.
-        Existing files are never overwritten. JSON preserves line IDs and revisions.
+        Existing files are never overwritten. JSON preserves line IDs and revisions;
+        this is a layer export, not the native full-document JSON archive.
         """
         return await call(export, timeout_seconds=1800)
 
@@ -40,18 +42,20 @@ def register_files(server: MCPServer) -> None:
     async def request_server_export(
         document_id: Identifier, export: ServerExport
     ) -> JsonValue:
-        """Queue a native ALTO, PAGE XML or text archive export.
+        """Queue native ALTO, PAGE XML, text, JSON, OpenITI or TEI export once.
 
-        Success means queued, not complete. Use the URL in the eScriptorium completion
-        notification with download_export. This instance has no downloads-list API.
+        OpenITI/TEI require server enablement. Omitted pages and region types mean
+        all; the selected transcription must be active even with all_transcriptions.
+        JSON supports ZIP/tar.gz, metadata, annotations, model catalogue metadata
+        (not weights), all layers including archived ones, and partial author-name
+        anonymization. Missing images may be skipped. JSON has no native restore.
+        Character boxes apply to ALTO/PAGE/JSON and may be invalidated by editing.
+        Success means accepted, not complete, and returns no task/group/download ID.
+        Inspect document task reports and list_downloads; download.task_report_id
+        links a file to its report, not to this submission. Completion notifications
+        can also supply a URL for download_export. No automatic retry is performed.
         """
-        return await call(
-            ApiRequest(
-                method="POST",
-                route=f"documents/{document_id}/export/",
-                body_json=export.model_dump_json(exclude_none=True),
-            )
-        )
+        return await submit_export(document_id, export)
 
     @server.tool(annotations=CREATE)
     async def download_export(export: ExportDownload) -> JsonValue:

@@ -6519,7 +6519,7 @@
   {
     "name": "export_transcriptions",
     "title": null,
-    "description": "Save a layer as UTF-8 text or JSON locally in page/line order.\n\n        Works with API-token authentication without waiting for server notifications.\n        Existing files are never overwritten. JSON preserves line IDs and revisions.\n        ",
+    "description": "Save a layer as UTF-8 text or JSON locally in page/line order.\n\n        Works with API-token authentication without waiting for server notifications.\n        Existing files are never overwritten. JSON preserves line IDs and revisions;\n        this is a layer export, not the native full-document JSON archive.\n        ",
     "inputSchema": {
       "properties": {
         "export": {
@@ -6623,7 +6623,7 @@
   {
     "name": "request_server_export",
     "title": null,
-    "description": "Queue a native ALTO, PAGE XML or text archive export.\n\n        Success means queued, not complete. Use the URL in the eScriptorium completion\n        notification with download_export. This instance has no downloads-list API.\n        ",
+    "description": "Queue native ALTO, PAGE XML, text, JSON, OpenITI or TEI export once.\n\n        OpenITI/TEI require server enablement. Omitted pages and region types mean\n        all; the selected transcription must be active even with all_transcriptions.\n        JSON supports ZIP/tar.gz, metadata, annotations, model catalogue metadata\n        (not weights), all layers including archived ones, and partial author-name\n        anonymization. Missing images may be skipped. JSON has no native restore.\n        Character boxes apply to ALTO/PAGE/JSON and may be invalidated by editing.\n        Success means accepted, not complete, and returns no task/group/download ID.\n        Inspect document task reports and list_downloads; download.task_report_id\n        links a file to its report, not to this submission. Completion notifications\n        can also supply a URL for download_export. No automatic retry is performed.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -6643,7 +6643,7 @@
       "$defs": {
         "ServerExport": {
           "additionalProperties": false,
-          "description": "Native eScriptorium export job; download arrives through its notification.",
+          "description": "Native export options; JSON-only settings require the JSON archive format.",
           "properties": {
             "transcription": {
               "exclusiveMinimum": 0,
@@ -6655,7 +6655,10 @@
               "enum": [
                 "alto",
                 "pagexml",
-                "text"
+                "text",
+                "json",
+                "openitimarkdown",
+                "teixml"
               ],
               "title": "File Format",
               "type": "string"
@@ -6683,6 +6686,7 @@
                   "items": {
                     "anyOf": [
                       {
+                        "exclusiveMinimum": 0,
                         "type": "integer"
                       },
                       {
@@ -6694,6 +6698,7 @@
                       }
                     ]
                   },
+                  "minItems": 1,
                   "type": "array"
                 },
                 {
@@ -6707,6 +6712,45 @@
               "default": false,
               "title": "Include Characters",
               "type": "boolean"
+            },
+            "include_images": {
+              "default": false,
+              "title": "Include Images",
+              "type": "boolean"
+            },
+            "include_metadata": {
+              "default": false,
+              "title": "Include Metadata",
+              "type": "boolean"
+            },
+            "include_models": {
+              "default": false,
+              "title": "Include Models",
+              "type": "boolean"
+            },
+            "all_transcriptions": {
+              "default": false,
+              "title": "All Transcriptions",
+              "type": "boolean"
+            },
+            "include_annotations": {
+              "default": false,
+              "title": "Include Annotations",
+              "type": "boolean"
+            },
+            "anonymize": {
+              "default": false,
+              "title": "Anonymize",
+              "type": "boolean"
+            },
+            "archive_format": {
+              "default": "zip",
+              "enum": [
+                "zip",
+                "tar.gz"
+              ],
+              "title": "Archive Format",
+              "type": "string"
             }
           },
           "required": [
@@ -6893,6 +6937,199 @@
       "readOnlyHint": false,
       "destructiveHint": true,
       "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_downloads",
+    "title": null,
+    "description": "List all current-user download records, following every page safely.\n\n        task_report_id filters locally after pagination. A nonnull report ID links\n        an artifact to that report, not to an unconfirmed submission. Expired rows\n        may remain visible; absence does not prove an export failed. Without a\n        filter the native collection shape and metadata are preserved.\n        ",
+    "inputSchema": {
+      "properties": {
+        "task_report_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Report Id"
+        }
+      },
+      "type": "object",
+      "title": "list_downloadsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_downloadsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_download",
+    "title": null,
+    "description": "Read owned download metadata without incrementing file access counters.\n\n        fingerprint is exactly 32 lowercase hexadecimal characters. Expired rows\n        can still have metadata while file retrieval returns 404. Metadata does\n        not prove stored bytes exist; server-reported file_url is informational.\n        ",
+    "inputSchema": {
+      "properties": {
+        "fingerprint": {
+          "maxLength": 32,
+          "minLength": 32,
+          "pattern": "^[0-9a-f]{32}$",
+          "title": "Fingerprint",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fingerprint"
+      ],
+      "type": "object",
+      "title": "get_downloadArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_downloadOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "download_generated_export",
+    "title": null,
+    "description": "Save a generated export to a new file on the MCP server's host.\n\n        Verify metadata identity and byte size, then stream through the fixed\n        authenticated file route; file_url cannot choose the request destination.\n        File access increments server counters. Destination and .part must be new,\n        use portable names and stay outside the scan-only Books archive. Failed\n        transfers retain partial files. Return bytes/SHA-256 only after exclusive\n        publication; that checksum proves local bytes, not archive completeness.\n        Expired or missing files return errors. Redirects and retries are refused.\n        ",
+    "inputSchema": {
+      "properties": {
+        "fingerprint": {
+          "maxLength": 32,
+          "minLength": 32,
+          "pattern": "^[0-9a-f]{32}$",
+          "title": "Fingerprint",
+          "type": "string"
+        },
+        "destination": {
+          "format": "path",
+          "title": "Destination",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fingerprint",
+        "destination"
+      ],
+      "type": "object",
+      "title": "download_generated_exportArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "download_generated_exportOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "delete_download",
+    "title": null,
+    "description": "Delete one owned download record and ask eScriptorium to unlink its file.\n\n        The native bodyless 204 is success; the request is not retried. Upstream\n        can suppress file-removal failures, so success does not prove secure\n        erasure or physical removal. Save needed bytes before deleting the record.\n        ",
+    "inputSchema": {
+      "properties": {
+        "fingerprint": {
+          "maxLength": 32,
+          "minLength": 32,
+          "pattern": "^[0-9a-f]{32}$",
+          "title": "Fingerprint",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fingerprint"
+      ],
+      "type": "object",
+      "title": "delete_downloadArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "delete_downloadOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
       "openWorldHint": null
     },
     "_meta": null

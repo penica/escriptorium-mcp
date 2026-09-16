@@ -62,7 +62,15 @@ def api_fixture() -> Generator[Fixture, None, None]:
                         b'{"pk":2,"job":"Segment","rights":"owner","training":false}'
                     ),
                     "/api/documents/7/parts/11/": b'{"pk":11}',
-                    "/api/documents/7/": b'{"pk":7,"valid_block_types":[{"pk":4}]}',
+                    "/api/documents/7/": (
+                        b'{"pk":7,"valid_block_types":[{"pk":4},{"pk":1}]}'
+                    ),
+                    "/api/documents/7/transcriptions/5/": (
+                        b'{"pk":5,"archived":false}'
+                    ),
+                    "/api/documents/7/parts/": (
+                        b'{"count":1,"next":null,"results":[{"pk":11}]}'
+                    ),
                     "/api/documents/7/parts/11/lines/19/": (
                         b'{"pk":19,"document_part":11,"baseline":[[0,0],[1,1]]}'
                     ),

@@ -1,6 +1,6 @@
 [project]
 name = "escriptorium-mcp"
-version = "0.12.0"
+version = "0.13.0"
 description = "Local MCP tools backed by escriptorium-connector"
 requires-python = ">=3.11"
 dependencies = ["mcp>=2.2,<3", "pydantic-settings>=2,<3", "typer>=0.16,<1", "platformdirs>=4,<5"]
@@ -44,6 +44,8 @@ testpaths = ["tests"]
 
 "worker/rest.py" = "escriptorium_mcp/worker/rest.py"
 "worker/exports.py" = "escriptorium_mcp/worker/exports.py"
+"worker/downloads.py" = "escriptorium_mcp/worker/downloads.py"
+"worker/download_models.py" = "escriptorium_mcp/worker/download_models.py"
 "worker/archive.py" = "escriptorium_mcp/worker/archive.py"
 
 "worker/storage.py" = "escriptorium_mcp/worker/storage.py"

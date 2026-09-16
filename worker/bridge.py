@@ -7,6 +7,7 @@ from contextlib import redirect_stdout
 from typing import Literal, assert_never
 
 from archive import ArchiveRequest, download_register
+from downloads import execute_downloads
 from escriptorium_connector import EscriptoriumConnector
 from escriptorium_connector.connector_errors import (
     EscriptoriumConnectorError,
@@ -110,6 +111,7 @@ class Envelope(BaseModel):
             "download_export",
             "ontology_native",
             "page_by_order",
+            "downloads",
         ]
     )
 
@@ -117,6 +119,8 @@ class Envelope(BaseModel):
 def dispatch(client: EscriptoriumConnector, raw: str) -> str:
     """Parse a request using its operation-specific model."""
     match Envelope.parse_raw(raw).operation:
+        case "downloads":
+            result = execute_downloads(client, raw)
         case "page_by_order":
             result = read_page_by_order(client, PagesByOrderRequest.parse_raw(raw))
         case "ontology_native":

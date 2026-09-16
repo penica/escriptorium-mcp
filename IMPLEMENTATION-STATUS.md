@@ -18,7 +18,8 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 4. **Released and verified:** Transcriptions (0.9.0), eight new tools; 111 total.
 5. **Released and verified:** Segmentation (0.10.0), eight new tools; 119 total.
 6. **Released and verified:** Pages and image operations (0.11.0), five new tools; 124 total.
-7. **Release validation:** Imports (0.12.0), one new source-aware tool and grouped status; 125 tools total. Modules 8–13 remain pending in roadmap order.
+7. **Released and verified:** Imports (0.12.0), one new source-aware tool and grouped status; 125 tools total.
+8. **Locally verified, GitHub regression pending:** Exports and downloads (0.13.0), expanded export settings and four new download tools; 129 tools total. Modules 9–13 remain pending in roadmap order.
 
 ## Baseline evidence
 - Initial public commit: 73f08eb (MCP 0.5.0, 89 tools).
@@ -123,7 +124,7 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 - [Compatibility run 35099080011](https://github.com/penica/escriptorium-mcp/actions/runs/35099080011) passed all six Windows/macOS/Linux and Python 3.11/3.13 jobs, each with 486 tests and zero annotations.
 - [GitHub release v0.11.0](https://github.com/penica/escriptorium-mcp/releases/tag/v0.11.0) published all four artifacts. Uploaded sizes/digests matched final local files and the release tag resolves to the verified commit.
 
-### 0.12.0 — Imports (release validation)
+### 0.12.0 — Imports
 
 - Added one modern submission tool with five coherent source variants: local PDF, XML/ordinary ZIP, IIIF URL, local METS XML/ZIP and METS URL. The catalogue contains 125 tools. Existing legacy file imports retain their endpoint/arguments.
 - Scoped document/layer preflight verifies returned identities and stored-name limits. XML exposes an exact layer selection by name/ID; METS exposes prefixes instead of claiming a single destination layer. Local extensions match native case-sensitive dispatch, and contradictory/unknown fields and explicit null options are rejected.
@@ -135,3 +136,19 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 - Nine existing HTTP/STDIO transport tests passed in 5.79 seconds. Fresh 0.12 installation and real 0.11-to-0.12 upgrade passed in temporary paths with spaces, preserving URL/key/token/Books settings, 0600 configuration/backup permissions and linked launcher/help.
 - The isolated installed interpreter (`-I`) advertised 125 tools and resolved all five source schemas. It exercised exact multipart file bytes and false values, all source modes, scoped layer preflight, raw acceptance, accepted submission after monitoring failure with one POST, group-filtered history, legacy file import and invalid-source rejection.
 - Artifacts passed 22 inner checksums, the outer checksum, normalized ownership, private-file exclusion and bundled worker byte equivalence. Final documentation-only rebuilds must retain the installer-tested wheel hash. No service was installed or changed; actual WSL/systemd deployment remains separate verification.
+
+- Public commit: `b92e453b85f46c4a41ef8806b4a92405a9d2a39b`.
+- [Compatibility run 35102716674](https://github.com/penica/escriptorium-mcp/actions/runs/35102716674) passed all six Windows/macOS/Linux and Python 3.11/3.13 jobs, each with 553 tests and zero annotations.
+- [GitHub release v0.12.0](https://github.com/penica/escriptorium-mcp/releases/tag/v0.12.0) published all four artifacts. Uploaded sizes/digests matched final local files and the release tag resolves to the verified commit.
+
+### 0.13.0 — Exports and downloads (release validation)
+
+- Expanded native export requests to six format IDs and all supported inclusion/container options, preserving existing calls and raw acceptance. Added four tools for owned download listing, metadata, file retrieval and deletion; 129 tools total. JSON archive, optional-format and attribution limits are recorded in the pinned-source export guide and bundled skill.
+- Export preflight checks returned document/layer identities, active-layer status, complete page selection and enabled region types. Omitted selections retain native all-page/all-region behavior; explicit subsets and false values are preserved. One POST is submitted without retries or invented job/download IDs.
+- Private download actions use strict fingerprints and fixed routes. Pagination rejects foreign origins, wrong paths, redirects and loops. File retrieval ignores advertised URLs, checks identity/size and meaningful Content-Length, streams to an exclusive partial file and reports bytes/SHA-256 only after publication. DELETE preserves bodyless 204 while making no physical-erasure guarantee.
+- Initial actual-STDIO tests failed for the missing download tool and unsupported JSON export fields. All 64 export cases passed in 58.35 seconds and all 64 download cases passed in 88.67 seconds. Coverage includes actual STDIO/authenticated HTTP, six formats, full JSON presets, scoped guards, pagination isolation, lost responses, streaming/storage failures and deletion. A failing HTTP 500 status test led to disabling status-exhaustion exceptions while keeping every retry budget at zero.
+- Existing regression checks passed: 42 mutation cases in 64.54 seconds with explicit export preflight expectations, 19 direct export/model-download cases in 30.05 seconds, and nine transport/discovery cases in 5.36 seconds. Module registration was moved into a small private helper after the expanded registry exceeded existing statement/complexity limits. The complete suite collects 681 tests for exact-commit verification in all six GitHub jobs.
+- Ruff lint/format, strict Basedpyright for source/tests/scripts, changed-file programming checks, installer shell syntax and skill validation passed. Existing storage/direct-download implementations were left intact.
+- Live read-only STDIO verified 0.13.0/129 tools, downloads listing and local report filtering, invalid-fingerprint rejection and a missing-record HTTP 404. The account had no generated downloads. No live export, file access-counter update, deletion or research-content mutation was performed; successful archive/file behavior is fixture/source evidence.
+- Fresh 0.13 installation and real 0.12-to-0.13 upgrade passed in temporary paths with spaces, preserving URL/key/token/Books settings, 0600 configuration/backup permissions and linked launcher/help. The isolated installed interpreter (`-I`) exercised full JSON/default ALTO requests, failed layer preflight without a POST, paginated report-filtered downloads, unknown/null/zero metadata, fixed-route retrieval ignoring a malicious file URL, 524,288 streamed bytes with verified SHA-256, size-mismatch partial preservation, DELETE 204 and legacy direct URL retrieval.
+- Artifacts passed 23 inner checksums, the outer checksum, normalized ownership, private-file exclusion and byte equivalence for packaged worker modules. Final documentation-only rebuilds must retain the installed-QA wheel hash. Error details remain sanitized; an integrity failure can produce a generic connector error while retaining its partial file. No running service was upgraded; actual WSL/systemd deployment remains separate verification.

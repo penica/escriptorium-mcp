@@ -9,6 +9,7 @@ from pydantic import JsonValue
 from escriptorium_mcp.annotation_tools import register_annotations
 from escriptorium_mcp.api import ApiRequest, invoke
 from escriptorium_mcp.bridge import Identifier, Name, Request, call
+from escriptorium_mcp.download_tools import register_downloads
 from escriptorium_mcp.file_tools import register_files
 from escriptorium_mcp.import_tools import register_imports
 from escriptorium_mcp.instance_tools import register_instances
@@ -41,7 +42,7 @@ def create_server() -> MCPServer:
     """Build tools without making network calls or requiring credentials."""
     server = MCPServer(
         "eScriptorium",
-        version="0.12.0",
+        version="0.13.0",
         instructions=(
             "Use server primary keys, not page numbers. "
             "Write and processing tools change the remote instance. "
@@ -148,25 +149,33 @@ def create_server() -> MCPServer:
             )
         )
 
-    register_records(server)
-    register_page_operations(server)
-    register_text(server)
-    register_text_bulk(server)
-    register_text_reads(server)
-    register_segmentation(server)
-    register_segmentation_expansion(server)
-    register_jobs(server)
-    register_models(server)
-    register_task_monitoring(server)
-    register_training(server)
-    register_files(server)
-    register_imports(server)
-    register_ontology(server)
-    register_annotations(server)
-    register_instances(server)
-    register_taxonomy_edits(server)
-    register_taxonomy_merges(server)
-    register_repairs(server)
-    register_native(server)
-    register_snapshots(server)
+    _register_extensions(server)
     return server
+
+
+def _register_extensions(server: MCPServer) -> None:
+    for register in (
+        register_records,
+        register_page_operations,
+        register_text,
+        register_text_bulk,
+        register_text_reads,
+        register_segmentation,
+        register_segmentation_expansion,
+        register_jobs,
+        register_models,
+        register_task_monitoring,
+        register_training,
+        register_files,
+        register_downloads,
+        register_imports,
+        register_ontology,
+        register_annotations,
+        register_instances,
+        register_taxonomy_edits,
+        register_taxonomy_merges,
+        register_repairs,
+        register_native,
+        register_snapshots,
+    ):
+        register(server)

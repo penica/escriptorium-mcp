@@ -1,5 +1,39 @@
 # Changelog
 
+## 0.13.0 — 2026-09-16
+
+### Module 8: Exports and downloads
+
+Added four generated-download tools, bringing the catalogue to 129: list owned
+downloads with optional local report filtering, inspect metadata, retrieve a file
+by fingerprint, and delete a download record. Collection reads fully paginate
+within the configured downloads route. File retrieval uses a fixed authenticated
+route, verifies metadata identity and byte size, and never trusts `file_url` as a
+request target. Redirects, pagination loops and cross-route links are rejected.
+
+Expanded `request_server_export` with native JSON archives, optional server-enabled
+OpenITI Markdown/TEI XML, image inclusion and JSON metadata/model/all-layer/
+annotation/anonymization/container options. Existing basic export calls and raw
+acceptance responses remain compatible. Scoped checks validate documents, active
+layers, selected pages and enabled region types before one submission.
+
+Streaming downloads retain portable, exclusive destination handling outside the
+Books archive, preserve failed partial files and report bytes/SHA-256 after
+publication. Download deletion preserves native bodyless success without claiming
+guaranteed physical erasure. Expired records and missing files remain errors at
+retrieval; access counters are acknowledged as a file-download side effect.
+
+Documentation distinguishes a direct layer JSON export from a native document
+archive. Native archives contain model metadata rather than weights, can omit
+missing images, and do not provide full database backup or JSON restoration.
+Anonymization has limited scope. Export submissions return no report/download ID;
+an artifact's report link does not establish client-submission attribution.
+
+Version, installer, generated catalogue/schema, bundled skill and the
+[export/download contract](docs/EXPORTS-API.md) are updated together. No live
+exports, download deletions or service deployment are performed during validation.
+
+
 ## 0.12.0 — 2026-09-16
 
 ### Module 7: Imports
