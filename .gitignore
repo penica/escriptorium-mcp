@@ -1,0 +1,27 @@
+# Credentials and local configuration
+.env
+.env.*
+!.env.example
+config.env
+*.pem
+*.key
+
+# Environments, caches, build outputs
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+.DS_Store
+
+# Local research and development evidence
+live-verification/
+WORKPLAN*.md
+verification.json
+extension-verification.json
+ontology-verification.json
+portability-verification.json

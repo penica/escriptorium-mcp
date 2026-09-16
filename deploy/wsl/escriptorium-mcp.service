@@ -1,0 +1,14 @@
+[Unit]
+Description=eScriptorium MCP Streamable HTTP
+
+[Service]
+Type=simple
+Environment="ESCRIPTORIUM_ENV_FILE=%h/.local/share/escriptorium-mcp/config.env"
+Environment="PATH=%h/.local/share/escriptorium-mcp/bin:/usr/local/bin:/usr/bin:/bin"
+ExecStart="%h/.local/share/escriptorium-mcp/.venv/bin/escriptorium-mcp" --transport streamable-http --host 127.0.0.1 --port 8000
+Restart=on-failure
+RestartSec=5
+UMask=0077
+
+[Install]
+WantedBy=default.target

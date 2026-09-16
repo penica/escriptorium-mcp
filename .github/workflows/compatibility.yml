@@ -1,0 +1,35 @@
+name: eScriptorium MCP compatibility
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.11", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install server and legacy worker Python runtimes
+        run: uv python install ${{ matrix.python }} 3.11
+      - name: Install locked dependencies
+        run: uv sync --frozen --python ${{ matrix.python }}
+      - name: Lint
+        run: uv run --frozen ruff check .
+      - name: Check types
+        run: uv run --frozen basedpyright
+      - name: Exercise both MCP transports and file operations
+        run: uv run --frozen pytest -q
+      - name: Build distributable packages
+        run: uv build

@@ -1,0 +1,51 @@
+[project]
+name = "escriptorium-mcp"
+version = "0.5.0"
+description = "Local MCP tools backed by escriptorium-connector"
+requires-python = ">=3.11"
+dependencies = ["mcp>=2.2,<3", "pydantic-settings>=2,<3", "typer>=0.16,<1", "platformdirs>=4,<5"]
+
+[project.scripts]
+escriptorium-mcp = "escriptorium_mcp.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = ["pytest>=8,<9", "ruff", "basedpyright"]
+
+[tool.basedpyright]
+typeCheckingMode = "all"
+pythonVersion = "3.11"
+include = ["src", "tests"]
+
+[tool.ruff]
+target-version = "py311"
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["COM812", "D203", "D213", "CPY001"]
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D", "S101", "PLR2004", "INP001"]
+"worker/*.py" = ["INP001"]
+# The tool registry and allowlist dispatch each contain one branch per tool.
+[tool.ruff.lint.mccabe]
+max-complexity = 15
+[tool.ruff.lint.pylint]
+max-branches = 15
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"worker/bridge.py" = "escriptorium_mcp/worker/bridge.py"
+"worker/pages.py" = "escriptorium_mcp/worker/pages.py"
+"worker/pyproject.toml" = "escriptorium_mcp/worker/pyproject.toml"
+"worker/uv.lock" = "escriptorium_mcp/worker/uv.lock"
+
+"worker/rest.py" = "escriptorium_mcp/worker/rest.py"
+"worker/exports.py" = "escriptorium_mcp/worker/exports.py"
+"worker/archive.py" = "escriptorium_mcp/worker/archive.py"
+
+"worker/storage.py" = "escriptorium_mcp/worker/storage.py"
+
+"worker/ontology_native.py" = "escriptorium_mcp/worker/ontology_native.py"

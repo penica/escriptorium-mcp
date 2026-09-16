@@ -1,0 +1,6970 @@
+[
+  {
+    "name": "list_projects",
+    "title": null,
+    "description": "List all accessible projects; follows the connector's pagination.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object",
+      "title": "list_projectsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_projectsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_project",
+    "title": null,
+    "description": "Read project metadata by primary key.",
+    "inputSchema": {
+      "properties": {
+        "project_id": {
+          "exclusiveMinimum": 0,
+          "title": "Project Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "type": "object",
+      "title": "get_projectArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_projectOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_documents",
+    "title": null,
+    "description": "List all accessible documents; follows the connector's pagination.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object",
+      "title": "list_documentsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_documentsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_document",
+    "title": null,
+    "description": "Read document metadata and its available transcription layers.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "type": "object",
+      "title": "get_documentArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_documentOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_pages",
+    "title": null,
+    "description": "List available scanned parts of a document.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "type": "object",
+      "title": "list_pagesArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_pagesOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_page",
+    "title": null,
+    "description": "Read a page's metadata, image references and processing state.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id"
+      ],
+      "type": "object",
+      "title": "get_pageArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_pageOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_lines",
+    "title": null,
+    "description": "Read segmented lines for a page.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id"
+      ],
+      "type": "object",
+      "title": "list_linesArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_linesOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_regions",
+    "title": null,
+    "description": "Read segmented regions for a page.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id"
+      ],
+      "type": "object",
+      "title": "list_regionsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_regionsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_transcriptions",
+    "title": null,
+    "description": "List transcription layers and their primary keys.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "type": "object",
+      "title": "list_transcriptionsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_transcriptionsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_page_transcriptions",
+    "title": null,
+    "description": "Read line text, layer IDs, confidence and revision metadata for a page.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id"
+      ],
+      "type": "object",
+      "title": "get_page_transcriptionsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_page_transcriptionsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "create_project",
+    "title": null,
+    "description": "Create a remote project. Repeating this call may create duplicates.",
+    "inputSchema": {
+      "properties": {
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object",
+      "title": "create_projectArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "create_projectOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "create_transcription",
+    "title": null,
+    "description": "Create an empty transcription layer in an existing document.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id",
+        "name"
+      ],
+      "type": "object",
+      "title": "create_transcriptionArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "create_transcriptionOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_scripts",
+    "title": null,
+    "description": "List writing systems; use their name in create_document.main_script.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object",
+      "title": "list_scriptsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_scriptsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "create_document",
+    "title": null,
+    "description": "Create an empty document; project is a slug, main_script a script name.",
+    "inputSchema": {
+      "properties": {
+        "data": {
+          "$ref": "#/$defs/DocumentCreate"
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "type": "object",
+      "$defs": {
+        "DocumentCreate": {
+          "additionalProperties": false,
+          "description": "Create a document in a project identified by slug.",
+          "properties": {
+            "name": {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Name",
+              "type": "string"
+            },
+            "project": {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Project",
+              "type": "string"
+            },
+            "main_script": {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Main Script",
+              "type": "string"
+            },
+            "read_direction": {
+              "default": "ltr",
+              "enum": [
+                "ltr",
+                "rtl"
+              ],
+              "title": "Read Direction",
+              "type": "string"
+            },
+            "line_offset": {
+              "default": 0,
+              "enum": [
+                0,
+                1,
+                2
+              ],
+              "title": "Line Offset",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "name",
+            "project",
+            "main_script"
+          ],
+          "title": "DocumentCreate",
+          "type": "object"
+        }
+      },
+      "title": "create_documentArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "create_documentOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_document",
+    "title": null,
+    "description": "Rename a document, move it to another project slug, or change metadata.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "changes": {
+          "$ref": "#/$defs/DocumentPatch"
+        }
+      },
+      "required": [
+        "document_id",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "DocumentPatch": {
+          "additionalProperties": false,
+          "description": "Rename, move project, or change document reading conventions.",
+          "properties": {
+            "name": {
+              "anyOf": [
+                {
+                  "maxLength": 255,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Name"
+            },
+            "project": {
+              "anyOf": [
+                {
+                  "maxLength": 255,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Project"
+            },
+            "main_script": {
+              "anyOf": [
+                {
+                  "maxLength": 255,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Main Script"
+            },
+            "read_direction": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "ltr",
+                    "rtl"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Read Direction"
+            },
+            "line_offset": {
+              "anyOf": [
+                {
+                  "enum": [
+                    0,
+                    1,
+                    2
+                  ],
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Line Offset"
+            }
+          },
+          "title": "DocumentPatch",
+          "type": "object"
+        }
+      },
+      "title": "update_documentArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_documentOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "rename_project",
+    "title": null,
+    "description": "Rename a project while preserving its sharing settings.",
+    "inputSchema": {
+      "properties": {
+        "project_id": {
+          "exclusiveMinimum": 0,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "name"
+      ],
+      "type": "object",
+      "title": "rename_projectArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "rename_projectOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "upload_page",
+    "title": null,
+    "description": "Upload one local image into a document; conversion may run asynchronously.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "image": {
+          "$ref": "#/$defs/PageUpload"
+        }
+      },
+      "required": [
+        "document_id",
+        "image"
+      ],
+      "type": "object",
+      "$defs": {
+        "PageUpload": {
+          "additionalProperties": false,
+          "description": "Upload an existing image from this machine or a mounted volume.",
+          "properties": {
+            "image_path": {
+              "format": "file-path",
+              "title": "Image Path",
+              "type": "string"
+            },
+            "name": {
+              "default": "",
+              "title": "Name",
+              "type": "string"
+            },
+            "source": {
+              "default": "",
+              "title": "Source",
+              "type": "string"
+            }
+          },
+          "required": [
+            "image_path"
+          ],
+          "title": "PageUpload",
+          "type": "object"
+        }
+      },
+      "title": "upload_pageArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "upload_pageOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_page",
+    "title": null,
+    "description": "Rename a page or edit its source, comments and typology.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        },
+        "changes": {
+          "$ref": "#/$defs/PagePatch"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "PagePatch": {
+          "additionalProperties": false,
+          "description": "Editable page metadata; ordering uses the move tool.",
+          "properties": {
+            "name": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Name"
+            },
+            "source": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Source"
+            },
+            "comments": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Comments"
+            },
+            "typology": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Typology"
+            }
+          },
+          "title": "PagePatch",
+          "type": "object"
+        }
+      },
+      "title": "update_pageArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_pageOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "delete_document",
+    "title": null,
+    "description": "Permanently delete a document, its pages and transcriptions.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "type": "object",
+      "title": "delete_documentArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "delete_documentOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "delete_project",
+    "title": null,
+    "description": "Delete a project; its documents may also be removed by the server.",
+    "inputSchema": {
+      "properties": {
+        "project_id": {
+          "exclusiveMinimum": 0,
+          "title": "Project Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "type": "object",
+      "title": "delete_projectArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "delete_projectOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "delete_page",
+    "title": null,
+    "description": "Delete a page and its segmentation and transcriptions.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id"
+      ],
+      "type": "object",
+      "title": "delete_pageArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "delete_pageOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "create_line_transcription",
+    "title": null,
+    "description": "Write text for an existing segmented line in a transcription layer.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        },
+        "text": {
+          "$ref": "#/$defs/LineText"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id",
+        "text"
+      ],
+      "type": "object",
+      "$defs": {
+        "LineText": {
+          "additionalProperties": false,
+          "description": "A line's text in a particular transcription layer.",
+          "properties": {
+            "line": {
+              "exclusiveMinimum": 0,
+              "title": "Line",
+              "type": "integer"
+            },
+            "transcription": {
+              "exclusiveMinimum": 0,
+              "title": "Transcription",
+              "type": "integer"
+            },
+            "content": {
+              "maxLength": 2048,
+              "title": "Content",
+              "type": "string"
+            }
+          },
+          "required": [
+            "line",
+            "transcription",
+            "content"
+          ],
+          "title": "LineText",
+          "type": "object"
+        }
+      },
+      "title": "create_line_transcriptionArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "create_line_transcriptionOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_line_transcription",
+    "title": null,
+    "description": "Correct an existing line transcription by its record PK, not its line PK.",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/TextTarget"
+        },
+        "changes": {
+          "$ref": "#/$defs/TextPatch"
+        }
+      },
+      "required": [
+        "target",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "TextPatch": {
+          "additionalProperties": false,
+          "description": "Correct text without rewriting segmentation or other layers.",
+          "properties": {
+            "content": {
+              "maxLength": 2048,
+              "title": "Content",
+              "type": "string"
+            }
+          },
+          "required": [
+            "content"
+          ],
+          "title": "TextPatch",
+          "type": "object"
+        },
+        "TextTarget": {
+          "additionalProperties": false,
+          "description": "The complete address of one line transcription record.",
+          "properties": {
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            },
+            "line_transcription_id": {
+              "exclusiveMinimum": 0,
+              "title": "Line Transcription Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "document_id",
+            "page_id",
+            "line_transcription_id"
+          ],
+          "title": "TextTarget",
+          "type": "object"
+        }
+      },
+      "title": "update_line_transcriptionArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_line_transcriptionOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "rename_transcription",
+    "title": null,
+    "description": "Rename a transcription layer without rewriting its line text.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "transcription_id": {
+          "exclusiveMinimum": 0,
+          "title": "Transcription Id",
+          "type": "integer"
+        },
+        "changes": {
+          "$ref": "#/$defs/Rename"
+        }
+      },
+      "required": [
+        "document_id",
+        "transcription_id",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "Rename": {
+          "additionalProperties": false,
+          "description": "A new display name.",
+          "properties": {
+            "name": {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "title": "Rename",
+          "type": "object"
+        }
+      },
+      "title": "rename_transcriptionArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "rename_transcriptionOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "delete_transcription",
+    "title": null,
+    "description": "Delete a transcription layer and its line text according to server rules.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "transcription_id": {
+          "exclusiveMinimum": 0,
+          "title": "Transcription Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id",
+        "transcription_id"
+      ],
+      "type": "object",
+      "title": "delete_transcriptionArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "delete_transcriptionOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "delete_line_transcription",
+    "title": null,
+    "description": "Delete one line transcription record, keeping its segmented line.",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/TextTarget"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "type": "object",
+      "$defs": {
+        "TextTarget": {
+          "additionalProperties": false,
+          "description": "The complete address of one line transcription record.",
+          "properties": {
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            },
+            "line_transcription_id": {
+              "exclusiveMinimum": 0,
+              "title": "Line Transcription Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "document_id",
+            "page_id",
+            "line_transcription_id"
+          ],
+          "title": "TextTarget",
+          "type": "object"
+        }
+      },
+      "title": "delete_line_transcriptionArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "delete_line_transcriptionOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "create_line",
+    "title": null,
+    "description": "Create a segmented line on line.document_part; coordinates are pixels.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "line": {
+          "$ref": "#/$defs/LineCreate"
+        }
+      },
+      "required": [
+        "document_id",
+        "line"
+      ],
+      "type": "object",
+      "$defs": {
+        "LineCreate": {
+          "additionalProperties": false,
+          "description": "Baseline coordinates in image pixels and optional region/polygon.",
+          "properties": {
+            "document_part": {
+              "exclusiveMinimum": 0,
+              "title": "Document Part",
+              "type": "integer"
+            },
+            "baseline": {
+              "items": {
+                "items": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "maxItems": 2,
+                "minItems": 2,
+                "type": "array"
+              },
+              "minItems": 2,
+              "title": "Baseline",
+              "type": "array"
+            },
+            "mask": {
+              "anyOf": [
+                {
+                  "items": {
+                    "items": {
+                      "minimum": 0,
+                      "type": "number"
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "minItems": 3,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Mask"
+            },
+            "region": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Region"
+            },
+            "typology": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Typology"
+            }
+          },
+          "required": [
+            "document_part",
+            "baseline"
+          ],
+          "title": "LineCreate",
+          "type": "object"
+        }
+      },
+      "title": "create_lineArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "create_lineOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_line",
+    "title": null,
+    "description": "Edit an existing line's baseline, mask, region or type.",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/ElementTarget"
+        },
+        "changes": {
+          "$ref": "#/$defs/LinePatch"
+        }
+      },
+      "required": [
+        "target",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "ElementTarget": {
+          "additionalProperties": false,
+          "description": "Address an existing line or region inside a page.",
+          "properties": {
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            },
+            "element_id": {
+              "exclusiveMinimum": 0,
+              "title": "Element Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "document_id",
+            "page_id",
+            "element_id"
+          ],
+          "title": "ElementTarget",
+          "type": "object"
+        },
+        "LinePatch": {
+          "additionalProperties": false,
+          "description": "Change supplied geometry fields; null clears a polygon or region.",
+          "properties": {
+            "baseline": {
+              "anyOf": [
+                {
+                  "items": {
+                    "items": {
+                      "minimum": 0,
+                      "type": "number"
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "minItems": 2,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Baseline"
+            },
+            "mask": {
+              "anyOf": [
+                {
+                  "items": {
+                    "items": {
+                      "minimum": 0,
+                      "type": "number"
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "minItems": 3,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Mask"
+            },
+            "region": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Region"
+            },
+            "typology": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Typology"
+            }
+          },
+          "title": "LinePatch",
+          "type": "object"
+        }
+      },
+      "title": "update_lineArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_lineOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "create_region",
+    "title": null,
+    "description": "Create a region polygon on region.document_part.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "region": {
+          "$ref": "#/$defs/RegionCreate"
+        }
+      },
+      "required": [
+        "document_id",
+        "region"
+      ],
+      "type": "object",
+      "$defs": {
+        "RegionCreate": {
+          "additionalProperties": false,
+          "description": "A page region polygon in image pixels.",
+          "properties": {
+            "document_part": {
+              "exclusiveMinimum": 0,
+              "title": "Document Part",
+              "type": "integer"
+            },
+            "box": {
+              "items": {
+                "items": {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                "maxItems": 2,
+                "minItems": 2,
+                "type": "array"
+              },
+              "minItems": 3,
+              "title": "Box",
+              "type": "array"
+            },
+            "typology": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Typology"
+            }
+          },
+          "required": [
+            "document_part",
+            "box"
+          ],
+          "title": "RegionCreate",
+          "type": "object"
+        }
+      },
+      "title": "create_regionArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "create_regionOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_region",
+    "title": null,
+    "description": "Edit an existing region's polygon or type.",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/ElementTarget"
+        },
+        "changes": {
+          "$ref": "#/$defs/RegionPatch"
+        }
+      },
+      "required": [
+        "target",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "ElementTarget": {
+          "additionalProperties": false,
+          "description": "Address an existing line or region inside a page.",
+          "properties": {
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            },
+            "element_id": {
+              "exclusiveMinimum": 0,
+              "title": "Element Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "document_id",
+            "page_id",
+            "element_id"
+          ],
+          "title": "ElementTarget",
+          "type": "object"
+        },
+        "RegionPatch": {
+          "additionalProperties": false,
+          "description": "Edit a region's outline or classification.",
+          "properties": {
+            "box": {
+              "anyOf": [
+                {
+                  "items": {
+                    "items": {
+                      "minimum": 0,
+                      "type": "number"
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "minItems": 3,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Box"
+            },
+            "typology": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Typology"
+            }
+          },
+          "title": "RegionPatch",
+          "type": "object"
+        }
+      },
+      "title": "update_regionArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_regionOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "delete_line",
+    "title": null,
+    "description": "Delete a segmented line and its attached transcription text.",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/ElementTarget"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "type": "object",
+      "$defs": {
+        "ElementTarget": {
+          "additionalProperties": false,
+          "description": "Address an existing line or region inside a page.",
+          "properties": {
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            },
+            "element_id": {
+              "exclusiveMinimum": 0,
+              "title": "Element Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "document_id",
+            "page_id",
+            "element_id"
+          ],
+          "title": "ElementTarget",
+          "type": "object"
+        }
+      },
+      "title": "delete_lineArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "delete_lineOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "delete_region",
+    "title": null,
+    "description": "Delete a region; related line treatment follows server rules.",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/ElementTarget"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "type": "object",
+      "$defs": {
+        "ElementTarget": {
+          "additionalProperties": false,
+          "description": "Address an existing line or region inside a page.",
+          "properties": {
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            },
+            "element_id": {
+              "exclusiveMinimum": 0,
+              "title": "Element Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "document_id",
+            "page_id",
+            "element_id"
+          ],
+          "title": "ElementTarget",
+          "type": "object"
+        }
+      },
+      "title": "delete_regionArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "delete_regionOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "move_page",
+    "title": null,
+    "description": "Reorder one page within its document using a zero-based index.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        },
+        "position": {
+          "$ref": "#/$defs/PagePosition"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id",
+        "position"
+      ],
+      "type": "object",
+      "$defs": {
+        "PagePosition": {
+          "additionalProperties": false,
+          "description": "Zero-based page position within the same document.",
+          "properties": {
+            "index": {
+              "minimum": 0,
+              "title": "Index",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "index"
+          ],
+          "title": "PagePosition",
+          "type": "object"
+        }
+      },
+      "title": "move_pageArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "move_pageOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "reorder_lines",
+    "title": null,
+    "description": "Change line reading order within a page.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        },
+        "order": {
+          "$ref": "#/$defs/LineOrder"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id",
+        "order"
+      ],
+      "type": "object",
+      "$defs": {
+        "LineOrder": {
+          "additionalProperties": false,
+          "description": "Explicit line order changes within one page.",
+          "properties": {
+            "lines": {
+              "items": {
+                "$ref": "#/$defs/LinePosition"
+              },
+              "minItems": 1,
+              "title": "Lines",
+              "type": "array"
+            }
+          },
+          "required": [
+            "lines"
+          ],
+          "title": "LineOrder",
+          "type": "object"
+        },
+        "LinePosition": {
+          "additionalProperties": false,
+          "description": "A line's primary key and new reading-order index.",
+          "properties": {
+            "pk": {
+              "exclusiveMinimum": 0,
+              "title": "Pk",
+              "type": "integer"
+            },
+            "order": {
+              "minimum": 0,
+              "title": "Order",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "pk",
+            "order"
+          ],
+          "title": "LinePosition",
+          "type": "object"
+        }
+      },
+      "title": "reorder_linesArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "reorder_linesOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_models",
+    "title": null,
+    "description": "List models, job type (1 segmentation, 2 recognition), and training state.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object",
+      "title": "list_modelsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_modelsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "upload_model",
+    "title": null,
+    "description": "Register a local Kraken model for segmentation (1) or recognition (2).",
+    "inputSchema": {
+      "properties": {
+        "model": {
+          "$ref": "#/$defs/ModelUpload"
+        }
+      },
+      "required": [
+        "model"
+      ],
+      "type": "object",
+      "$defs": {
+        "ModelUpload": {
+          "additionalProperties": false,
+          "description": "Upload a local Kraken model: job 1 segments, job 2 recognizes text.",
+          "properties": {
+            "file_path": {
+              "format": "file-path",
+              "title": "File Path",
+              "type": "string"
+            },
+            "name": {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Name",
+              "type": "string"
+            },
+            "job": {
+              "enum": [
+                1,
+                2
+              ],
+              "title": "Job",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "file_path",
+            "name",
+            "job"
+          ],
+          "title": "ModelUpload",
+          "type": "object"
+        }
+      },
+      "title": "upload_modelArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "upload_modelOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_model",
+    "title": null,
+    "description": "Read model training progress, versions and available accuracy metadata.",
+    "inputSchema": {
+      "properties": {
+        "model_id": {
+          "exclusiveMinimum": 0,
+          "title": "Model Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "type": "object",
+      "title": "get_modelArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_modelOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_tasks",
+    "title": null,
+    "description": "List task reports: 0 queued, 1 running, 2 crashed, 3 done, 4 canceled.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object",
+      "title": "list_tasksArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_tasksOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_task",
+    "title": null,
+    "description": "Read a task report's status, messages and timestamps.",
+    "inputSchema": {
+      "properties": {
+        "task_id": {
+          "exclusiveMinimum": 0,
+          "title": "Task Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "type": "object",
+      "title": "get_taskArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_taskOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "segment_pages",
+    "title": null,
+    "description": "Queue automatic segmentation; override replaces existing geometry.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "job": {
+          "$ref": "#/$defs/Segmentation"
+        }
+      },
+      "required": [
+        "document_id",
+        "job"
+      ],
+      "type": "object",
+      "$defs": {
+        "Segmentation": {
+          "additionalProperties": false,
+          "description": "Require explicit pages; preserve existing segmentation unless overridden.",
+          "properties": {
+            "parts": {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "minItems": 1,
+              "title": "Parts",
+              "type": "array"
+            },
+            "model": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Model"
+            },
+            "steps": {
+              "default": "both",
+              "enum": [
+                "both",
+                "lines",
+                "masks",
+                "regions"
+              ],
+              "title": "Steps",
+              "type": "string"
+            },
+            "override": {
+              "default": false,
+              "title": "Override",
+              "type": "boolean"
+            },
+            "text_direction": {
+              "default": "horizontal-lr",
+              "enum": [
+                "horizontal-lr",
+                "horizontal-rl",
+                "vertical-lr",
+                "vertical-rl"
+              ],
+              "title": "Text Direction",
+              "type": "string"
+            }
+          },
+          "required": [
+            "parts"
+          ],
+          "title": "Segmentation",
+          "type": "object"
+        }
+      },
+      "title": "segment_pagesArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "segment_pagesOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "transcribe_pages",
+    "title": null,
+    "description": "Queue OCR/HTR; existing text in the selected layer may be replaced.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "job": {
+          "$ref": "#/$defs/Recognition"
+        }
+      },
+      "required": [
+        "document_id",
+        "job"
+      ],
+      "type": "object",
+      "$defs": {
+        "Recognition": {
+          "additionalProperties": false,
+          "description": "Transcribe selected pages with an existing recognizer and layer.",
+          "properties": {
+            "parts": {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "minItems": 1,
+              "title": "Parts",
+              "type": "array"
+            },
+            "model": {
+              "exclusiveMinimum": 0,
+              "title": "Model",
+              "type": "integer"
+            },
+            "transcription": {
+              "exclusiveMinimum": 0,
+              "title": "Transcription",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "parts",
+            "model",
+            "transcription"
+          ],
+          "title": "Recognition",
+          "type": "object"
+        }
+      },
+      "title": "transcribe_pagesArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "transcribe_pagesOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "train_recognition",
+    "title": null,
+    "description": "Queue recognition model training from selected ground-truth pages.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "job": {
+          "$ref": "#/$defs/RecognitionTraining"
+        }
+      },
+      "required": [
+        "document_id",
+        "job"
+      ],
+      "type": "object",
+      "$defs": {
+        "RecognitionTraining": {
+          "additionalProperties": false,
+          "description": "Recognition training uses a ground-truth transcription layer.",
+          "properties": {
+            "parts": {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "minItems": 1,
+              "title": "Parts",
+              "type": "array"
+            },
+            "model": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Model"
+            },
+            "model_name": {
+              "anyOf": [
+                {
+                  "maxLength": 255,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Model Name"
+            },
+            "override": {
+              "default": false,
+              "title": "Override",
+              "type": "boolean"
+            },
+            "transcription": {
+              "exclusiveMinimum": 0,
+              "title": "Transcription",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "parts",
+            "transcription"
+          ],
+          "title": "RecognitionTraining",
+          "type": "object"
+        }
+      },
+      "title": "train_recognitionArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "train_recognitionOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "train_segmentation",
+    "title": null,
+    "description": "Queue segmentation training from at least two segmented pages.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "job": {
+          "$ref": "#/$defs/SegmentationTraining"
+        }
+      },
+      "required": [
+        "document_id",
+        "job"
+      ],
+      "type": "object",
+      "$defs": {
+        "SegmentationTraining": {
+          "additionalProperties": false,
+          "description": "Segmentation training requires at least two distinct page images.",
+          "properties": {
+            "parts": {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "minItems": 1,
+              "title": "Parts",
+              "type": "array"
+            },
+            "model": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Model"
+            },
+            "model_name": {
+              "anyOf": [
+                {
+                  "maxLength": 255,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Model Name"
+            },
+            "override": {
+              "default": false,
+              "title": "Override",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "parts"
+          ],
+          "title": "SegmentationTraining",
+          "type": "object"
+        }
+      },
+      "title": "train_segmentationArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "train_segmentationOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "cancel_task",
+    "title": null,
+    "description": "Cancel a queued/running task using the server's cancellation action.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "task_id": {
+          "exclusiveMinimum": 0,
+          "title": "Task Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id",
+        "task_id"
+      ],
+      "type": "object",
+      "title": "cancel_taskArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "cancel_taskOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "cancel_page_tasks",
+    "title": null,
+    "description": "Cancel pending processing for one page.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id"
+      ],
+      "type": "object",
+      "title": "cancel_page_tasksArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "cancel_page_tasksOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "cancel_model_training",
+    "title": null,
+    "description": "Stop training an existing model using the dedicated cancel action.",
+    "inputSchema": {
+      "properties": {
+        "model_id": {
+          "exclusiveMinimum": 0,
+          "title": "Model Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "type": "object",
+      "title": "cancel_model_trainingArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "cancel_model_trainingOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "download_register",
+    "title": null,
+    "description": "Download ALL available scans directly to NAS with a checksum manifest.\n\n        Requires a new catalogue folder. Existing destinations are never overwritten.\n        Download completion does not mean visual inspection or transcription completion.\n        ",
+    "inputSchema": {
+      "properties": {
+        "register": {
+          "$ref": "#/$defs/RegisterDownload"
+        }
+      },
+      "required": [
+        "register"
+      ],
+      "type": "object",
+      "$defs": {
+        "RegisterDownload": {
+          "additionalProperties": false,
+          "description": "Catalogue identifiers used for the fixed NAS book folder.",
+          "properties": {
+            "operation": {
+              "const": "download_register",
+              "default": "download_register",
+              "title": "Operation",
+              "type": "string"
+            },
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "parish": {
+              "pattern": "^[\\w][\\w .-]{0,99}$",
+              "title": "Parish",
+              "type": "string"
+            },
+            "register_id": {
+              "pattern": "^[0-9]{1,30}$",
+              "title": "Register Id",
+              "type": "string"
+            },
+            "register_type": {
+              "enum": [
+                "Baptisms",
+                "Marriages",
+                "Deaths",
+                "BaptismIndex",
+                "MarriageIndex",
+                "DeathIndex"
+              ],
+              "title": "Register Type",
+              "type": "string"
+            },
+            "years": {
+              "pattern": "^[0-9]{4}(?:-[0-9]{4})?$",
+              "title": "Years",
+              "type": "string"
+            }
+          },
+          "required": [
+            "document_id",
+            "parish",
+            "register_id",
+            "register_type",
+            "years"
+          ],
+          "title": "RegisterDownload",
+          "type": "object"
+        }
+      },
+      "title": "download_registerArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "download_registerOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "export_transcriptions",
+    "title": null,
+    "description": "Save a layer as UTF-8 text or JSON locally in page/line order.\n\n        Works with API-token authentication without waiting for server notifications.\n        Existing files are never overwritten. JSON preserves line IDs and revisions.\n        ",
+    "inputSchema": {
+      "properties": {
+        "export": {
+          "$ref": "#/$defs/TranscriptionExport"
+        }
+      },
+      "required": [
+        "export"
+      ],
+      "type": "object",
+      "$defs": {
+        "TranscriptionExport": {
+          "additionalProperties": false,
+          "description": "Export a layer to a new local file, all pages unless explicitly selected.",
+          "properties": {
+            "operation": {
+              "const": "export_transcriptions",
+              "default": "export_transcriptions",
+              "title": "Operation",
+              "type": "string"
+            },
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "transcription_id": {
+              "exclusiveMinimum": 0,
+              "title": "Transcription Id",
+              "type": "integer"
+            },
+            "destination": {
+              "format": "path",
+              "title": "Destination",
+              "type": "string"
+            },
+            "file_format": {
+              "default": "text",
+              "enum": [
+                "text",
+                "json"
+              ],
+              "title": "File Format",
+              "type": "string"
+            },
+            "parts": {
+              "anyOf": [
+                {
+                  "items": {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Parts"
+            }
+          },
+          "required": [
+            "document_id",
+            "transcription_id",
+            "destination"
+          ],
+          "title": "TranscriptionExport",
+          "type": "object"
+        }
+      },
+      "title": "export_transcriptionsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "export_transcriptionsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "request_server_export",
+    "title": null,
+    "description": "Queue a native ALTO, PAGE XML or text archive export.\n\n        Success means queued, not complete. Use the URL in the eScriptorium completion\n        notification with download_export. This instance has no downloads-list API.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "export": {
+          "$ref": "#/$defs/ServerExport"
+        }
+      },
+      "required": [
+        "document_id",
+        "export"
+      ],
+      "type": "object",
+      "$defs": {
+        "ServerExport": {
+          "additionalProperties": false,
+          "description": "Native eScriptorium export job; download arrives through its notification.",
+          "properties": {
+            "transcription": {
+              "exclusiveMinimum": 0,
+              "title": "Transcription",
+              "type": "integer"
+            },
+            "file_format": {
+              "default": "alto",
+              "enum": [
+                "alto",
+                "pagexml",
+                "text"
+              ],
+              "title": "File Format",
+              "type": "string"
+            },
+            "parts": {
+              "anyOf": [
+                {
+                  "items": {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Parts"
+            },
+            "region_types": {
+              "anyOf": [
+                {
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "enum": [
+                          "Undefined",
+                          "Orphan"
+                        ],
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Region Types"
+            },
+            "include_characters": {
+              "default": false,
+              "title": "Include Characters",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "transcription"
+          ],
+          "title": "ServerExport",
+          "type": "object"
+        }
+      },
+      "title": "request_server_exportArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "request_server_exportOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "download_export",
+    "title": null,
+    "description": "Save a completed same-server export URL to a new local file with checksum.",
+    "inputSchema": {
+      "properties": {
+        "export": {
+          "$ref": "#/$defs/ExportDownload"
+        }
+      },
+      "required": [
+        "export"
+      ],
+      "type": "object",
+      "$defs": {
+        "ExportDownload": {
+          "additionalProperties": false,
+          "description": "Download an export URL supplied by an eScriptorium notification.",
+          "properties": {
+            "operation": {
+              "const": "download_export",
+              "default": "download_export",
+              "title": "Operation",
+              "type": "string"
+            },
+            "url": {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "title": "Url",
+              "type": "string"
+            },
+            "destination": {
+              "format": "path",
+              "title": "Destination",
+              "type": "string"
+            }
+          },
+          "required": [
+            "url",
+            "destination"
+          ],
+          "title": "ExportDownload",
+          "type": "object"
+        }
+      },
+      "title": "download_exportArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "download_exportOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "import_document_file",
+    "title": null,
+    "description": "Queue import of PDF, ZIP, ALTO or PAGE XML into an existing document.\n\n        override=true can replace segmentation and text. Poll task reports afterward.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "upload": {
+          "$ref": "#/$defs/DocumentImport"
+        }
+      },
+      "required": [
+        "document_id",
+        "upload"
+      ],
+      "type": "object",
+      "$defs": {
+        "DocumentImport": {
+          "additionalProperties": false,
+          "description": "Import a supported PDF, image archive or transcription file.",
+          "properties": {
+            "file_path": {
+              "format": "file-path",
+              "title": "File Path",
+              "type": "string"
+            },
+            "name": {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Name",
+              "type": "string"
+            },
+            "override": {
+              "default": false,
+              "title": "Override",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "file_path",
+            "name"
+          ],
+          "title": "DocumentImport",
+          "type": "object"
+        }
+      },
+      "title": "import_document_fileArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "import_document_fileOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_document_ontology",
+    "title": null,
+    "description": "Read the document's allowed page, region and line types with actual IDs.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "type": "object",
+      "title": "get_document_ontologyArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_document_ontologyOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_ontology_types",
+    "title": null,
+    "description": "List public/template types; use get_document_ontology for assigned types.",
+    "inputSchema": {
+      "properties": {
+        "kind": {
+          "enum": [
+            "block",
+            "line",
+            "part",
+            "annotations"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "type": "object",
+      "title": "list_ontology_typesArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_ontology_typesOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "create_ontology_type",
+    "title": null,
+    "description": "Create/reuse a named type; this does not attach it to a document.",
+    "inputSchema": {
+      "properties": {
+        "kind": {
+          "enum": [
+            "block",
+            "line",
+            "part",
+            "annotations"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "data": {
+          "$ref": "#/$defs/TypeDefinition"
+        }
+      },
+      "required": [
+        "kind",
+        "data"
+      ],
+      "type": "object",
+      "$defs": {
+        "TypeDefinition": {
+          "additionalProperties": false,
+          "description": "Name supported by both legacy and current ontology APIs.",
+          "properties": {
+            "name": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Name",
+              "type": "string"
+            },
+            "color": {
+              "anyOf": [
+                {
+                  "maxLength": 7,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Color"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "title": "TypeDefinition",
+          "type": "object"
+        }
+      },
+      "title": "create_ontology_typeArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "create_ontology_typeOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_ontology_type",
+    "title": null,
+    "description": "Rename a type. Legacy/shared types affect every document using that ID.",
+    "inputSchema": {
+      "properties": {
+        "kind": {
+          "enum": [
+            "block",
+            "line",
+            "part",
+            "annotations"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "type_id": {
+          "exclusiveMinimum": 0,
+          "title": "Type Id",
+          "type": "integer"
+        },
+        "changes": {
+          "$ref": "#/$defs/TypeDefinition"
+        }
+      },
+      "required": [
+        "kind",
+        "type_id",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "TypeDefinition": {
+          "additionalProperties": false,
+          "description": "Name supported by both legacy and current ontology APIs.",
+          "properties": {
+            "name": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Name",
+              "type": "string"
+            },
+            "color": {
+              "anyOf": [
+                {
+                  "maxLength": 7,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Color"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "title": "TypeDefinition",
+          "type": "object"
+        }
+      },
+      "title": "update_ontology_typeArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_ontology_typeOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "delete_ontology_type",
+    "title": null,
+    "description": "Delete a definition globally where permitted.\n\n        Page/region/line references become untyped. Deleting an annotation\n        type can cascade to taxonomies and their annotations.\n\n        To remove it only from one document, use set_document_ontology instead.\n        ",
+    "inputSchema": {
+      "properties": {
+        "kind": {
+          "enum": [
+            "block",
+            "line",
+            "part",
+            "annotations"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "type_id": {
+          "exclusiveMinimum": 0,
+          "title": "Type Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind",
+        "type_id"
+      ],
+      "type": "object",
+      "title": "delete_ontology_typeArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "delete_ontology_typeOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "set_document_ontology",
+    "title": null,
+    "description": "Replace supplied allowed-type lists, preserving omitted categories.\n\n        Audit/reassign used types before removal. Newer servers may clear content\n        assignments when dropping a document-owned type. Re-read resulting IDs.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "types": {
+          "$ref": "#/$defs/OntologySelection"
+        }
+      },
+      "required": [
+        "document_id",
+        "types"
+      ],
+      "type": "object",
+      "$defs": {
+        "OntologySelection": {
+          "additionalProperties": false,
+          "description": "Replacement lists: omitted categories stay unchanged, empty lists clear.",
+          "properties": {
+            "valid_block_types": {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "title": "Valid Block Types",
+              "type": "array"
+            },
+            "valid_line_types": {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "title": "Valid Line Types",
+              "type": "array"
+            },
+            "valid_part_types": {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "title": "Valid Part Types",
+              "type": "array"
+            }
+          },
+          "title": "OntologySelection",
+          "type": "object"
+        }
+      },
+      "title": "set_document_ontologyArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "set_document_ontologyOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "add_document_ontology_type",
+    "title": null,
+    "description": "Create/reuse and attach a named type while keeping existing allowed types.\n\n        Multiple requests are not atomic. If attachment fails, the created\n        definition may remain. Re-read the document to obtain its assigned ID.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "kind": {
+          "enum": [
+            "block",
+            "line",
+            "part"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "data": {
+          "$ref": "#/$defs/TypeDefinition"
+        }
+      },
+      "required": [
+        "document_id",
+        "kind",
+        "data"
+      ],
+      "type": "object",
+      "$defs": {
+        "TypeDefinition": {
+          "additionalProperties": false,
+          "description": "Name supported by both legacy and current ontology APIs.",
+          "properties": {
+            "name": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Name",
+              "type": "string"
+            },
+            "color": {
+              "anyOf": [
+                {
+                  "maxLength": 7,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Color"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "title": "TypeDefinition",
+          "type": "object"
+        }
+      },
+      "title": "add_document_ontology_typeArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "add_document_ontology_typeOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_annotation_components",
+    "title": null,
+    "description": "List all annotation input fields and their allowed values in a document.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "type": "object",
+      "title": "list_annotation_componentsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_annotation_componentsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_annotation_component",
+    "title": null,
+    "description": "Read an annotation input field and its allowed values.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "component_id": {
+          "exclusiveMinimum": 0,
+          "title": "Component Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id",
+        "component_id"
+      ],
+      "type": "object",
+      "title": "get_annotation_componentArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_annotation_componentOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "create_annotation_component",
+    "title": null,
+    "description": "Create a document annotation field; empty allowed_values means free text.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "component": {
+          "$ref": "#/$defs/AnnotationComponent"
+        }
+      },
+      "required": [
+        "document_id",
+        "component"
+      ],
+      "type": "object",
+      "$defs": {
+        "AnnotationComponent": {
+          "additionalProperties": false,
+          "description": "Named input field; an empty allowed-values list permits free text.",
+          "properties": {
+            "name": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Name",
+              "type": "string"
+            },
+            "allowed_values": {
+              "anyOf": [
+                {
+                  "items": {
+                    "maxLength": 128,
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Allowed Values"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "title": "AnnotationComponent",
+          "type": "object"
+        }
+      },
+      "title": "create_annotation_componentArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "create_annotation_componentOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_annotation_component",
+    "title": null,
+    "description": "Rename a field or replace its allowed values; annotation text remains.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "component_id": {
+          "exclusiveMinimum": 0,
+          "title": "Component Id",
+          "type": "integer"
+        },
+        "changes": {
+          "$ref": "#/$defs/AnnotationComponentPatch"
+        }
+      },
+      "required": [
+        "document_id",
+        "component_id",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "AnnotationComponentPatch": {
+          "additionalProperties": false,
+          "description": "Change a component label or replace its allowed values.",
+          "properties": {
+            "name": {
+              "anyOf": [
+                {
+                  "maxLength": 128,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Name"
+            },
+            "allowed_values": {
+              "anyOf": [
+                {
+                  "items": {
+                    "maxLength": 128,
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Allowed Values"
+            }
+          },
+          "title": "AnnotationComponentPatch",
+          "type": "object"
+        }
+      },
+      "title": "update_annotation_componentArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_annotation_componentOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "delete_annotation_component",
+    "title": null,
+    "description": "Delete an annotation field; associated annotation values may be deleted.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "component_id": {
+          "exclusiveMinimum": 0,
+          "title": "Component Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id",
+        "component_id"
+      ],
+      "type": "object",
+      "title": "delete_annotation_componentArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "delete_annotation_componentOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_annotation_taxonomies",
+    "title": null,
+    "description": "List annotation categories, optionally filtering image or text markers.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "enum": [
+                "image",
+                "text"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "type": "object",
+      "title": "list_annotation_taxonomiesArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_annotation_taxonomiesOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_annotation_taxonomy",
+    "title": null,
+    "description": "Read a complete annotation category before replacing its definition.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "taxonomy_id": {
+          "exclusiveMinimum": 0,
+          "title": "Taxonomy Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id",
+        "taxonomy_id"
+      ],
+      "type": "object",
+      "title": "get_annotation_taxonomyArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_annotation_taxonomyOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "create_annotation_taxonomy",
+    "title": null,
+    "description": "Create an annotation category; typology uses name, components use IDs.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "taxonomy": {
+          "$ref": "#/$defs/AnnotationTaxonomy"
+        }
+      },
+      "required": [
+        "document_id",
+        "taxonomy"
+      ],
+      "type": "object",
+      "$defs": {
+        "AnnotationTaxonomy": {
+          "additionalProperties": false,
+          "description": "Complete annotation display definition with document component IDs.",
+          "properties": {
+            "name": {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Name",
+              "type": "string"
+            },
+            "marker_type": {
+              "enum": [
+                "Rectangle",
+                "Polygon",
+                "Background Color",
+                "Text Color",
+                "Bold",
+                "Italic"
+              ],
+              "title": "Marker Type",
+              "type": "string"
+            },
+            "abbreviation": {
+              "anyOf": [
+                {
+                  "maxLength": 3,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "",
+              "title": "Abbreviation"
+            },
+            "marker_detail": {
+              "anyOf": [
+                {
+                  "maxLength": 7,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "",
+              "title": "Marker Detail"
+            },
+            "has_comments": {
+              "default": false,
+              "title": "Has Comments",
+              "type": "boolean"
+            },
+            "typology": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/AnnotationType"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "components": {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "title": "Components",
+              "type": "array"
+            }
+          },
+          "required": [
+            "name",
+            "marker_type"
+          ],
+          "title": "AnnotationTaxonomy",
+          "type": "object"
+        },
+        "AnnotationType": {
+          "additionalProperties": false,
+          "description": "An annotation type is resolved or created by its global name.",
+          "properties": {
+            "name": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "title": "AnnotationType",
+          "type": "object"
+        }
+      },
+      "title": "create_annotation_taxonomyArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "create_annotation_taxonomyOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_annotation_taxonomy",
+    "title": null,
+    "description": "Replace the full definition: supply every setting to preserve it.\n\n        Read first; convert nested components to their IDs and typology to {name}.\n        Explicit components=[] removes all fields; typology=null clears the type.\n        Omitted display fields reset to defaults. Existing annotations remain.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "taxonomy_id": {
+          "exclusiveMinimum": 0,
+          "title": "Taxonomy Id",
+          "type": "integer"
+        },
+        "definition": {
+          "$ref": "#/$defs/AnnotationTaxonomyReplacement"
+        }
+      },
+      "required": [
+        "document_id",
+        "taxonomy_id",
+        "definition"
+      ],
+      "type": "object",
+      "$defs": {
+        "AnnotationTaxonomyReplacement": {
+          "additionalProperties": false,
+          "description": "Require explicit relations because the upstream PATCH replaces them.",
+          "properties": {
+            "name": {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Name",
+              "type": "string"
+            },
+            "marker_type": {
+              "enum": [
+                "Rectangle",
+                "Polygon",
+                "Background Color",
+                "Text Color",
+                "Bold",
+                "Italic"
+              ],
+              "title": "Marker Type",
+              "type": "string"
+            },
+            "abbreviation": {
+              "anyOf": [
+                {
+                  "maxLength": 3,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "",
+              "title": "Abbreviation"
+            },
+            "marker_detail": {
+              "anyOf": [
+                {
+                  "maxLength": 7,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "",
+              "title": "Marker Detail"
+            },
+            "has_comments": {
+              "default": false,
+              "title": "Has Comments",
+              "type": "boolean"
+            },
+            "typology": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/AnnotationType"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "components": {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "title": "Components",
+              "type": "array"
+            }
+          },
+          "required": [
+            "name",
+            "marker_type",
+            "typology",
+            "components"
+          ],
+          "title": "AnnotationTaxonomyReplacement",
+          "type": "object"
+        },
+        "AnnotationType": {
+          "additionalProperties": false,
+          "description": "An annotation type is resolved or created by its global name.",
+          "properties": {
+            "name": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "title": "AnnotationType",
+          "type": "object"
+        }
+      },
+      "title": "update_annotation_taxonomyArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_annotation_taxonomyOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "delete_annotation_taxonomy",
+    "title": null,
+    "description": "Delete an annotation category; its existing annotations may be deleted.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "taxonomy_id": {
+          "exclusiveMinimum": 0,
+          "title": "Taxonomy Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id",
+        "taxonomy_id"
+      ],
+      "type": "object",
+      "title": "delete_annotation_taxonomyArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "delete_annotation_taxonomyOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_annotations",
+    "title": null,
+    "description": "List page annotations; optionally filter text by transcription layer.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        },
+        "kind": {
+          "enum": [
+            "image",
+            "text"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "transcription_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transcription Id"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id",
+        "kind"
+      ],
+      "type": "object",
+      "title": "list_annotationsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_annotationsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_annotation",
+    "title": null,
+    "description": "Read an annotation, component values and its server-generated W3C form.",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/AnnotationTarget"
+        },
+        "kind": {
+          "enum": [
+            "image",
+            "text"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target",
+        "kind"
+      ],
+      "type": "object",
+      "$defs": {
+        "AnnotationTarget": {
+          "additionalProperties": false,
+          "description": "Address an annotation within a document and page.",
+          "properties": {
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            },
+            "annotation_id": {
+              "exclusiveMinimum": 0,
+              "title": "Annotation Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "document_id",
+            "page_id",
+            "annotation_id"
+          ],
+          "title": "AnnotationTarget",
+          "type": "object"
+        }
+      },
+      "title": "get_annotationArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_annotationOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "delete_annotation",
+    "title": null,
+    "description": "Delete an annotation and its component values from this page.",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/AnnotationTarget"
+        },
+        "kind": {
+          "enum": [
+            "image",
+            "text"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target",
+        "kind"
+      ],
+      "type": "object",
+      "$defs": {
+        "AnnotationTarget": {
+          "additionalProperties": false,
+          "description": "Address an annotation within a document and page.",
+          "properties": {
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            },
+            "annotation_id": {
+              "exclusiveMinimum": 0,
+              "title": "Annotation Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "document_id",
+            "page_id",
+            "annotation_id"
+          ],
+          "title": "AnnotationTarget",
+          "type": "object"
+        }
+      },
+      "title": "delete_annotationArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "delete_annotationOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "create_image_annotation",
+    "title": null,
+    "description": "Create an image annotation on this page using a document taxonomy.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/$defs/ImageAnnotationCreate"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id",
+        "data"
+      ],
+      "type": "object",
+      "$defs": {
+        "AnnotationValue": {
+          "additionalProperties": false,
+          "description": "A field value; null clears its content but does not remove its relation.",
+          "properties": {
+            "component": {
+              "exclusiveMinimum": 0,
+              "title": "Component",
+              "type": "integer"
+            },
+            "value": {
+              "anyOf": [
+                {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Value"
+            }
+          },
+          "required": [
+            "component",
+            "value"
+          ],
+          "title": "AnnotationValue",
+          "type": "object"
+        },
+        "ImageAnnotationCreate": {
+          "additionalProperties": false,
+          "description": "Rectangle corners or polygon vertices, in integer image pixels.",
+          "properties": {
+            "components": {
+              "items": {
+                "$ref": "#/$defs/AnnotationValue"
+              },
+              "title": "Components",
+              "type": "array"
+            },
+            "comments": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Comments"
+            },
+            "taxonomy": {
+              "exclusiveMinimum": 0,
+              "title": "Taxonomy",
+              "type": "integer"
+            },
+            "coordinates": {
+              "items": {
+                "items": {
+                  "maximum": 2147483647,
+                  "minimum": -2147483648,
+                  "type": "integer"
+                },
+                "maxItems": 2,
+                "minItems": 2,
+                "type": "array"
+              },
+              "minItems": 2,
+              "title": "Coordinates",
+              "type": "array"
+            }
+          },
+          "required": [
+            "taxonomy",
+            "coordinates"
+          ],
+          "title": "ImageAnnotationCreate",
+          "type": "object"
+        }
+      },
+      "title": "create_image_annotationArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "create_image_annotationOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_image_annotation",
+    "title": null,
+    "description": "Update image fields; components upsert by ID, [] preserves existing values.\n\n        Set a component value to null to clear it. Its relation remains because\n        the upstream API has no component-value deletion endpoint.\n        ",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/AnnotationTarget"
+        },
+        "changes": {
+          "$ref": "#/$defs/ImageAnnotationPatch"
+        }
+      },
+      "required": [
+        "target",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "AnnotationTarget": {
+          "additionalProperties": false,
+          "description": "Address an annotation within a document and page.",
+          "properties": {
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            },
+            "annotation_id": {
+              "exclusiveMinimum": 0,
+              "title": "Annotation Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "document_id",
+            "page_id",
+            "annotation_id"
+          ],
+          "title": "AnnotationTarget",
+          "type": "object"
+        },
+        "AnnotationValue": {
+          "additionalProperties": false,
+          "description": "A field value; null clears its content but does not remove its relation.",
+          "properties": {
+            "component": {
+              "exclusiveMinimum": 0,
+              "title": "Component",
+              "type": "integer"
+            },
+            "value": {
+              "anyOf": [
+                {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Value"
+            }
+          },
+          "required": [
+            "component",
+            "value"
+          ],
+          "title": "AnnotationValue",
+          "type": "object"
+        },
+        "ImageAnnotationPatch": {
+          "additionalProperties": false,
+          "description": "Update supplied fields while preserving omitted values and components.",
+          "properties": {
+            "components": {
+              "items": {
+                "$ref": "#/$defs/AnnotationValue"
+              },
+              "title": "Components",
+              "type": "array"
+            },
+            "comments": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Comments"
+            },
+            "taxonomy": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Taxonomy"
+            },
+            "coordinates": {
+              "anyOf": [
+                {
+                  "items": {
+                    "items": {
+                      "maximum": 2147483647,
+                      "minimum": -2147483648,
+                      "type": "integer"
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "minItems": 2,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Coordinates"
+            }
+          },
+          "title": "ImageAnnotationPatch",
+          "type": "object"
+        }
+      },
+      "title": "update_image_annotationArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_image_annotationOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "create_text_annotation",
+    "title": null,
+    "description": "Create a text span; use page line IDs and the document transcription ID.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Page Id",
+          "type": "integer"
+        },
+        "data": {
+          "$ref": "#/$defs/TextAnnotationCreate"
+        }
+      },
+      "required": [
+        "document_id",
+        "page_id",
+        "data"
+      ],
+      "type": "object",
+      "$defs": {
+        "AnnotationValue": {
+          "additionalProperties": false,
+          "description": "A field value; null clears its content but does not remove its relation.",
+          "properties": {
+            "component": {
+              "exclusiveMinimum": 0,
+              "title": "Component",
+              "type": "integer"
+            },
+            "value": {
+              "anyOf": [
+                {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Value"
+            }
+          },
+          "required": [
+            "component",
+            "value"
+          ],
+          "title": "AnnotationValue",
+          "type": "object"
+        },
+        "TextAnnotationCreate": {
+          "additionalProperties": false,
+          "description": "Text span identified by line IDs, a layer ID and zero-based offsets.",
+          "properties": {
+            "components": {
+              "items": {
+                "$ref": "#/$defs/AnnotationValue"
+              },
+              "title": "Components",
+              "type": "array"
+            },
+            "comments": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Comments"
+            },
+            "taxonomy": {
+              "exclusiveMinimum": 0,
+              "title": "Taxonomy",
+              "type": "integer"
+            },
+            "transcription": {
+              "exclusiveMinimum": 0,
+              "title": "Transcription",
+              "type": "integer"
+            },
+            "start_line": {
+              "exclusiveMinimum": 0,
+              "title": "Start Line",
+              "type": "integer"
+            },
+            "end_line": {
+              "exclusiveMinimum": 0,
+              "title": "End Line",
+              "type": "integer"
+            },
+            "start_offset": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "title": "Start Offset",
+              "type": "integer"
+            },
+            "end_offset": {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "title": "End Offset",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "taxonomy",
+            "transcription",
+            "start_line",
+            "end_line",
+            "start_offset",
+            "end_offset"
+          ],
+          "title": "TextAnnotationCreate",
+          "type": "object"
+        }
+      },
+      "title": "create_text_annotationArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "create_text_annotationOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_text_annotation",
+    "title": null,
+    "description": "Update text fields; components upsert by ID, [] preserves existing values.\n\n        Set a component value to null to clear it. Its relation remains because\n        the upstream API has no component-value deletion endpoint.\n        ",
+    "inputSchema": {
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/AnnotationTarget"
+        },
+        "changes": {
+          "$ref": "#/$defs/TextAnnotationPatch"
+        }
+      },
+      "required": [
+        "target",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "AnnotationTarget": {
+          "additionalProperties": false,
+          "description": "Address an annotation within a document and page.",
+          "properties": {
+            "document_id": {
+              "exclusiveMinimum": 0,
+              "title": "Document Id",
+              "type": "integer"
+            },
+            "page_id": {
+              "exclusiveMinimum": 0,
+              "title": "Page Id",
+              "type": "integer"
+            },
+            "annotation_id": {
+              "exclusiveMinimum": 0,
+              "title": "Annotation Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "document_id",
+            "page_id",
+            "annotation_id"
+          ],
+          "title": "AnnotationTarget",
+          "type": "object"
+        },
+        "AnnotationValue": {
+          "additionalProperties": false,
+          "description": "A field value; null clears its content but does not remove its relation.",
+          "properties": {
+            "component": {
+              "exclusiveMinimum": 0,
+              "title": "Component",
+              "type": "integer"
+            },
+            "value": {
+              "anyOf": [
+                {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Value"
+            }
+          },
+          "required": [
+            "component",
+            "value"
+          ],
+          "title": "AnnotationValue",
+          "type": "object"
+        },
+        "TextAnnotationPatch": {
+          "additionalProperties": false,
+          "description": "Change a span, its layer, taxonomy or values; omitted fields stay intact.",
+          "properties": {
+            "components": {
+              "items": {
+                "$ref": "#/$defs/AnnotationValue"
+              },
+              "title": "Components",
+              "type": "array"
+            },
+            "comments": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Comments"
+            },
+            "taxonomy": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Taxonomy"
+            },
+            "transcription": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Transcription"
+            },
+            "start_line": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Start Line"
+            },
+            "end_line": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "End Line"
+            },
+            "start_offset": {
+              "anyOf": [
+                {
+                  "maximum": 2147483647,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Start Offset"
+            },
+            "end_offset": {
+              "anyOf": [
+                {
+                  "maximum": 2147483647,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "End Offset"
+            }
+          },
+          "title": "TextAnnotationPatch",
+          "type": "object"
+        }
+      },
+      "title": "update_text_annotationArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_text_annotationOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "patch_annotation_taxonomy",
+    "title": null,
+    "description": "Edit only supplied taxonomy fields, preserving omitted relations/settings.\n\n        Explicit typology=null clears its relation; components=[] removes all fields.\n        The API has no atomic conditional update: avoid concurrent taxonomy edits.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "taxonomy_id": {
+          "exclusiveMinimum": 0,
+          "title": "Taxonomy Id",
+          "type": "integer"
+        },
+        "changes": {
+          "$ref": "#/$defs/TaxonomyPatch"
+        }
+      },
+      "required": [
+        "document_id",
+        "taxonomy_id",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "AnnotationType": {
+          "additionalProperties": false,
+          "description": "An annotation type is resolved or created by its global name.",
+          "properties": {
+            "name": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "title": "AnnotationType",
+          "type": "object"
+        },
+        "TaxonomyPatch": {
+          "additionalProperties": false,
+          "description": "Only supplied fields change; null typology clears the relation.",
+          "properties": {
+            "name": {
+              "default": "",
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Name",
+              "type": "string"
+            },
+            "marker_type": {
+              "default": "Rectangle",
+              "enum": [
+                "Rectangle",
+                "Polygon",
+                "Background Color",
+                "Text Color",
+                "Bold",
+                "Italic"
+              ],
+              "title": "Marker Type",
+              "type": "string"
+            },
+            "abbreviation": {
+              "anyOf": [
+                {
+                  "maxLength": 3,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "",
+              "title": "Abbreviation"
+            },
+            "marker_detail": {
+              "anyOf": [
+                {
+                  "maxLength": 7,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "",
+              "title": "Marker Detail"
+            },
+            "has_comments": {
+              "default": false,
+              "title": "Has Comments",
+              "type": "boolean"
+            },
+            "typology": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/AnnotationType"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "components": {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "title": "Components",
+              "type": "array"
+            }
+          },
+          "title": "TaxonomyPatch",
+          "type": "object"
+        }
+      },
+      "title": "patch_annotation_taxonomyArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "patch_annotation_taxonomyOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "merge_annotation_taxonomies",
+    "title": null,
+    "description": "Preview/apply reassignment of all source image/text annotations to target.\n\n        Target must support every stored component and the same marker family.\n        Existing values/geometry/text spans remain. Source deletion is opt-in and\n        requires a clean rescan. Pause concurrent editing: upstream has no atomic\n        conditional writes. Failures return partial progress; inspect before retry.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "source_taxonomy_id": {
+          "exclusiveMinimum": 0,
+          "title": "Source Taxonomy Id",
+          "type": "integer"
+        },
+        "target_taxonomy_id": {
+          "exclusiveMinimum": 0,
+          "title": "Target Taxonomy Id",
+          "type": "integer"
+        },
+        "apply": {
+          "default": false,
+          "title": "Apply",
+          "type": "boolean"
+        },
+        "delete_source": {
+          "default": false,
+          "title": "Delete Source",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "document_id",
+        "source_taxonomy_id",
+        "target_taxonomy_id"
+      ],
+      "type": "object",
+      "title": "merge_annotation_taxonomiesArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "merge_annotation_taxonomiesOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "audit_document_ontology",
+    "title": null,
+    "description": "Audit type usage, untyped content and invalid/duplicate labels.",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "type": "object",
+      "title": "audit_document_ontologyArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "audit_document_ontologyOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "replace_ontology_assignments",
+    "title": null,
+    "description": "Preview (default) or apply type replacement across an entire document.\n\n        Null source selects untyped content; null target clears assignments.\n        Writes are sequential, not atomic; avoid concurrent editing during repair.\n        Returns partial progress on failure. Source removal affects this document only.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "change": {
+          "$ref": "#/$defs/TypeReplacement"
+        }
+      },
+      "required": [
+        "document_id",
+        "change"
+      ],
+      "type": "object",
+      "$defs": {
+        "TypeReplacement": {
+          "additionalProperties": false,
+          "description": "Preview or apply a document-wide type replacement; null means untyped.",
+          "properties": {
+            "kind": {
+              "enum": [
+                "block",
+                "line",
+                "part"
+              ],
+              "title": "Kind",
+              "type": "string"
+            },
+            "source_type_id": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Source Type Id"
+            },
+            "target_type_id": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Target Type Id"
+            },
+            "apply": {
+              "default": false,
+              "title": "Apply",
+              "type": "boolean"
+            },
+            "remove_source_from_ontology": {
+              "default": false,
+              "title": "Remove Source From Ontology",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "kind",
+            "source_type_id",
+            "target_type_id"
+          ],
+          "title": "TypeReplacement",
+          "type": "object"
+        }
+      },
+      "title": "replace_ontology_assignmentsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "replace_ontology_assignmentsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "merge_ontology_types",
+    "title": null,
+    "description": "Preview/apply a merge: reassign usage, then remove source from this document.\n\n        Both definitions remain globally on legacy servers; no global deletion.\n        Concurrent edits are not transactionally isolated. Inspect partial results.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "kind": {
+          "enum": [
+            "block",
+            "line",
+            "part"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "source_type_id": {
+          "exclusiveMinimum": 0,
+          "title": "Source Type Id",
+          "type": "integer"
+        },
+        "target_type_id": {
+          "exclusiveMinimum": 0,
+          "title": "Target Type Id",
+          "type": "integer"
+        },
+        "apply": {
+          "default": false,
+          "title": "Apply",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "document_id",
+        "kind",
+        "source_type_id",
+        "target_type_id"
+      ],
+      "type": "object",
+      "title": "merge_ontology_typesArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "merge_ontology_typesOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_ontology_capabilities",
+    "title": null,
+    "description": "Probe native import/export and project templates using GET and OPTIONS.\n\n        A missing/denied parent stays an HTTP error. Endpoint 404 means absent\n        or hidden, 403 means denied; neither is guessed to be a server version.\n        Methods and serializer fields are reported where OPTIONS supplies them.\n        ",
+    "inputSchema": {
+      "properties": {
+        "scope": {
+          "enum": [
+            "documents",
+            "projects"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "resource_id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "scope",
+        "resource_id"
+      ],
+      "type": "object",
+      "title": "get_ontology_capabilitiesArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_ontology_capabilitiesOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "export_native_ontology",
+    "title": null,
+    "description": "Save native ontology YAML on the MCP host without overwriting files.\n\n        Requires the server's native endpoint; use portable ontology backup on\n        older servers. Project export can return 404 when no template is set.\n        ",
+    "inputSchema": {
+      "properties": {
+        "scope": {
+          "enum": [
+            "documents",
+            "projects"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "resource_id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource Id",
+          "type": "integer"
+        },
+        "destination": {
+          "format": "path",
+          "title": "Destination",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scope",
+        "resource_id",
+        "destination"
+      ],
+      "type": "object",
+      "title": "export_native_ontologyArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "export_native_ontologyOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "import_native_ontology",
+    "title": null,
+    "description": "Apply server-native YAML/legacy JSON from the MCP host (maximum 16 MiB).\n\n        Document import can replace definitions and affect annotations; project\n        import sets the template for future documents. Preserve returned warnings.\n        Unsupported/denied endpoints return capability evidence without writing.\n        ",
+    "inputSchema": {
+      "properties": {
+        "scope": {
+          "enum": [
+            "documents",
+            "projects"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "resource_id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource Id",
+          "type": "integer"
+        },
+        "file_path": {
+          "format": "file-path",
+          "title": "File Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scope",
+        "resource_id",
+        "file_path"
+      ],
+      "type": "object",
+      "title": "import_native_ontologyArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "import_native_ontologyOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_project_ontology",
+    "title": null,
+    "description": "Read the default template for future documents; null means none set.\n\n        Older servers return 404 for the unsupported endpoint.\n        ",
+    "inputSchema": {
+      "properties": {
+        "project_id": {
+          "exclusiveMinimum": 0,
+          "title": "Project Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "type": "object",
+      "title": "get_project_ontologyArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_project_ontologyOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "delete_project_ontology",
+    "title": null,
+    "description": "Clear the project template without changing existing documents.",
+    "inputSchema": {
+      "properties": {
+        "project_id": {
+          "exclusiveMinimum": 0,
+          "title": "Project Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "type": "object",
+      "title": "delete_project_ontologyArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "delete_project_ontologyOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_ontology_type",
+    "title": null,
+    "description": "Read a public/template type; private document types may return 404.\n\n        Use get_document_ontology for assigned document-owned type records.\n        ",
+    "inputSchema": {
+      "properties": {
+        "kind": {
+          "enum": [
+            "block",
+            "line",
+            "part",
+            "annotations"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "type_id": {
+          "exclusiveMinimum": 0,
+          "title": "Type Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind",
+        "type_id"
+      ],
+      "type": "object",
+      "title": "get_ontology_typeArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_ontology_typeOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_ontology_type_color",
+    "title": null,
+    "description": "Set a region/line type color when exposed by this server's OPTIONS.\n\n        Prefer #RRGGBB; blank or null clears the override. Permission rules\n        still apply; public templates may be read-only.\n        ",
+    "inputSchema": {
+      "properties": {
+        "kind": {
+          "enum": [
+            "block",
+            "line",
+            "part",
+            "annotations"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "type_id": {
+          "exclusiveMinimum": 0,
+          "title": "Type Id",
+          "type": "integer"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "maxLength": 7,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Color"
+        }
+      },
+      "required": [
+        "kind",
+        "type_id",
+        "color"
+      ],
+      "type": "object",
+      "title": "update_ontology_type_colorArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_ontology_type_colorOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "export_ontology_snapshot",
+    "title": null,
+    "description": "Return versioned JSON ontology schema, excluding annotations/text/geometry.\n\n        Save this result as JSON for backup or pass it to restore_ontology_snapshot.\n        Component relations use names, so source database IDs are not required.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "type": "object",
+      "title": "export_ontology_snapshotArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "export_ontology_snapshotOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "restore_ontology_snapshot",
+    "title": null,
+    "description": "Preview or add portable schema to a document; never delete existing schema.\n\n        Conflicting same-name definitions stop all writes. Apply is non-atomic;\n        failures report completed steps. Re-export to inspect state before retrying.\n        Annotation instances, text and geometry are not restored by this tool.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "snapshot": {
+          "$ref": "#/$defs/OntologySnapshot"
+        },
+        "apply": {
+          "default": false,
+          "title": "Apply",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "document_id",
+        "snapshot"
+      ],
+      "type": "object",
+      "$defs": {
+        "AnnotationComponent": {
+          "additionalProperties": false,
+          "description": "Named input field; an empty allowed-values list permits free text.",
+          "properties": {
+            "name": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Name",
+              "type": "string"
+            },
+            "allowed_values": {
+              "anyOf": [
+                {
+                  "items": {
+                    "maxLength": 128,
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Allowed Values"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "title": "AnnotationComponent",
+          "type": "object"
+        },
+        "OntologySnapshot": {
+          "additionalProperties": false,
+          "description": "Versioned schema; excludes annotation instances, text and geometry.",
+          "properties": {
+            "format": {
+              "const": "escriptorium-ontology",
+              "default": "escriptorium-ontology",
+              "title": "Format",
+              "type": "string"
+            },
+            "version": {
+              "const": 1,
+              "default": 1,
+              "title": "Version",
+              "type": "integer"
+            },
+            "scope": {
+              "const": "schema-only",
+              "default": "schema-only",
+              "title": "Scope",
+              "type": "string"
+            },
+            "valid_block_types": {
+              "items": {
+                "$ref": "#/$defs/SnapshotType"
+              },
+              "title": "Valid Block Types",
+              "type": "array"
+            },
+            "valid_line_types": {
+              "items": {
+                "$ref": "#/$defs/SnapshotType"
+              },
+              "title": "Valid Line Types",
+              "type": "array"
+            },
+            "valid_part_types": {
+              "items": {
+                "$ref": "#/$defs/SnapshotType"
+              },
+              "title": "Valid Part Types",
+              "type": "array"
+            },
+            "components": {
+              "items": {
+                "$ref": "#/$defs/AnnotationComponent"
+              },
+              "title": "Components",
+              "type": "array"
+            },
+            "taxonomies": {
+              "items": {
+                "$ref": "#/$defs/SnapshotTaxonomy"
+              },
+              "title": "Taxonomies",
+              "type": "array"
+            }
+          },
+          "required": [
+            "valid_block_types",
+            "valid_line_types",
+            "valid_part_types",
+            "components",
+            "taxonomies"
+          ],
+          "title": "OntologySnapshot",
+          "type": "object"
+        },
+        "SnapshotTaxonomy": {
+          "additionalProperties": false,
+          "description": "Annotation display settings with component and typology names.",
+          "properties": {
+            "name": {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Name",
+              "type": "string"
+            },
+            "marker_type": {
+              "enum": [
+                "Rectangle",
+                "Polygon",
+                "Background Color",
+                "Text Color",
+                "Bold",
+                "Italic"
+              ],
+              "title": "Marker Type",
+              "type": "string"
+            },
+            "abbreviation": {
+              "anyOf": [
+                {
+                  "maxLength": 3,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "",
+              "title": "Abbreviation"
+            },
+            "marker_detail": {
+              "anyOf": [
+                {
+                  "maxLength": 7,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "",
+              "title": "Marker Detail"
+            },
+            "has_comments": {
+              "default": false,
+              "title": "Has Comments",
+              "type": "boolean"
+            },
+            "typology": {
+              "anyOf": [
+                {
+                  "maxLength": 128,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Typology"
+            },
+            "components": {
+              "items": {
+                "maxLength": 128,
+                "minLength": 1,
+                "pattern": "\\S",
+                "type": "string"
+              },
+              "title": "Components",
+              "type": "array"
+            }
+          },
+          "required": [
+            "name",
+            "marker_type"
+          ],
+          "title": "SnapshotTaxonomy",
+          "type": "object"
+        },
+        "SnapshotType": {
+          "additionalProperties": false,
+          "description": "Portable document type definition.",
+          "properties": {
+            "name": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Name",
+              "type": "string"
+            },
+            "color": {
+              "anyOf": [
+                {
+                  "maxLength": 7,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Color"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "title": "SnapshotType",
+          "type": "object"
+        }
+      },
+      "title": "restore_ontology_snapshotArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "restore_ontology_snapshotOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  }
+]

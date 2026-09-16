@@ -1,0 +1,39 @@
+{
+  "version": "0.5.0",
+  "tools": 89,
+  "verification_date": "2026-09-16",
+  "host": "macOS",
+  "python_311_full_suite": {
+    "passed": 138
+  },
+  "python_313_targeted_runs": {
+    "ontology_http_passed": 55,
+    "snapshot_and_taxonomy_surface_passed": 13
+  },
+  "static_checks": {
+    "ruff": "passed",
+    "basedpyright": "0 errors, 0 warnings",
+    "installer_bash_syntax": "passed"
+  },
+  "manual_qa": {
+    "source_stdio_live": [
+      "capability probe",
+      "annotation list",
+      "snapshot export",
+      "restore preview with empty plan"
+    ],
+    "source_authenticated_http_live": "snapshot export passed",
+    "installed_wheel_live": "snapshot export passed",
+    "installer_upgrade": "0.4.0 to 0.5.0; config and custom service byte-identical; launcher discovers 89 tools; systemctl simulated"
+  },
+  "limitations": [
+    "No live writes performed; mutation tests use isolated HTTP fixtures.",
+    "Native Windows/Linux and actual WSL/systemd execution not run locally; CI matrix configured.",
+    "Configured older API reports native ontology endpoints 404 and lacks writable type colors.",
+    "Upstream has no transaction or conditional-write guarantee; pause concurrent writers for composed mutations."
+  ],
+  "coverage": "ONTOLOGY-COVERAGE.md",
+  "python_311_additional_taxonomy_filter_tests": {
+    "passed": 3
+  }
+}

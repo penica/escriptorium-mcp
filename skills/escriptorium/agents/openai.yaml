@@ -1,0 +1,9 @@
+interface:
+  display_name: "eScriptorium"
+  short_description: "Manage eScriptorium documents, OCR and archives"
+  default_prompt: "Use $escriptorium to work with my eScriptorium documents and transcriptions."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "escriptorium"
+      description: "eScriptorium document, transcription and processing tools"
