@@ -35,7 +35,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
       - run: ./scripts/test_skills.ps1
-        shell: ${{ matrix.shell }}
+        if: matrix.shell == 'pwsh'
+        shell: pwsh
+      - run: ./scripts/test_skills.ps1
+        if: matrix.shell == 'powershell'
+        shell: powershell
   server-bootstrap:
     runs-on: ubuntu-latest
     steps:
