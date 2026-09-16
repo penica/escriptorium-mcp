@@ -16,13 +16,17 @@ class ApiRequest(BaseModel):
     operation: Literal["api"]
     method: Literal["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
     route: str = Field(
-        regex=r"^(documents|projects|models|scripts|tasks|types|tags|collections)/[a-z0-9_/]*$"
+        regex=(
+            r"^(?:(?:documents|projects|models|scripts|tasks|types|tags|collections)"
+            r"/[a-z0-9_/]*|textual-witnesses/(?:[1-9][0-9]*/)?)\Z"
+        )
     )
     body_json: str = "{}"
     file_path: Path | None = None
-    file_field: Literal["image", "file", "upload_file"] = "image"
+    file_field: Literal["image", "file", "upload_file", "witness_file"] = "image"
     paginate: bool = False
     strict_pagination: bool = False
+    single_attempt: bool = False
     query: dict[str, str] = Field(default_factory=dict)
 
     class Config:
@@ -67,6 +71,12 @@ def scoped_next_url(
 
 def execute_api(client: EscriptoriumConnector, request: ApiRequest) -> str:
     """Perform one action, preserving server JSON and bodyless success responses."""
+    if request.single_attempt:
+        for adapter in client.http.adapters.values():
+            adapter.max_retries = adapter.max_retries.new(
+                total=0, connect=0, read=0, redirect=0, status=0, raise_on_status=False
+            )
+    guarded_response = request.strict_pagination or request.single_attempt
     url = client.api_url + request.route
     body = json.loads(request.body_json)
     if request.route.endswith("/export/") and "region_types" not in body:
@@ -92,12 +102,12 @@ def execute_api(client: EscriptoriumConnector, request: ApiRequest) -> str:
             allow_redirects=False,
         )
     if response.is_redirect or (
-        request.strict_pagination
+        guarded_response
         and HTTPStatus.MULTIPLE_CHOICES <= response.status_code < HTTPStatus.BAD_REQUEST
     ):
         msg = "Unexpected API redirect."
         raise ValueError(msg)
-    if request.strict_pagination:
+    if guarded_response:
         response.raise_for_status()
     if not response.content:
         return json.dumps({"status": "success", "http_status": response.status_code})
@@ -119,7 +129,7 @@ def execute_api(client: EscriptoriumConnector, request: ApiRequest) -> str:
             visited.add(absolute)
             following = client.http.get(absolute, allow_redirects=False)
             if (
-                request.strict_pagination
+                guarded_response
                 and HTTPStatus.MULTIPLE_CHOICES
                 <= following.status_code
                 < HTTPStatus.BAD_REQUEST

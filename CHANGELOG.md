@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.16.0 — 2026-09-16
+
+### Module 11: Alignment and textual witnesses
+
+Added eight tools for owned reference-text management, safe local download,
+ordinary reference alignment and forced character alignment; 160 tools total.
+Witness file operations validate nonempty UTF-8 text while preserving original
+bytes. Downloads use existing portable storage and checksum reporting.
+
+Standalone native upload requires explicit acknowledgment of the audited
+upstream owner-assignment defect. Native acceptance is retained separately from
+bounded ownership-readback evidence; inaccessible or malformed results do not
+cause retries, hidden alignment jobs or automatic cleanup.
+
+Ordinary alignment exposes all supported form options and coherent beam/offset
+search modes, with explicit native defaults and preserved zero values. Scope
+checks cover active sources, pages, region types and existing owned witnesses.
+Target names are normalized and source-name reuse is rejected. Required target
+reuse acknowledgment covers hidden archived collisions that the API cannot
+enumerate. Direct reference uploads use the native owned alignment-upload path.
+
+Forced alignment accepts native-supported archived layers through the action's
+document-scoped validation and replaces character graphs, not text or geometry.
+Both actions submit once. Optional ordinary-alignment group tracking preserves
+acceptance after monitoring failure and labels all inferred groups unconfirmed.
+
+Documentation explains target reuse, merge/full-document scope, partial effects,
+missing execution prerequisites and cancellation limits. A private single-attempt
+request option bounds mutations and diagnostic reads without changing existing
+requests. Version, installer, bundled skill and generated catalogue are updated
+together; release testing does not modify live research content or services.
+
 ## 0.15.0 — 2026-09-16
 
 ### Module 10: Virtual collections

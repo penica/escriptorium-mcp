@@ -14,9 +14,9 @@ Implementation authorized on 2026-09-16. Ontology is complete for the audited AP
 | 6 | Released (0.11.0) | Pages and image operations | Rotation, cropping, lookup by page order, bulk page moves and server-side filtering. Basic upload/edit/delete/reorder already exist. |
 | 7 | Released (0.12.0) | Imports | IIIF manifests, METS files/URLs, explicit import modes and target transcription layers, plus status and cancellation. |
 | 8 | Released (0.13.0) | Exports and downloads | More export options, full-document JSON archives, and listing/retrieving/deleting generated downloads. The downloads API requires the newer release. |
-| 9 | Implemented (0.14.0), release validation | Projects, documents and metadata | Search/filter/sort, document statistics, page-ID lookup, document/page metadata CRUD, project/document tags and remaining editable settings. |
+| 9 | Released (0.14.0) | Projects, documents and metadata | Search/filter/sort, document statistics, page-ID lookup, document/page metadata CRUD, project/document tags and remaining editable settings. |
 | 10 | Implemented (0.15.0), release validation | Virtual collections | Collection CRUD, complete membership replacement and recognition/segmentation training across documents. |
-| 11 | Pending | Alignment and textual witnesses | Manage reference texts; expose alignment and forced-alignment actions. Currently absent. |
+| 11 | Implemented (0.16.0), release validation | Alignment and textual witnesses | Manage owned reference files, diagnose native upload ownership, expose ordinary alignment and forced character alignment. |
 | 12 | Pending | Sharing, users and groups | Project/document sharing, user/group discovery and permitted account/group operations. Currently absent. |
 | 13 | Pending | Fonts and presentation settings | List fonts and configure supported transcription-font preferences. Requires the newer release; font upload itself is an admin-interface operation. |
 

@@ -3850,6 +3850,718 @@
     "_meta": null
   },
   {
+    "name": "align_document",
+    "title": null,
+    "description": "Align an active transcription to owned reference text or a local UTF-8 TXT.\n\n        Required acknowledge_target_reuse=true accepts that layer_name can reuse\n        and modify existing text, including hidden archived targets. The source\n        layer's name is always rejected after trimming. Target absence cannot be\n        guaranteed. A direct file upload creates an owned witness while queuing.\n        Omit parts/types for all. merge=false leaves old unmatched target text;\n        merge=true can copy source text outside selected regions. full_doc=true\n        reads all source pages even when output parts select only some pages.\n        Beam and offset search explicitly disable each other; offset zero is valid.\n        Success is native acceptance, not completed or quality-checked output.\n        Optional tracking returns unconfirmed group candidates and survives read\n        failures. Use task reports with method core.tasks.align. Native Passim\n        availability, rollback and precise alignment cancellation are not assured.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "job": {
+          "$ref": "#/$defs/AlignmentJob"
+        },
+        "track": {
+          "default": false,
+          "title": "Track",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "document_id",
+        "job"
+      ],
+      "type": "object",
+      "$defs": {
+        "AlignmentJob": {
+          "additionalProperties": false,
+          "description": "Reference-text alignment may reuse text in existing or hidden target layers.",
+          "properties": {
+            "parts": {
+              "anyOf": [
+                {
+                  "items": {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Parts"
+            },
+            "transcription": {
+              "exclusiveMinimum": 0,
+              "title": "Transcription",
+              "type": "integer"
+            },
+            "witness": {
+              "discriminator": {
+                "mapping": {
+                  "existing": "#/$defs/ExistingWitness",
+                  "file": "#/$defs/UploadedWitness"
+                },
+                "propertyName": "kind"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/ExistingWitness"
+                },
+                {
+                  "$ref": "#/$defs/UploadedWitness"
+                }
+              ],
+              "title": "Witness"
+            },
+            "layer_name": {
+              "maxLength": 512,
+              "minLength": 1,
+              "title": "Layer Name",
+              "type": "string"
+            },
+            "acknowledge_target_reuse": {
+              "const": true,
+              "title": "Acknowledge Target Reuse",
+              "type": "boolean"
+            },
+            "region_types": {
+              "anyOf": [
+                {
+                  "items": {
+                    "anyOf": [
+                      {
+                        "exclusiveMinimum": 0,
+                        "type": "integer"
+                      },
+                      {
+                        "enum": [
+                          "Undefined",
+                          "Orphan"
+                        ],
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Region Types"
+            },
+            "n_gram": {
+              "default": 25,
+              "maximum": 25,
+              "minimum": 2,
+              "title": "N Gram",
+              "type": "integer"
+            },
+            "gap": {
+              "default": 600,
+              "maximum": 1000000,
+              "minimum": 1,
+              "title": "Gap",
+              "type": "integer"
+            },
+            "threshold": {
+              "default": 0.8,
+              "maximum": 1,
+              "minimum": 0,
+              "title": "Threshold",
+              "type": "number"
+            },
+            "merge": {
+              "default": false,
+              "title": "Merge",
+              "type": "boolean"
+            },
+            "add_hyphens": {
+              "default": false,
+              "title": "Add Hyphens",
+              "type": "boolean"
+            },
+            "full_doc": {
+              "default": true,
+              "title": "Full Doc",
+              "type": "boolean"
+            },
+            "search": {
+              "discriminator": {
+                "mapping": {
+                  "beam": "#/$defs/BeamSearch",
+                  "offset": "#/$defs/OffsetSearch"
+                },
+                "propertyName": "kind"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/BeamSearch"
+                },
+                {
+                  "$ref": "#/$defs/OffsetSearch"
+                }
+              ],
+              "title": "Search"
+            }
+          },
+          "required": [
+            "transcription",
+            "witness",
+            "layer_name",
+            "acknowledge_target_reuse"
+          ],
+          "title": "AlignmentJob",
+          "type": "object"
+        },
+        "BeamSearch": {
+          "additionalProperties": false,
+          "description": "Beam search explicitly disables max-offset search in the native request.",
+          "properties": {
+            "kind": {
+              "const": "beam",
+              "title": "Kind",
+              "type": "string"
+            },
+            "beam_size": {
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Beam Size",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "title": "BeamSearch",
+          "type": "object"
+        },
+        "ExistingWitness": {
+          "additionalProperties": false,
+          "description": "Reuse a textual witness visible through the current user's owned route.",
+          "properties": {
+            "kind": {
+              "const": "existing",
+              "title": "Kind",
+              "type": "string"
+            },
+            "witness_id": {
+              "exclusiveMinimum": 0,
+              "title": "Witness Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "kind",
+            "witness_id"
+          ],
+          "title": "ExistingWitness",
+          "type": "object"
+        },
+        "OffsetSearch": {
+          "additionalProperties": false,
+          "description": "Offset search explicitly disables native default beam search, including zero.",
+          "properties": {
+            "kind": {
+              "const": "offset",
+              "title": "Kind",
+              "type": "string"
+            },
+            "max_offset": {
+              "maximum": 80,
+              "minimum": 0,
+              "title": "Max Offset",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "kind",
+            "max_offset"
+          ],
+          "title": "OffsetSearch",
+          "type": "object"
+        },
+        "UploadedWitness": {
+          "additionalProperties": false,
+          "description": "Upload UTF-8 text directly in alignment, preserving original file bytes.",
+          "properties": {
+            "kind": {
+              "const": "file",
+              "title": "Kind",
+              "type": "string"
+            },
+            "file_path": {
+              "format": "file-path",
+              "title": "File Path",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "file_path"
+          ],
+          "title": "UploadedWitness",
+          "type": "object"
+        }
+      },
+      "title": "align_documentArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "align_documentOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "force_align_pages",
+    "title": null,
+    "description": "Replace character positions/confidences in an existing transcription layer.\n\n        Uses a readable recognition model and existing text/geometry; it does not\n        rewrite text, geometry or create a layer. Native document-scoped validation\n        permits archived layers, so no active-only layer lookup is imposed here.\n        Model metadata does not prove binary compatibility. Omit parts for all pages.\n        One request queues page jobs without a group; failures may leave some jobs\n        queued or graphs changed. No MCP retry occurs, but the backend may retry.\n        Inspect core.tasks.forced_align reports; acceptance is not completion or\n        proof of model attribution. No automatic graph backup or rollback exists.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "job": {
+          "$ref": "#/$defs/ForcedAlignmentJob"
+        }
+      },
+      "required": [
+        "document_id",
+        "job"
+      ],
+      "type": "object",
+      "$defs": {
+        "ForcedAlignmentJob": {
+          "additionalProperties": false,
+          "description": "Replace character graphs in the specified layer using a readable model.",
+          "properties": {
+            "parts": {
+              "anyOf": [
+                {
+                  "items": {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Parts"
+            },
+            "model": {
+              "exclusiveMinimum": 0,
+              "title": "Model",
+              "type": "integer"
+            },
+            "transcription": {
+              "exclusiveMinimum": 0,
+              "title": "Transcription",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "model",
+            "transcription"
+          ],
+          "title": "ForcedAlignmentJob",
+          "type": "object"
+        }
+      },
+      "title": "force_align_pagesArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "force_align_pagesOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_textual_witnesses",
+    "title": null,
+    "description": "List all current-user-owned witnesses with full strict pagination.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object",
+      "title": "list_textual_witnessesArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_textual_witnessesOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_textual_witness",
+    "title": null,
+    "description": "Read owned witness metadata, retaining native fields and file references.",
+    "inputSchema": {
+      "properties": {
+        "witness_id": {
+          "exclusiveMinimum": 0,
+          "title": "Witness Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "witness_id"
+      ],
+      "type": "object",
+      "title": "get_textual_witnessArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_textual_witnessOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "upload_textual_witness",
+    "title": null,
+    "description": "Upload UTF-8 .txt once, acknowledging uncertain native owner assignment.\n\n        Some server versions create ownerless inaccessible witnesses. Required\n        acknowledge_unverified_ownership=true accepts that risk. A successful\n        native POST is reported as accepted separately from one ownership\n        readback; failed readback never hides acceptance or triggers a retry.\n        ",
+    "inputSchema": {
+      "properties": {
+        "upload": {
+          "$ref": "#/$defs/WitnessUpload"
+        }
+      },
+      "required": [
+        "upload"
+      ],
+      "type": "object",
+      "$defs": {
+        "WitnessUpload": {
+          "additionalProperties": false,
+          "description": "Upload text once, acknowledging that native creation may leave no owner.",
+          "properties": {
+            "name": {
+              "maxLength": 256,
+              "minLength": 1,
+              "title": "Name",
+              "type": "string"
+            },
+            "file_path": {
+              "format": "file-path",
+              "title": "File Path",
+              "type": "string"
+            },
+            "acknowledge_unverified_ownership": {
+              "const": true,
+              "title": "Acknowledge Unverified Ownership",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "name",
+            "file_path",
+            "acknowledge_unverified_ownership"
+          ],
+          "title": "WitnessUpload",
+          "type": "object"
+        }
+      },
+      "title": "upload_textual_witnessArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "upload_textual_witnessOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_textual_witness",
+    "title": null,
+    "description": "Rename or replace an owned witness file, preserving omitted fields.\n\n        Replacement keeps exact UTF-8 bytes and can affect queued consumers.\n        It does not rewrite completed alignment output or promise rollback.\n        ",
+    "inputSchema": {
+      "properties": {
+        "witness_id": {
+          "exclusiveMinimum": 0,
+          "title": "Witness Id",
+          "type": "integer"
+        },
+        "changes": {
+          "$ref": "#/$defs/WitnessPatch"
+        }
+      },
+      "required": [
+        "witness_id",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "WitnessPatch": {
+          "additionalProperties": false,
+          "description": "Rename or replace an owned witness; omitted fields remain unchanged.",
+          "properties": {
+            "name": {
+              "anyOf": [
+                {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Name"
+            },
+            "file_path": {
+              "anyOf": [
+                {
+                  "format": "file-path",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "File Path"
+            }
+          },
+          "title": "WitnessPatch",
+          "type": "object"
+        }
+      },
+      "title": "update_textual_witnessArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_textual_witnessOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "delete_textual_witness",
+    "title": null,
+    "description": "Delete an owned witness; queued consumers may fail afterward.\n\n        Deletion does not cancel jobs or guarantee secure physical file erasure.\n        ",
+    "inputSchema": {
+      "properties": {
+        "witness_id": {
+          "exclusiveMinimum": 0,
+          "title": "Witness Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "witness_id"
+      ],
+      "type": "object",
+      "title": "delete_textual_witnessArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "delete_textual_witnessOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "download_textual_witness",
+    "title": null,
+    "description": "Save owned witness bytes to a new file outside the scan-only Books archive.\n\n        Destination and .part must be unused; interrupted partials are preserved.\n        Return byte count and local SHA-256 after completion, without claiming\n        a native checksum exists. Foreign, signed or redirected URLs are refused.\n        ",
+    "inputSchema": {
+      "properties": {
+        "witness_id": {
+          "exclusiveMinimum": 0,
+          "title": "Witness Id",
+          "type": "integer"
+        },
+        "destination": {
+          "format": "path",
+          "title": "Destination",
+          "type": "string"
+        }
+      },
+      "required": [
+        "witness_id",
+        "destination"
+      ],
+      "type": "object",
+      "title": "download_textual_witnessArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "download_textual_witnessOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
     "name": "get_page_by_order",
     "title": null,
     "description": "Read a page by zero-based order, distinct from its page ID.\n\n        Follows only one same-origin redirect to this document's page detail.\n        Missing/out-of-bounds order and unexpected redirect targets are errors.\n        ",
