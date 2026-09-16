@@ -1,9 +1,22 @@
 # eScriptorium MCP tools
 
-Version 0.16.0: 160 tools.
+Version 0.17.0: 173 tools.
 
 | Tool | Description |
 |---|---|
+| `get_current_user` | Read the authenticated account's native identity and capability fields. |
+| `list_users` | List visible accounts: self for nonstaff, all native-visible users for staff. Optional search is a local case-insensitive substring match of username, first/last name or email after full pagination. Its count is local; no native search parameters or hidden-user discovery are used. |
+| `get_user` | Read an account visible to the current self/staff native queryset. |
+| `create_user` | Create a native account row as staff, preserving omitted defaults. Acceptance does not establish a usable password login or send an invitation. Password setup, privilege changes and tokens are not fields of this operation; native email syntax and uniqueness remain authoritative. |
+| `update_user` | Edit an account allowed by the native self/staff permissions. Own-email changes are permitted, without a verification-email guarantee. Self-deactivation may end access; username changes may affect login and sharing. Omitted fields remain unchanged; empty display names clear them. |
+| `delete_user` | Delete an account and native dependent records; staff permission required. Self-deletion can end access. Collections, tags and reporting/download records may cascade, while owned content may lose its owner. Protected relationships can reject deletion; this is not a complete erasure report. |
+| `list_groups` | List all groups visible through current membership, including for staff. Optional case-insensitive name search runs locally after full pagination. Its count is the local match count; no native search parameter is sent. With no search, preserve the native collection shape and metadata. |
+| `get_group` | Read a membership-visible group; staff has no arbitrary-group bypass. |
+| `create_group` | Create a native group, acknowledging possible missing membership/ownership. Required acknowledge_native_create_limitations=true accepts that the native REST endpoint may leave the creator outside an ownerless, inaccessible group. Send one creation request, then at most one bounded detail read. Return native acceptance separately from observed readability, membership and ownership; failed verification never discards acceptance or implies no group was created. No membership repair, owner change, web workflow, cleanup or retry occurs. |
+| `update_group` | Rename one membership-visible group without changing its members or owner. Native REST access is member-scoped, not owner-only. Existing sharing assignments remain attached to the renamed group. No automatic retry occurs. |
+| `delete_group` | Delete the group and its memberships, sharing links and group model rights. Source projects/documents remain, but members may lose access derived from this group. This is not removal of one member or one sharing grant. Native REST access is member-scoped, including for staff; no owner-only claim is made. No automatic retry or speculative read after successful deletion occurs. |
+| `share_project` | Add project access for one known username or current member group. Existing grants remain. Project access includes current and future accessible documents. The server decides permission; no owner-only rule is assumed. This API has no revoke, role or expiration option. Return native updated metadata after one POST, without a follow-up read. |
+| `share_document` | Add document access for one known username or current member group. Existing grants remain. Other project, group or ownership relationships may also grant access. The server decides permission; no owner-only rule is assumed. This API has no revoke, role or expiration option. Return native updated metadata after one POST, without a follow-up read. |
 | `list_projects` | List accessible projects with native name/tag filters and ordering. Follows pagination and preserves expanded sharing, tags and new fields. Native OR tag queries can return duplicate rows; counts are not rewritten. |
 | `get_project` | Read project metadata by primary key. |
 | `list_documents` | List accessible documents, preserving all native fields and pagination. Optional project filter is a numeric ID; document create/move uses a slug. Supports name/tag filters and ordering without deduplicating native rows. |

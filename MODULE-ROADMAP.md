@@ -17,7 +17,7 @@ Implementation authorized on 2026-09-16. Ontology is complete for the audited AP
 | 9 | Released (0.14.0) | Projects, documents and metadata | Search/filter/sort, document statistics, page-ID lookup, document/page metadata CRUD, project/document tags and remaining editable settings. |
 | 10 | Implemented (0.15.0), release validation | Virtual collections | Collection CRUD, complete membership replacement and recognition/segmentation training across documents. |
 | 11 | Implemented (0.16.0), release validation | Alignment and textual witnesses | Manage owned reference files, diagnose native upload ownership, expose ordinary alignment and forced character alignment. |
-| 12 | Pending | Sharing, users and groups | Project/document sharing, user/group discovery and permitted account/group operations. Currently absent. |
+| 12 | Implemented (0.17.0), release validation | Sharing, users and groups | Additive project/document sharing, visible directories and native account/group CRUD with explicit creation limits. |
 | 13 | Pending | Fonts and presentation settings | List fonts and configure supported transcription-font preferences. Requires the newer release; font upload itself is an admin-interface operation. |
 
 ## Implementation constraints

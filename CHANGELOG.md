@@ -1,5 +1,36 @@
 # Changelog
 
+## 0.17.0 — 2026-09-16
+
+### Module 12: Sharing, users and groups
+
+Added 13 tools for current/visible account discovery, native account CRUD,
+membership-scoped group CRUD and additive project/document sharing;
+173 tools total. User/group directories paginate safely and optionally search
+visible rows locally without inventing server filter parameters.
+
+Account writes expose username, email, first/last names and active status only.
+Staff checks protect creation/deletion; native self/staff scope governs edits,
+including own-email changes. Self-deactivation/deletion preserves accepted native
+results without a follow-up read. Account creation is explicitly not password
+setup or an invitation workflow.
+
+Group creation requires acknowledgment of the pinned upstream creator-membership
+and ownership defect. One native creation is retained as accepted even when
+bounded readback is unavailable or incomplete. Membership/ownership observations
+remain separate and nullable; no repair, rollback or repeated creation occurs.
+Existing group edits/deletion follow native member visibility, including staff.
+
+Sharing maps an unambiguous username or group target to one native additive
+action. Existing grants and response fields are preserved. Username sharing does
+not require global directory visibility. No unsupported revoke/replace-sharing,
+membership, owner-transfer, password, privilege or invitation tool is claimed.
+
+Typed inputs reject silently ignored fields; mutations use one request attempt.
+Rejected input values are omitted from validation errors to avoid echoing secrets.
+Version, installer, guide, bundled skill and catalogue/schema are updated
+together. Live checks remain read-only and do not alter accounts or sharing.
+
 ## 0.16.0 — 2026-09-16
 
 ### Module 11: Alignment and textual witnesses

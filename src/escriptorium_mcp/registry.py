@@ -6,6 +6,7 @@ from mcp.server import MCPServer
 from mcp_types import ToolAnnotations
 from pydantic import JsonValue
 
+from escriptorium_mcp.account_tools import build_account_tools
 from escriptorium_mcp.alignment_tools import register_alignment
 from escriptorium_mcp.annotation_tools import register_annotations
 from escriptorium_mcp.api import ApiRequest, invoke
@@ -14,6 +15,7 @@ from escriptorium_mcp.collection_tools import register_collections
 from escriptorium_mcp.collection_training import register_collection_training
 from escriptorium_mcp.download_tools import register_downloads
 from escriptorium_mcp.file_tools import register_files
+from escriptorium_mcp.group_tools import build_group_tools
 from escriptorium_mcp.import_tools import register_imports
 from escriptorium_mcp.instance_tools import register_instances
 from escriptorium_mcp.job_tools import register_jobs
@@ -36,6 +38,7 @@ from escriptorium_mcp.record_query_models import DocumentFilters, ProjectFilters
 from escriptorium_mcp.record_tools import register_records
 from escriptorium_mcp.segmentation import register_segmentation
 from escriptorium_mcp.segmentation_bulk import register_segmentation_expansion
+from escriptorium_mcp.sharing_tools import build_sharing_tools
 from escriptorium_mcp.tag_tools import register_tags
 from escriptorium_mcp.task_tools import register_task_monitoring
 from escriptorium_mcp.taxonomy_edit import register_taxonomy_edits
@@ -56,7 +59,8 @@ def create_server() -> MCPServer:
     """Build tools without making network calls or requiring credentials."""
     server = MCPServer(
         "eScriptorium",
-        version="0.16.0",
+        version="0.17.0",
+        tools=build_account_tools() + build_group_tools() + build_sharing_tools(),
         instructions=(
             "Use server primary keys, not page numbers. "
             "Write and processing tools change the remote instance. "

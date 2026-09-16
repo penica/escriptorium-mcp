@@ -1,5 +1,866 @@
 [
   {
+    "name": "get_current_user",
+    "title": null,
+    "description": "Read the authenticated account's native identity and capability fields.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object",
+      "additionalProperties": false,
+      "title": "get_current_userArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_current_userOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_users",
+    "title": null,
+    "description": "List visible accounts: self for nonstaff, all native-visible users for staff.\n\n        Optional search is a local case-insensitive substring match of username,\n        first/last name or email after full pagination. Its count is local; no\n        native search parameters or hidden-user discovery are used.\n        ",
+    "inputSchema": {
+      "properties": {
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false,
+      "title": "list_usersArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_usersOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_user",
+    "title": null,
+    "description": "Read an account visible to the current self/staff native queryset.",
+    "inputSchema": {
+      "properties": {
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "title": "User Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "type": "object",
+      "additionalProperties": false,
+      "title": "get_userArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_userOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "create_user",
+    "title": null,
+    "description": "Create a native account row as staff, preserving omitted defaults.\n\n        Acceptance does not establish a usable password login or send an\n        invitation. Password setup, privilege changes and tokens are not fields\n        of this operation; native email syntax and uniqueness remain authoritative.\n        ",
+    "inputSchema": {
+      "properties": {
+        "account": {
+          "$ref": "#/$defs/UserCreate"
+        }
+      },
+      "required": [
+        "account"
+      ],
+      "type": "object",
+      "$defs": {
+        "UserCreate": {
+          "additionalProperties": false,
+          "description": "Create a native account row; password setup and invitations are separate.",
+          "properties": {
+            "username": {
+              "maxLength": 150,
+              "minLength": 1,
+              "title": "Username",
+              "type": "string"
+            },
+            "email": {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "\\S",
+              "title": "Email",
+              "type": "string"
+            },
+            "first_name": {
+              "default": "",
+              "maxLength": 150,
+              "title": "First Name",
+              "type": "string"
+            },
+            "last_name": {
+              "default": "",
+              "maxLength": 150,
+              "title": "Last Name",
+              "type": "string"
+            },
+            "is_active": {
+              "default": true,
+              "title": "Is Active",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "username",
+            "email"
+          ],
+          "title": "UserCreate",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "title": "create_userArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "create_userOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_user",
+    "title": null,
+    "description": "Edit an account allowed by the native self/staff permissions.\n\n        Own-email changes are permitted, without a verification-email guarantee.\n        Self-deactivation may end access; username changes may affect login and\n        sharing. Omitted fields remain unchanged; empty display names clear them.\n        ",
+    "inputSchema": {
+      "properties": {
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "changes": {
+          "$ref": "#/$defs/UserPatch"
+        }
+      },
+      "required": [
+        "user_id",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "UserPatch": {
+          "additionalProperties": false,
+          "description": "Edit native account fields; empty display names deliberately clear them.",
+          "properties": {
+            "username": {
+              "anyOf": [
+                {
+                  "maxLength": 150,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Username"
+            },
+            "email": {
+              "anyOf": [
+                {
+                  "maxLength": 255,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Email"
+            },
+            "first_name": {
+              "anyOf": [
+                {
+                  "maxLength": 150,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "First Name"
+            },
+            "last_name": {
+              "anyOf": [
+                {
+                  "maxLength": 150,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Last Name"
+            },
+            "is_active": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Is Active"
+            }
+          },
+          "title": "UserPatch",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "title": "update_userArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_userOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "delete_user",
+    "title": null,
+    "description": "Delete an account and native dependent records; staff permission required.\n\n        Self-deletion can end access. Collections, tags and reporting/download\n        records may cascade, while owned content may lose its owner. Protected\n        relationships can reject deletion; this is not a complete erasure report.\n        ",
+    "inputSchema": {
+      "properties": {
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "title": "User Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "type": "object",
+      "additionalProperties": false,
+      "title": "delete_userArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "delete_userOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_groups",
+    "title": null,
+    "description": "List all groups visible through current membership, including for staff.\n\n        Optional case-insensitive name search runs locally after full pagination.\n        Its count is the local match count; no native search parameter is sent.\n        With no search, preserve the native collection shape and metadata.\n        ",
+    "inputSchema": {
+      "properties": {
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "type": "object",
+      "additionalProperties": false,
+      "title": "list_groupsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_groupsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_group",
+    "title": null,
+    "description": "Read a membership-visible group; staff has no arbitrary-group bypass.",
+    "inputSchema": {
+      "properties": {
+        "group_id": {
+          "exclusiveMinimum": 0,
+          "title": "Group Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "type": "object",
+      "additionalProperties": false,
+      "title": "get_groupArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_groupOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "create_group",
+    "title": null,
+    "description": "Create a native group, acknowledging possible missing membership/ownership.\n\n        Required acknowledge_native_create_limitations=true accepts that the native\n        REST endpoint may leave the creator outside an ownerless, inaccessible group.\n        Send one creation request, then at most one bounded detail read. Return native\n        acceptance separately from observed readability, membership and ownership;\n        failed verification never discards acceptance or implies no group was created.\n        No membership repair, owner change, web workflow, cleanup or retry occurs.\n        ",
+    "inputSchema": {
+      "properties": {
+        "name": {
+          "maxLength": 150,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "acknowledge_native_create_limitations": {
+          "const": true,
+          "title": "Acknowledge Native Create Limitations",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "acknowledge_native_create_limitations"
+      ],
+      "type": "object",
+      "additionalProperties": false,
+      "title": "create_groupArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "create_groupOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_group",
+    "title": null,
+    "description": "Rename one membership-visible group without changing its members or owner.\n\n        Native REST access is member-scoped, not owner-only. Existing sharing\n        assignments remain attached to the renamed group. No automatic retry occurs.\n        ",
+    "inputSchema": {
+      "properties": {
+        "group_id": {
+          "exclusiveMinimum": 0,
+          "title": "Group Id",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 150,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id",
+        "name"
+      ],
+      "type": "object",
+      "additionalProperties": false,
+      "title": "update_groupArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_groupOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "delete_group",
+    "title": null,
+    "description": "Delete the group and its memberships, sharing links and group model rights.\n\n        Source projects/documents remain, but members may lose access derived from\n        this group. This is not removal of one member or one sharing grant. Native\n        REST access is member-scoped, including for staff; no owner-only claim is made.\n        No automatic retry or speculative read after successful deletion occurs.\n        ",
+    "inputSchema": {
+      "properties": {
+        "group_id": {
+          "exclusiveMinimum": 0,
+          "title": "Group Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "type": "object",
+      "additionalProperties": false,
+      "title": "delete_groupArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "delete_groupOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "share_project",
+    "title": null,
+    "description": "Add project access for one known username or current member group.\n\n        Existing grants remain. Project access includes current and future\n        accessible documents. The server decides permission; no owner-only rule\n        is assumed. This API has no revoke, role or expiration option. Return\n        native updated metadata after one POST, without a follow-up read.\n        ",
+    "inputSchema": {
+      "properties": {
+        "project_id": {
+          "exclusiveMinimum": 0,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "target": {
+          "discriminator": {
+            "mapping": {
+              "group": "#/$defs/ShareGroup",
+              "user": "#/$defs/ShareUser"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ShareUser"
+            },
+            {
+              "$ref": "#/$defs/ShareGroup"
+            }
+          ],
+          "title": "Target"
+        }
+      },
+      "required": [
+        "project_id",
+        "target"
+      ],
+      "type": "object",
+      "$defs": {
+        "ShareGroup": {
+          "additionalProperties": false,
+          "description": "Share with a group in the caller's native membership scope.",
+          "properties": {
+            "kind": {
+              "const": "group",
+              "title": "Kind",
+              "type": "string"
+            },
+            "group_id": {
+              "exclusiveMinimum": 0,
+              "title": "Group Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "kind",
+            "group_id"
+          ],
+          "title": "ShareGroup",
+          "type": "object"
+        },
+        "ShareUser": {
+          "additionalProperties": false,
+          "description": "Share with a known username, even outside the visible user directory.",
+          "properties": {
+            "kind": {
+              "const": "user",
+              "title": "Kind",
+              "type": "string"
+            },
+            "username": {
+              "maxLength": 150,
+              "minLength": 1,
+              "title": "Username",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "username"
+          ],
+          "title": "ShareUser",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "title": "share_projectArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "share_projectOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "share_document",
+    "title": null,
+    "description": "Add document access for one known username or current member group.\n\n        Existing grants remain. Other project, group or ownership relationships\n        may also grant access. The server decides permission; no owner-only rule\n        is assumed. This API has no revoke, role or expiration option. Return\n        native updated metadata after one POST, without a follow-up read.\n        ",
+    "inputSchema": {
+      "properties": {
+        "document_id": {
+          "exclusiveMinimum": 0,
+          "title": "Document Id",
+          "type": "integer"
+        },
+        "target": {
+          "discriminator": {
+            "mapping": {
+              "group": "#/$defs/ShareGroup",
+              "user": "#/$defs/ShareUser"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ShareUser"
+            },
+            {
+              "$ref": "#/$defs/ShareGroup"
+            }
+          ],
+          "title": "Target"
+        }
+      },
+      "required": [
+        "document_id",
+        "target"
+      ],
+      "type": "object",
+      "$defs": {
+        "ShareGroup": {
+          "additionalProperties": false,
+          "description": "Share with a group in the caller's native membership scope.",
+          "properties": {
+            "kind": {
+              "const": "group",
+              "title": "Kind",
+              "type": "string"
+            },
+            "group_id": {
+              "exclusiveMinimum": 0,
+              "title": "Group Id",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "kind",
+            "group_id"
+          ],
+          "title": "ShareGroup",
+          "type": "object"
+        },
+        "ShareUser": {
+          "additionalProperties": false,
+          "description": "Share with a known username, even outside the visible user directory.",
+          "properties": {
+            "kind": {
+              "const": "user",
+              "title": "Kind",
+              "type": "string"
+            },
+            "username": {
+              "maxLength": 150,
+              "minLength": 1,
+              "title": "Username",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "username"
+          ],
+          "title": "ShareUser",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "title": "share_documentArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "share_documentOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
     "name": "list_projects",
     "title": null,
     "description": "List accessible projects with native name/tag filters and ordering.\n\n        Follows pagination and preserves expanded sharing, tags and new fields.\n        Native OR tag queries can return duplicate rows; counts are not rewritten.\n        ",
