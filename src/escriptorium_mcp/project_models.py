@@ -36,10 +36,11 @@ TagIds = Annotated[list[Identifier], AfterValidator(distinct_tags)]
 
 
 class ProjectCreateSettings(Input):
-    """Optional native guidelines and complete personal-tag assignment."""
+    """Optional guidelines, complete tag assignment and nullable presentation font."""
 
     guidelines: Annotated[str, Field(max_length=200)] | None = None
     tags: TagIds | None = None
+    transcription_font: Identifier | None = None
 
     @field_validator("guidelines")
     @classmethod

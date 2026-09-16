@@ -21,9 +21,10 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 7. **Released and verified:** Imports (0.12.0), one new source-aware tool and grouped status; 125 tools total.
 8. **Released and verified:** Exports and downloads (0.13.0), expanded export settings and four new download tools; 129 tools total.
 9. **Released and verified:** Projects, documents and metadata (0.14.0), 15 new tools and expanded record operations; 144 tools total.
-10. **Locally verified, GitHub regression pending:** Virtual collections (0.15.0), eight new tools; 152 tools total.
+10. **Released and verified:** Virtual collections (0.15.0), eight new tools; 152 tools total.
 11. **Locally verified, GitHub regression pending:** Alignment and textual witnesses (0.16.0), eight new tools; 160 tools total.
-12. **Locally verified, release preparation:** Sharing, users and groups (0.17.0), 13 new tools; 173 tools total. Module 13 remains pending.
+12. **Locally verified, GitHub regression pending:** Sharing, users and groups (0.17.0), 13 new tools; 173 tools total.
+13. **Locally verified, release preparation:** Fonts and presentation settings (0.18.0), two new tools and four expanded record operations; 175 tools total.
 
 ## Baseline evidence
 - Initial public commit: 73f08eb (MCP 0.5.0, 89 tools).
@@ -177,7 +178,7 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 - [Compatibility run 35110720095](https://github.com/penica/escriptorium-mcp/actions/runs/35110720095) passed all six Windows/macOS/Linux and Python 3.11/3.13 jobs, each with 869 tests and zero annotations.
 - [GitHub release v0.14.0](https://github.com/penica/escriptorium-mcp/releases/tag/v0.14.0) published all four artifacts. Uploaded sizes/digests match the final local files and the release tag resolves to the verified commit.
 
-### 0.15.0 — Virtual collections (release validation)
+### 0.15.0 — Virtual collections
 
 - Added eight tools for owned collection CRUD, complete membership reads/replacement and recognition/segmentation training across documents; 152 tools total. Default transcription maps remain independent editor preferences. Omitted fields preserve state; empty membership/maps explicitly clear it.
 - Strict typed source references verify document/page/layer identities and current access. Training rechecks every current member and model identity/job, with owned idle overwrite guards and a two-page segmentation minimum. Membership is not frozen until execution. Native model IDs are preserved without invented task/group attribution.
@@ -188,6 +189,10 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 - Read-only live STDIO verified version 0.15.0, owned collection listing with its empty native envelope, missing-detail errors and validation before an invalid creation. No live collection, model, job or service was changed. Successful writes/training remain isolated fixture and source-contract evidence.
 - Fresh 0.15 installation and real 0.14-to-0.15 upgrade passed in temporary paths with spaces, preserving the complete URL/key/token/Books configuration, 0600 configuration/backup permissions and launcher/help. The isolated installed interpreter (`-I`) advertised 152 tools and exercised collection CRUD, raw metadata/member preservation, native source mappings, omission/clearing, duplicate rejection, source-preserving deletion, both paginated cross-document training submissions and one-page segmentation refusal.
 - Artifacts passed 25 inner checksums, outer checksum, normalized ownership, private-file exclusion and packaged worker equivalence. The collection contract guide is included. The final documentation-only rebuild must retain installed-QA wheel SHA-256 `67bdd19f0df1a5223844ea39f917555f7027c721fb7c373a14da21e1a4c40bdd`. Actual WSL/systemd deployment, native database mutations and model training execution remain outside isolated package verification.
+
+- Public commit: `036b4da3d768f80d3179dca708ebb93664cb2612`.
+- [Compatibility run 35113306988](https://github.com/penica/escriptorium-mcp/actions/runs/35113306988) passed all six Windows/macOS/Linux and Python 3.11/3.13 jobs, each with 1005 tests and zero annotations.
+- [GitHub release v0.15.0](https://github.com/penica/escriptorium-mcp/releases/tag/v0.15.0) published all four artifacts. Uploaded sizes/digests and the release tag match the verified commit and final files.
 
 ### 0.16.0 — Alignment and textual witnesses (release validation)
 
@@ -215,3 +220,14 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 
 - Actual MCP error tests exposed rejected synthetic passwords in validation results. Hiding validation input values fixed both top-level and nested leaks without changing zero-network rejection; both failing cases now pass and remain in the suite.
 - Fresh 0.17 installation and real 0.16-to-0.17 upgrade passed in temporary paths with spaces. Isolated installed execution verified 173 tools, all 13 strict schemas, account permissions, group diagnostics, additive sharing and private error results. Configuration/backup permissions, 27 inner checksums, outer checksum, private-file exclusion and packaged worker equivalence passed. Final documentation-only rebuilding must preserve installed-QA wheel SHA-256 `889883215599f9029274c08ffa5ff5396072429fff880eba6f3eda3f4de1609b`. No service was deployed.
+
+### 0.18.0 — Fonts and presentation settings (release validation)
+
+- Added two strict tools for full native font catalogue traversal and identity-checked detail; 175 tools total. Responses preserve all 13 current metadata fields, nulls, zeroes, negative margins and future fields. Advertised URLs remain inert metadata; no font files are fetched or installed.
+- Four existing project/document create/update operations accept nullable transcription_font. Omission leaves existing request sequences and settings intact; explicit null clears an override. Supplied values require action-specific writable OPTIONS metadata, including clearing; non-null values additionally require matching readable font identity. Font-bearing writes use one attempt. The document patch validator now excludes the nullable font from its non-null setting checks.
+- Record reads retain native direct font IDs and authoritative effective objects, including old-server omission. Documentation explains document/project/user/default inheritance and presentation-only effects. Admin font upload/metric CRUD and web-profile user preferences remain outside the exposed REST API.
+- Initial actual-STDIO failures confirmed missing catalogue tools and rejected font fields before implementation. Live read-only STDIO now verifies 0.18.0/175 tools, an empty font catalogue, missing/invalid font errors and retained project/document font metadata. No live assignments, font downloads, profile changes or service actions occurred.
+- Nine existing STDIO/HTTP transport cases passed in 6.46 seconds. Source/test/script/worker lint and formatting, source/test/script strict types, shell syntax and skill validation passed. Tool discovery generated the updated catalogue/schema and all distributions built. All 30 new catalogue cases passed in 51.80 seconds. All 68 affected existing mutation and record-read/write/scope cases passed in 110.61 seconds. All 63 assignment cases were verified: 58 passed in the initial run and eight follow-up cases passed in 12.93 seconds, covering the corrected test setup and four additional boundaries. One test helper initially placed a top-level project name inside settings; correcting the fixture restored the existing name-only contract without production changes. All 93 new cases now pass; the complete suite collects 1432 tests for exact-commit platform verification.
+
+- Fresh 0.18 installation and real 0.17-to-0.18 upgrade passed in temporary paths with spaces, preserving URL/key/token/Books configuration, 0600 configuration/backup permissions and launcher/help. Isolated installed execution (`-I`, outside checkout) advertised 175 tools and verified raw metrics, inert font URLs, strict unknown-input rejection, safe pagination, all four font write surfaces, null/omission behavior, unsupported-capability refusal and authoritative effective metadata.
+- Artifacts passed 28 inner checksums, the outer checksum, normalized ownership, private-file exclusion and packaged worker equivalence. The font guide is included. Final documentation-only rebuilding must preserve installed-QA wheel SHA-256 `598003f36d1e70ec80e714a2261e3ab1f552456f66c618efa8420e97c3d839a9`. Native database changes, visual glyph quality and actual WSL/systemd deployment remain outside isolated fixture verification.

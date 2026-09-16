@@ -15,6 +15,7 @@ from escriptorium_mcp.collection_tools import register_collections
 from escriptorium_mcp.collection_training import register_collection_training
 from escriptorium_mcp.download_tools import register_downloads
 from escriptorium_mcp.file_tools import register_files
+from escriptorium_mcp.font_tools import build_font_tools
 from escriptorium_mcp.group_tools import build_group_tools
 from escriptorium_mcp.import_tools import register_imports
 from escriptorium_mcp.instance_tools import register_instances
@@ -59,8 +60,13 @@ def create_server() -> MCPServer:
     """Build tools without making network calls or requiring credentials."""
     server = MCPServer(
         "eScriptorium",
-        version="0.17.0",
-        tools=build_account_tools() + build_group_tools() + build_sharing_tools(),
+        version="0.18.0",
+        tools=(
+            build_account_tools()
+            + build_group_tools()
+            + build_sharing_tools()
+            + build_font_tools()
+        ),
         instructions=(
             "Use server primary keys, not page numbers. "
             "Write and processing tools change the remote instance. "
@@ -165,7 +171,7 @@ def create_server() -> MCPServer:
     async def create_project(
         name: RecordName, settings: ProjectCreateSettings | None = None
     ) -> JsonValue:
-        """Create a project with optional guidelines and personal tag IDs.
+        """Create a project with optional guidelines, personal tags and display font.
 
         Existing name-only calls remain valid. Repetition may create duplicates.
         Omitted settings retain native defaults; supplied tag arrays are complete.

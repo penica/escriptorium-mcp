@@ -20,6 +20,7 @@ class DocumentCreate(Input):
     line_offset: Literal[0, 1, 2] = 0
     show_confidence_viz: bool = False
     tags: TagIds = Field(default_factory=list)
+    transcription_font: Identifier | None = None
 
 
 class Patch(Input):
@@ -44,10 +45,11 @@ class DocumentPatch(Patch):
     line_offset: Literal[0, 1, 2] | None = None
     show_confidence_viz: bool | None = None
     tags: TagIds | None = None
+    transcription_font: Identifier | None = None
 
     @model_validator(mode="after")
     def require_nonnull_changes(self) -> Self:
-        """Omission preserves settings; no editable document field accepts null."""
+        """Reject null for required settings while allowing a font override to clear."""
         values = {
             "name": self.name,
             "project": self.project,
@@ -57,8 +59,13 @@ class DocumentPatch(Patch):
             "show_confidence_viz": self.show_confidence_viz,
             "tags": self.tags,
         }
-        if any(values[field] is None for field in self.model_fields_set):
-            msg = "Document changes cannot be null; omit fields to preserve them."
+        if any(
+            values[field] is None for field in self.model_fields_set & values.keys()
+        ):
+            msg = (
+                "Only transcription_font may be null; "
+                "omit other fields to preserve them."
+            )
             raise ValueError(msg)
         return self
 

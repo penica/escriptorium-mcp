@@ -5,6 +5,7 @@ from pydantic import JsonValue
 
 from escriptorium_mcp.api import CHANGE, CREATE, DELETE, JOB, READ, ApiRequest, invoke
 from escriptorium_mcp.bridge import Identifier, call
+from escriptorium_mcp.font_scope import save_record
 from escriptorium_mcp.page_scope import require_part_type
 from escriptorium_mcp.project_models import RecordName
 from escriptorium_mcp.record_models import (
@@ -32,7 +33,7 @@ def register_records(server: MCPServer) -> None:
         """Create an empty document; project is a slug, main_script a script name."""
         if "tags" in data.model_fields_set:
             await require_document_tags(data.tags, data.project)
-        return await invoke("POST", "documents/", data)
+        return await save_record("POST", "documents/", data, data.transcription_font)
 
     @server.tool(annotations=CHANGE)
     async def update_document(
@@ -43,10 +44,14 @@ def register_records(server: MCPServer) -> None:
         Tags replace all assignments; [] clears them. A move with tags omitted
         retains existing assignments, even from the old project. Scope preflight
         checks supplied tags against the target project, without locking edits.
+        transcription_font controls presentation only; null clears the document
+        override and inherits project, user or default settings.
         """
         if changes.tags is not None:
             await require_document_tags(changes.tags, changes.project, document_id)
-        return await invoke("PATCH", f"documents/{document_id}/", changes)
+        return await save_record(
+            "PATCH", f"documents/{document_id}/", changes, changes.transcription_font
+        )
 
     @server.tool(annotations=CHANGE)
     async def rename_project(project_id: Identifier, name: RecordName) -> JsonValue:

@@ -19,7 +19,7 @@ class ApiRequest(BaseModel):
         regex=(
             r"^(?:(?:documents|projects|models|scripts|tasks|types|tags|collections)"
             r"/[a-z0-9_/]*|textual-witnesses/(?:[1-9][0-9]*/)?"
-            r"|users/(?:(?:current|[1-9][0-9]*)/)?|groups/(?:[1-9][0-9]*/)?)\Z"
+            r"|users/(?:(?:current|[1-9][0-9]*)/)?|(?:groups|fonts)/(?:[1-9][0-9]*/)?)\Z"
         )
     )
     body_json: str = "{}"

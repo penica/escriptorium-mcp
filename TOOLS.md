@@ -1,6 +1,6 @@
 # eScriptorium MCP tools
 
-Version 0.17.0: 173 tools.
+Version 0.18.0: 175 tools.
 
 | Tool | Description |
 |---|---|
@@ -17,6 +17,8 @@ Version 0.17.0: 173 tools.
 | `delete_group` | Delete the group and its memberships, sharing links and group model rights. Source projects/documents remain, but members may lose access derived from this group. This is not removal of one member or one sharing grant. Native REST access is member-scoped, including for staff; no owner-only claim is made. No automatic retry or speculative read after successful deletion occurs. |
 | `share_project` | Add project access for one known username or current member group. Existing grants remain. Project access includes current and future accessible documents. The server decides permission; no owner-only rule is assumed. This API has no revoke, role or expiration option. Return native updated metadata after one POST, without a follow-up read. |
 | `share_document` | Add document access for one known username or current member group. Existing grants remain. Other project, group or ownership relationships may also grant access. The server decides permission; no owner-only rule is assumed. This API has no revoke, role or expiration option. Return native updated metadata after one POST, without a follow-up read. |
+| `list_fonts` | List all authenticated instance-wide font metadata with strict pagination. Preserve native metrics and storage URLs without fetching font bytes. An empty catalogue means no available fonts; missing API remains an error. Uploading fonts and editing metrics require the native admin interface. |
+| `get_font` | Read one font's native metadata, retaining zero/null and negative metrics. A URL is metadata, not proof of file availability or successful rendering. This operation never downloads, executes or installs the font file. |
 | `list_projects` | List accessible projects with native name/tag filters and ordering. Follows pagination and preserves expanded sharing, tags and new fields. Native OR tag queries can return duplicate rows; counts are not rewritten. |
 | `get_project` | Read project metadata by primary key. |
 | `list_documents` | List accessible documents, preserving all native fields and pagination. Optional project filter is a numeric ID; document create/move uses a slug. Supports name/tag filters and ordering without deduplicating native rows. |
@@ -27,18 +29,18 @@ Version 0.17.0: 173 tools.
 | `list_regions` | Read segmented regions for a page. |
 | `list_transcriptions` | List transcription layers and their primary keys. |
 | `get_page_transcriptions` | Read page text/confidence/history, optionally filtered to one layer. |
-| `create_project` | Create a project with optional guidelines and personal tag IDs. Existing name-only calls remain valid. Repetition may create duplicates. Omitted settings retain native defaults; supplied tag arrays are complete. |
+| `create_project` | Create a project with optional guidelines, personal tags and display font. Existing name-only calls remain valid. Repetition may create duplicates. Omitted settings retain native defaults; supplied tag arrays are complete. |
 | `create_transcription` | Create an empty transcription layer in an existing document. |
 | `list_scripts` | List writing systems; use their name in create_document.main_script. |
 | `create_document` | Create an empty document; project is a slug, main_script a script name. |
-| `update_document` | Change settings or move a document to another project slug. Tags replace all assignments; [] clears them. A move with tags omitted retains existing assignments, even from the old project. Scope preflight checks supplied tags against the target project, without locking edits. |
+| `update_document` | Change settings or move a document to another project slug. Tags replace all assignments; [] clears them. A move with tags omitted retains existing assignments, even from the old project. Scope preflight checks supplied tags against the target project, without locking edits. transcription_font controls presentation only; null clears the document override and inherits project, user or default settings. |
 | `rename_project` | Rename a project while preserving its sharing settings. |
 | `upload_page` | Upload an image; a matching original filename can replace an existing page. Generates a card thumbnail and queues conversion. Use a unique filename when a new page is required; do not assume every upload creates a page. |
 | `update_page` | Edit page metadata, including document-enabled typology. original_filename changes stored metadata, not the image path. max_avg_confidence is a stored summary, not a confidence computation. Image replacement and ordering use their separate tools. |
 | `delete_document` | Permanently delete a document, its pages and transcriptions. |
 | `delete_project` | Permanently delete a project, its documents and cascading page content. |
 | `delete_page` | Delete a page and its segmentation and transcriptions. |
-| `update_project` | Update project name, guidelines or complete personal-tag assignments. Tags replace all assignments; [] clears them. Guidelines accept null or blank to clear. Preflight reads do not lock records against other edits. |
+| `update_project` | Update project name, guidelines or complete personal-tag assignments. Tags replace all assignments; [] clears them. Guidelines accept null or blank to clear. transcription_font changes presentation for inheriting documents; null restores user/default fallback without changing document overrides. Preflight reads do not lock records against other edits. |
 | `get_document_statistics` | Get native geometry/annotation counts, including untyped entries. Defaults may be cached for an hour. refresh=true recomputes; without ordering it also updates the default cache. These counts are not transcription characters or job progress. Ordering by typology applies to geometry, taxonomy to annotations; the other category retains native frequency ordering. |
 | `list_document_page_ids` | Return a raw list of all page IDs in native page order, possibly empty. |
 | `find_pages_by_type` | Get per-page counts for one region/line type or annotation taxonomy. type_id='none' selects untyped elements. Geometry results use document_part_id; annotation results use part_id. Preserve native keys. |

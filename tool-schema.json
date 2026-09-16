@@ -861,6 +861,87 @@
     "_meta": null
   },
   {
+    "name": "list_fonts",
+    "title": null,
+    "description": "List all authenticated instance-wide font metadata with strict pagination.\n\n        Preserve native metrics and storage URLs without fetching font bytes.\n        An empty catalogue means no available fonts; missing API remains an error.\n        Uploading fonts and editing metrics require the native admin interface.\n        ",
+    "inputSchema": {
+      "properties": {},
+      "type": "object",
+      "additionalProperties": false,
+      "title": "list_fontsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_fontsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_font",
+    "title": null,
+    "description": "Read one font's native metadata, retaining zero/null and negative metrics.\n\n        A URL is metadata, not proof of file availability or successful rendering.\n        This operation never downloads, executes or installs the font file.\n        ",
+    "inputSchema": {
+      "properties": {
+        "font_id": {
+          "exclusiveMinimum": 0,
+          "title": "Font Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "font_id"
+      ],
+      "type": "object",
+      "additionalProperties": false,
+      "title": "get_fontArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_fontOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
     "name": "list_projects",
     "title": null,
     "description": "List accessible projects with native name/tag filters and ordering.\n\n        Follows pagination and preserves expanded sharing, tags and new fields.\n        Native OR tag queries can return duplicate rows; counts are not rewritten.\n        ",
@@ -1542,7 +1623,7 @@
   {
     "name": "create_project",
     "title": null,
-    "description": "Create a project with optional guidelines and personal tag IDs.\n\n        Existing name-only calls remain valid. Repetition may create duplicates.\n        Omitted settings retain native defaults; supplied tag arrays are complete.\n        ",
+    "description": "Create a project with optional guidelines, personal tags and display font.\n\n        Existing name-only calls remain valid. Repetition may create duplicates.\n        Omitted settings retain native defaults; supplied tag arrays are complete.\n        ",
     "inputSchema": {
       "properties": {
         "name": {
@@ -1571,7 +1652,7 @@
       "$defs": {
         "ProjectCreateSettings": {
           "additionalProperties": false,
-          "description": "Optional native guidelines and complete personal-tag assignment.",
+          "description": "Optional guidelines, complete tag assignment and nullable presentation font.",
           "properties": {
             "guidelines": {
               "anyOf": [
@@ -1601,6 +1682,19 @@
               ],
               "default": null,
               "title": "Tags"
+            },
+            "transcription_font": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Transcription Font"
             }
           },
           "title": "ProjectCreateSettings",
@@ -1793,6 +1887,19 @@
               },
               "title": "Tags",
               "type": "array"
+            },
+            "transcription_font": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Transcription Font"
             }
           },
           "required": [
@@ -1835,7 +1942,7 @@
   {
     "name": "update_document",
     "title": null,
-    "description": "Change settings or move a document to another project slug.\n\n        Tags replace all assignments; [] clears them. A move with tags omitted\n        retains existing assignments, even from the old project. Scope preflight\n        checks supplied tags against the target project, without locking edits.\n        ",
+    "description": "Change settings or move a document to another project slug.\n\n        Tags replace all assignments; [] clears them. A move with tags omitted\n        retains existing assignments, even from the old project. Scope preflight\n        checks supplied tags against the target project, without locking edits.\n        transcription_font controls presentation only; null clears the document\n        override and inherits project, user or default settings.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -1962,6 +2069,19 @@
               ],
               "default": null,
               "title": "Tags"
+            },
+            "transcription_font": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Transcription Font"
             }
           },
           "title": "DocumentPatch",
@@ -2407,7 +2527,7 @@
   {
     "name": "update_project",
     "title": null,
-    "description": "Update project name, guidelines or complete personal-tag assignments.\n\n        Tags replace all assignments; [] clears them. Guidelines accept null or\n        blank to clear. Preflight reads do not lock records against other edits.\n        ",
+    "description": "Update project name, guidelines or complete personal-tag assignments.\n\n        Tags replace all assignments; [] clears them. Guidelines accept null or\n        blank to clear. transcription_font changes presentation for inheriting\n        documents; null restores user/default fallback without changing document\n        overrides. Preflight reads do not lock records against other edits.\n        ",
     "inputSchema": {
       "properties": {
         "project_id": {
@@ -2457,6 +2577,19 @@
               ],
               "default": null,
               "title": "Tags"
+            },
+            "transcription_font": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Transcription Font"
             },
             "name": {
               "anyOf": [

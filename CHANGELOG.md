@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.18.0 — 2026-09-16
+
+### Module 13: Fonts and presentation settings
+
+Added two tools for safely paginated font discovery and scoped metadata inspection;
+175 tools total. Native fields, nulls, zeroes, negative margins and future metadata
+are preserved without downloading font URLs.
+
+Project/document create and update inputs accept nullable transcription_font.
+Omission preserves prior behavior; null clears an override. Action-specific writable
+OPTIONS metadata is required before sending the field, including null. Non-null
+selections additionally verify the font identity. Unsupported serializers fail
+before a write instead of silently ignoring the requested setting.
+
+Existing record reads preserve direct font IDs and authoritative effective font
+objects. The guide and skill explain document/project/user/default inheritance,
+presentation-only effects, and native admin/profile operations absent from REST.
+The release includes updated installer, version, tool catalogue and schemas.
+
 ## 0.17.0 — 2026-09-16
 
 ### Module 12: Sharing, users and groups

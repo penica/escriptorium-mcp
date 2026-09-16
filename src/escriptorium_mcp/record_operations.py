@@ -8,6 +8,7 @@ from pydantic import JsonValue
 
 from escriptorium_mcp.api import CHANGE, READ, ApiRequest, invoke
 from escriptorium_mcp.bridge import Identifier, call
+from escriptorium_mcp.font_scope import save_record
 from escriptorium_mcp.project_models import (
     ProjectCreate,
     ProjectCreateSettings,
@@ -69,10 +70,13 @@ async def create_project_record(
     if settings is not None:
         if "guidelines" in settings.model_fields_set:
             body["guidelines"] = settings.guidelines
+        if "transcription_font" in settings.model_fields_set:
+            body["transcription_font"] = settings.transcription_font
         if settings.tags is not None:
             await require_personal_tags(settings.tags)
             body["tags"] = list(settings.tags)
-    return await invoke("POST", "projects/", ProjectCreate.model_validate(body))
+    data = ProjectCreate.model_validate(body)
+    return await save_record("POST", "projects/", data, data.transcription_font)
 
 
 def register_record_expansion(server: MCPServer) -> None:
@@ -85,12 +89,16 @@ def register_record_expansion(server: MCPServer) -> None:
         """Update project name, guidelines or complete personal-tag assignments.
 
         Tags replace all assignments; [] clears them. Guidelines accept null or
-        blank to clear. Preflight reads do not lock records against other edits.
+        blank to clear. transcription_font changes presentation for inheriting
+        documents; null restores user/default fallback without changing document
+        overrides. Preflight reads do not lock records against other edits.
         """
         if changes.tags is not None:
             _ = await require_project(project_id)
             await require_personal_tags(changes.tags)
-        return await invoke("PATCH", f"projects/{project_id}/", changes)
+        return await save_record(
+            "PATCH", f"projects/{project_id}/", changes, changes.transcription_font
+        )
 
     @server.tool(annotations=READ)
     async def get_document_statistics(

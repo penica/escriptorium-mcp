@@ -1,6 +1,6 @@
 # eScriptorium MCP server
 
-Version 0.17.0 exposes **173 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
+Version 0.18.0 exposes **175 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
 
 ## Capabilities
 
@@ -48,7 +48,7 @@ For a standalone installation, from this directory:
 uv tool install --python 3.11 .
 ```
 
-Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.17.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
+Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.18.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
 
 ## Credentials and paths
 
@@ -82,7 +82,7 @@ The supplied key remains in the ignored checkout `.env`; package and client exam
 
 ## Transport choice (checked 16 September 2026)
 
-**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 173 tools in either transport.
+**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 175 tools in either transport.
 
 STDIO is the default and needs no listening port. To run HTTP, first generate a separate service token:
 
@@ -128,6 +128,19 @@ The HTTP endpoint uses stateless requests; queued eScriptorium work remains moni
 **Cancellation scope:** the existing `cancel_task` endpoint has document-wide cleanup side effects: even with one task ID, upstream also marks all document training models and imports canceled. Prefer the dedicated model or import cancellation action for those jobs. Owner/staff permissions apply. Cancellation is not transactional; re-read status after errors or timeouts before retrying.
 
 See [CHANGELOG.md](CHANGELOG.md) for releases and [MODULE-ROADMAP.md](MODULE-ROADMAP.md) for the remaining modules.
+
+## Fonts and presentation (0.18.0)
+
+Two tools list and inspect native font metadata. Existing project/document
+create and update tools accept `transcription_font`: a font ID selects an override,
+`null` clears it, and omission preserves existing behavior. Assignments require
+writable-field evidence from the server before any change.
+
+Documents inherit their project font, then the user's preference, then the editor
+default. Existing document reads preserve the server's effective font object.
+Font changes affect text display only. Uploading fonts and editing font metrics
+requires the admin interface; user font preferences use the web profile page.
+See [docs/FONTS-API.md](docs/FONTS-API.md) for examples and capability limits.
 
 ## Sharing, users and groups (0.17.0)
 
