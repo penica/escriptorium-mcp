@@ -2902,7 +2902,7 @@
   {
     "name": "train_recognition",
     "title": null,
-    "description": "Queue recognition model training from selected ground-truth pages.",
+    "description": "Queue recognition training; override replaces an owned, idle model.\n\n        Otherwise an existing model is cloned. track=true wraps acceptance with\n        candidate task groups, never a proven association or completed result.\n        Monitoring failure does not undo acceptance and must not trigger a retry.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -2912,6 +2912,11 @@
         },
         "job": {
           "$ref": "#/$defs/RecognitionTraining"
+        },
+        "track": {
+          "default": false,
+          "title": "Track",
+          "type": "boolean"
         }
       },
       "required": [
@@ -2949,7 +2954,7 @@
             "model_name": {
               "anyOf": [
                 {
-                  "maxLength": 255,
+                  "maxLength": 256,
                   "minLength": 1,
                   "pattern": "\\S",
                   "type": "string"
@@ -3011,7 +3016,7 @@
   {
     "name": "train_segmentation",
     "title": null,
-    "description": "Queue segmentation training from at least two segmented pages.",
+    "description": "Queue segmentation training from at least two distinct segmented pages.\n\n        override=true replaces an owned, idle model; otherwise it is cloned.\n        track=true reports acceptance and unproven candidate task groups.\n        A monitoring failure never causes automatic resubmission.\n        ",
     "inputSchema": {
       "properties": {
         "document_id": {
@@ -3021,6 +3026,11 @@
         },
         "job": {
           "$ref": "#/$defs/SegmentationTraining"
+        },
+        "track": {
+          "default": false,
+          "title": "Track",
+          "type": "boolean"
         }
       },
       "required": [
@@ -3058,7 +3068,7 @@
             "model_name": {
               "anyOf": [
                 {
-                  "maxLength": 255,
+                  "maxLength": 256,
                   "minLength": 1,
                   "pattern": "\\S",
                   "type": "string"
@@ -3963,6 +3973,76 @@
       "readOnlyHint": false,
       "destructiveHint": true,
       "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_training_report",
+    "title": null,
+    "description": "Read model metrics/checkpoints and optionally selected training tasks.\n\n        A supplied document/group is caller-selected, not a proven model link.\n        Without a group, document task reports include historical training.\n        Idle models are not proof of successful training. Server validation\n        scores are not universal CER/WER metrics. Artifact existence is unchecked;\n        use download_model to verify a current file or checkpoint's availability.\n        ",
+    "inputSchema": {
+      "properties": {
+        "model_id": {
+          "exclusiveMinimum": 0,
+          "title": "Model Id",
+          "type": "integer"
+        },
+        "document_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document Id"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Id"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "type": "object",
+      "title": "get_training_reportArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_training_reportOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
       "openWorldHint": null
     },
     "_meta": null

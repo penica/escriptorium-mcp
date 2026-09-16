@@ -5,7 +5,7 @@ from typing import Annotated, Final, Literal, Self
 from pydantic import Field, FilePath, model_validator
 
 from escriptorium_mcp.api import Input
-from escriptorium_mcp.bridge import Identifier, Name
+from escriptorium_mcp.bridge import Identifier
 from escriptorium_mcp.model_models import JobLabel, ModelName
 
 MIN_TRAINING_IMAGES: Final = 2
@@ -41,7 +41,7 @@ class Training(Input):
 
     parts: Parts
     model: Identifier | None = None
-    model_name: Name | None = None
+    model_name: ModelName | None = None
     override: bool = False
 
     @model_validator(mode="after")
@@ -49,6 +49,14 @@ class Training(Input):
         """Match the server requirement for a starting model or output name."""
         if self.model is None and self.model_name is None:
             msg = "Supply model or model_name."
+            raise ValueError(msg)
+        if ("model" in self.model_fields_set and self.model is None) or (
+            "model_name" in self.model_fields_set and self.model_name is None
+        ):
+            msg = "Omit unused model/model_name options instead of passing null."
+            raise ValueError(msg)
+        if len(set(self.parts)) != len(self.parts):
+            msg = "Training pages must be distinct."
             raise ValueError(msg)
         return self
 

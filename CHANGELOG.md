@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.8.0 — 2026-09-16
+
+### Module 3: Training and evaluation
+
+Added `get_training_report`, bringing the catalogue from 102 to 103 tools. It returns model training state, raw validation scores, current-file references and checkpoint metadata, with optional caller-selected document/group task summaries filtered to the model's training method. Group selection requires a document ID. Caller-selected task/model relationships are labeled explicitly; document-only summaries include historical training reports. Missing values, zero values and repeated checkpoint paths are preserved. Idle state does not establish success, and file availability is not inferred from an advertised reference.
+
+`train_recognition` and `train_segmentation` add optional `track`, defaulting to false for the existing raw response shape. Tracked submission reads document groups before and after one POST, preserves the upstream acceptance response and reports zero/one/multiple matching candidates or unavailable monitoring. New groups whose method is initially null remain candidates. Even one candidate is not confirmed attribution; concurrency and delayed reports prevent a guaranteed link. Optional monitoring failure preserves acceptance and never triggers automatic resubmission.
+
+Training inputs now reject duplicate page IDs and explicit null model/name options, and accept model names up to 256 characters. Selected models are checked for the appropriate segmentation/recognition job. Overwriting requires model ownership and an explicitly stopped training state, including calls that also supply `model_name`. These reads are preflight observations rather than atomic locks. Page and recognition-layer membership remain authoritative server-side serializer validation.
+
+### Compatibility and limits
+
+The standard document-training API returns acceptance without a model, task or group ID. All supported request fields remain available; unsupported hyperparameter keys are not invented. The audited API has no independent evaluation endpoint or training request controls for epochs, learning rate, optimizer, batch size, precision, device or validation split. Validation-score meaning depends on the model/server; this release does not calculate or relabel it as CER/WER. Custom ARC controls and virtual-collection training are separate from this contract.
+
+Package/server/installer versions, generated tool catalogue/schema, training API documentation and the bundled agent skill are updated together. See [docs/TRAINING-API.md](docs/TRAINING-API.md) for contract evidence and [IMPLEMENTATION-STATUS.md](IMPLEMENTATION-STATUS.md) for completed validation and publication status.
+
 ## 0.7.0 — 2026-09-16
 
 ### Module 2: Model management

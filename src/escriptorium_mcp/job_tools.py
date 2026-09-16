@@ -21,6 +21,7 @@ from escriptorium_mcp.task_monitoring import (
     TaskState,
     read_tasks,
 )
+from escriptorium_mcp.training_submission import submit_training
 
 
 def register_jobs(server: MCPServer) -> None:
@@ -105,17 +106,31 @@ def register_jobs(server: MCPServer) -> None:
     async def train_recognition(
         document_id: Identifier,
         job: RecognitionTraining,
+        *,
+        track: bool = False,
     ) -> JsonValue:
-        """Queue recognition model training from selected ground-truth pages."""
-        return await invoke("POST", f"documents/{document_id}/train/", job)
+        """Queue recognition training; override replaces an owned, idle model.
+
+        Otherwise an existing model is cloned. track=true wraps acceptance with
+        candidate task groups, never a proven association or completed result.
+        Monitoring failure does not undo acceptance and must not trigger a retry.
+        """
+        return await submit_training(document_id, job, 2, track=track)
 
     @server.tool(annotations=JOB)
     async def train_segmentation(
         document_id: Identifier,
         job: SegmentationTraining,
+        *,
+        track: bool = False,
     ) -> JsonValue:
-        """Queue segmentation training from at least two segmented pages."""
-        return await invoke("POST", f"documents/{document_id}/segtrain/", job)
+        """Queue segmentation training from at least two distinct segmented pages.
+
+        override=true replaces an owned, idle model; otherwise it is cloned.
+        track=true reports acceptance and unproven candidate task groups.
+        A monitoring failure never causes automatic resubmission.
+        """
+        return await submit_training(document_id, job, 1, track=track)
 
     @server.tool(annotations=CHANGE)
     async def cancel_task(document_id: Identifier, task_id: Identifier) -> JsonValue:

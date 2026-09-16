@@ -1,6 +1,6 @@
 # eScriptorium MCP tools
 
-Version 0.7.0: 102 tools.
+Version 0.8.0: 103 tools.
 
 | Tool | Description |
 |---|---|
@@ -45,8 +45,8 @@ Version 0.7.0: 102 tools.
 | `get_task` | Read a task report's status, messages and timestamps. |
 | `segment_pages` | Queue automatic segmentation; override replaces existing geometry. |
 | `transcribe_pages` | Queue OCR/HTR; existing text in the selected layer may be replaced. |
-| `train_recognition` | Queue recognition model training from selected ground-truth pages. |
-| `train_segmentation` | Queue segmentation training from at least two segmented pages. |
+| `train_recognition` | Queue recognition training; override replaces an owned, idle model. Otherwise an existing model is cloned. track=true wraps acceptance with candidate task groups, never a proven association or completed result. Monitoring failure does not undo acceptance and must not trigger a retry. |
+| `train_segmentation` | Queue segmentation training from at least two distinct segmented pages. override=true replaces an owned, idle model; otherwise it is cloned. track=true reports acceptance and unproven candidate task groups. A monitoring failure never causes automatic resubmission. |
 | `cancel_task` | Cancel a report with DOCUMENT-WIDE training/import cleanup side effects. Even with one task ID, the server also marks all document training models and imports canceled. Prefer dedicated model/import cancellation for those jobs. Requires document owner/staff; refresh reports afterward. |
 | `cancel_page_tasks` | Cancel pending processing for one page. |
 | `cancel_model_training` | Stop training an existing model using the dedicated cancel action. |
@@ -63,6 +63,7 @@ Version 0.7.0: 102 tools.
 | `get_import_status` | Read visible import task history, messages and report state counts. Includes old imports; inspect timestamps to identify the relevant job. No visible reports does not prove no import exists. Native import record status, processed/total counts and progress percentages are not exposed. |
 | `cancel_document_tasks` | Cancel all queued/running document tasks and mark training/imports canceled. Requires owner/staff permission. The upstream operation is not atomic; refresh reports afterward. This is document-wide, across users and pages. |
 | `cancel_document_import` | Cancel the latest document import through its dedicated server action. This cannot select an arbitrary historical import. Already stopped imports return an upstream error; some versions return HTTP 500 when none exists. Task history alone cannot reliably prove that a cancelable import exists. |
+| `get_training_report` | Read model metrics/checkpoints and optionally selected training tasks. A supplied document/group is caller-selected, not a proven model link. Without a group, document task reports include historical training. Idle models are not proof of successful training. Server validation scores are not universal CER/WER metrics. Artifact existence is unchecked; use download_model to verify a current file or checkpoint's availability. |
 | `download_register` | Download ALL available scans directly to NAS with a checksum manifest. Requires a new catalogue folder. Existing destinations are never overwritten. Download completion does not mean visual inspection or transcription completion. |
 | `export_transcriptions` | Save a layer as UTF-8 text or JSON locally in page/line order. Works with API-token authentication without waiting for server notifications. Existing files are never overwritten. JSON preserves line IDs and revisions. |
 | `request_server_export` | Queue a native ALTO, PAGE XML or text archive export. Success means queued, not complete. Use the URL in the eScriptorium completion notification with download_export. This instance has no downloads-list API. |

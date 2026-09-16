@@ -28,6 +28,7 @@ class Case:
     method: str = "POST"
     payload: JsonValue = field(default_factory=dict)
     multipart: tuple[bytes, ...] = ()
+    preflight: tuple[tuple[str, str], ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -55,6 +56,11 @@ def api_fixture() -> Generator[Fixture, None, None]:
             )
             deleted = self.command == "DELETE"
             body = b"" if deleted else b'{"pk":81,"status":"queued"}'
+            if self.command == "GET":
+                if self.path != "/api/models/2/":
+                    self.send_error(404)
+                    return
+                body = b'{"pk":2,"job":"Segment","rights":"owner","training":false}'
             self.send_response(204 if deleted else 200)
             self.send_header("Content-Type", "application/json")
             self.send_header("Content-Length", str(len(body)))
@@ -62,6 +68,9 @@ def api_fixture() -> Generator[Fixture, None, None]:
             _ = self.wfile.write(body)
 
         def do_POST(self) -> None:
+            self.respond()
+
+        def do_GET(self) -> None:
             self.respond()
 
         def do_PATCH(self) -> None:
@@ -101,8 +110,12 @@ async def exercise(fixture: Fixture, case: Case) -> None:
             assert fixture.requests == []
             return
         assert not result.is_error, result.content
-        assert len(fixture.requests) == 1
-        request = fixture.requests[0]
+        assert len(fixture.requests) == len(case.preflight) + 1
+        assert (
+            tuple((request.method, request.path) for request in fixture.requests[:-1])
+            == case.preflight
+        )
+        request = fixture.requests[-1]
         assert (request.method, request.path) == (case.method, f"/api/{case.path}")
         if case.multipart:
             assert request.content_type.startswith("multipart/form-data; boundary=")

@@ -1,6 +1,6 @@
 # eScriptorium MCP server
 
-Version 0.7.0 exposes **102 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
+Version 0.8.0 exposes **103 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
 
 ## Capabilities
 
@@ -12,6 +12,7 @@ Version 0.7.0 exposes **102 tools** for eScriptorium. It uses the published [esc
 | Segmentation | Create/edit/delete line baselines and polygons or regions; reorder lines; run automatic segmentation |
 | Ontology and annotations | Manage types, components and taxonomies; edit image/text annotation instances; preview repairs/merges; portable schema snapshots; capability-gated native ontology files and project templates |
 | OCR and models | Filter/read/upload models; update owned models; replace/delete idle owned models; download weights/checkpoints; inspect document associations; run OCR/HTR and training |
+| Training reports | Optionally track submission candidates; combine model metrics/checkpoints with caller-selected training reports |
 | Jobs | List/read task reports; cancel a task, page processing or model training |
 | Exports | Direct UTF-8 text/JSON export; native ALTO/PAGE XML/text export jobs; download a completed export link |
 | Scan acquisition | Download an entire available register directly to NAS with a checksum manifest |
@@ -47,7 +48,7 @@ For a standalone installation, from this directory:
 uv tool install --python 3.11 .
 ```
 
-Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.7.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
+Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.8.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
 
 ## Credentials and paths
 
@@ -81,7 +82,7 @@ The supplied key remains in the ignored checkout `.env`; package and client exam
 
 ## Transport choice (checked 16 September 2026)
 
-**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 102 tools in either transport.
+**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 103 tools in either transport.
 
 STDIO is the default and needs no listening port. To run HTTP, first generate a separate service token:
 
@@ -138,6 +139,16 @@ See [CHANGELOG.md](CHANGELOG.md) for releases and [MODULE-ROADMAP.md](MODULE-ROA
 
 Ownership and idle-state checks occur before writes and are not an atomic server-side lock. Pause other writers when replacing/deleting files or changing job/size metadata. See [docs/MODEL-API.md](docs/MODEL-API.md) for the supported contract and limits, and [docs/RELEASING.md](docs/RELEASING.md) for package preparation.
 
+## Training and evaluation (0.8.0)
+
+`train_recognition` and `train_segmentation` retain the standard server-supported fields: explicit page IDs, an existing model and/or output name, override behavior, and a recognition transcription layer. Names support 256 characters; duplicate pages and explicit null model/name options are rejected. The selected model's job must match the action. Overwriting an existing model requires ownership and stopped training, even when a new name is also supplied. The server's submission serializer validates page/layer membership; preflight model checks are not atomic locks.
+
+Both tools accept optional `track: true`. The default preserves the raw submission response. Tracking wraps acceptance with groups observed before/after submission and marks new matching or initially unnamed-method groups as **candidates**. A single candidate is still unproven, and concurrent work can produce several. Failed monitoring does not undo an accepted submission or trigger a retry. Standard document training returns no model/group ID; acceptance is not completion.
+
+`get_training_report` presents raw model validation scores and checkpoint metadata alongside optional caller-selected document/group task summaries. A group requires its document ID. Task/model attribution is explicitly caller-supplied, and document-only summaries include historical training reports. Idle state does not prove success, missing metrics are not zero, and an advertised checkpoint may no longer exist. Use `download_model` to verify its bytes.
+
+The audited standard API has no independent evaluation action or request fields for epochs, learning rate, optimizer, batch size, precision, device or validation split. The MCP exposes available server metrics without converting them into invented CER/WER values. Custom ARC controls need their own API contract. See [docs/TRAINING-API.md](docs/TRAINING-API.md) for the detailed audit and attribution limits.
+
 ## Ontology and annotations (0.5.0)
 
 See [ONTOLOGY-COVERAGE.md](ONTOLOGY-COVERAGE.md) for the route-to-tool map, write semantics and server capability limits.
@@ -182,7 +193,7 @@ Geometry uses pixel coordinates. A baseline needs at least two points; a polygon
 2. Create/select a transcription layer.
 3. `segment_pages` and `transcribe_pages` require explicit page IDs.
 4. `train_recognition` requires a ground-truth layer and either a starting model or a new model name. `train_segmentation` requires at least two distinct segmented pages and a starting model or new name.
-5. Check `list_tasks`/`get_task`, `get_model` and page workflow for actual completion.
+5. Optionally use `track: true` when submitting to receive candidate task groups, then inspect `get_training_report`, task reports and page workflow. Select document/group IDs explicitly; candidates are not confirmed model links.
 
 Task report states: **0 queued, 1 running, 2 crashed, 3 finished, 4 canceled**. Successful job submission is not successful processing. OCR can replace text in its target layer; segmentation/training overrides can replace existing results. Cancellation uses dedicated server actions, not a manual change to the status field.
 

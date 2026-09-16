@@ -60,6 +60,7 @@ def case_id(case: Case) -> str:
                 },
             },
             "documents/7/segtrain/",
+            preflight=(("GET", "/api/models/2/"),),
             payload={
                 "parts": [11, 12],
                 "model": 2,

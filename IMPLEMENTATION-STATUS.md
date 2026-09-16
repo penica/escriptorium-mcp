@@ -13,8 +13,9 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 
 ## Current work
 1. **Released and verified:** Tasks and job monitoring (0.6.0).
-2. **Locally verified, publication pending:** Model management (0.7.0), six new tools and filtered model listing; 102 tools total. Contract evidence and API limits are recorded in docs/MODEL-API.md.
-3. **Pending:** Modules 3–13 in roadmap order.
+2. **Released and verified:** Model management (0.7.0), six new tools and filtered model listing; 102 tools total. Contract evidence and API limits are recorded in docs/MODEL-API.md.
+3. **Locally verified, publication pending:** Training and evaluation (0.8.0), optional tracked submissions and the new `get_training_report`; 103 tools total. API limits are recorded in docs/TRAINING-API.md.
+4. **Pending:** Modules 4–13 in roadmap order.
 
 ## Baseline evidence
 - Initial public commit: 73f08eb (MCP 0.5.0, 89 tools).
@@ -37,7 +38,7 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 - [GitHub release v0.6.0](https://github.com/penica/escriptorium-mcp/releases/tag/v0.6.0) published the wheel, source distribution, WSL archive and checksum; all four assets verified uploaded.
 - Fresh installer and 0.5.0-to-0.6.0 upgrade passed in temporary directories, preserving URL/key/token/archive settings, private configuration permissions and command launcher.
 
-### 0.7.0 — Model management (locally verified; GitHub CI/publication pending)
+### 0.7.0 — Model management
 
 - Implemented metadata edits, file replacement, deletion, checkpoint listing, association reads and current/checkpoint downloads; `list_models` adds document/job filters.
 - New model mutations require ownership. Replacement, deletion and job/size edits additionally require an explicitly idle model; rename-only updates remain available during training.
@@ -49,7 +50,21 @@ Implement all 13 modules in MODULE-ROADMAP.md in order, preserving existing tool
 - Updated package/server/installer versions, model contract documentation and bundled skill. Actual STDIO discovery generated the catalogue/schema with 102 tools and verified server version 0.7.0.
 - Release builder lint/format/strict types, installer shell syntax and skill validation passed. Built wheel, source distribution and WSL transfer archive; verified its outer hash and 17 inner hashes, normalized ownership metadata and included model/releasing guides. Wheel contains all three new model modules. Source/wheel inspection found no private environment/config files or live evidence.
 - Fresh installer and real 0.6.0-to-0.7.0 upgrade passed in temporary directories, including a path with spaces. URL/key/token/Books configuration, private backups, 0600 permissions and linked launcher were preserved. The installed wheel advertised 102 tools and passed actual STDIO metadata updates, association/checkpoint reads, byte/checksum-verified current/checkpoint downloads and invalid-null rejection against isolated fixtures. No service was installed or changed.
+- Public commit: `f618cf3fb0c38fa01847ec2c66d66dd5f18e2057`.
+- [Compatibility run 35082582284](https://github.com/penica/escriptorium-mcp/actions/runs/35082582284) passed all six jobs: Windows/macOS/Linux with Python 3.11/3.13.
+- [GitHub release v0.7.0](https://github.com/penica/escriptorium-mcp/releases/tag/v0.7.0) published all four artifacts. Uploaded asset digests matched the final local wheel, source distribution, WSL archive and checksum.
+
+### 0.8.0 — Training and evaluation (locally verified; GitHub CI/publication pending)
+
+- Added `get_training_report`: raw model metrics, checkpoint records and optional caller-selected document/group training task summaries. Idle state is not success, model/group attribution is not assumed and no CER/WER or independent evaluation is invented.
+- Existing training tools add optional `track=false` by default for raw-response compatibility. Tracking compares groups before/after one POST and exposes candidates, including initially null methods, with attribution explicitly unconfirmed. Optional monitoring failure preserves acceptance and never resubmits.
+- Selected models must match the training action. Overwrite requires ownership and `training == false`, including requests also containing a model name. Training inputs reject duplicate pages and explicit null model/name options; names support 256 characters. Server submission serializers remain authoritative for document/page/layer membership.
+- Standard server-supported training fields are retained. The audited API has no independent evaluation action or hyperparameter request fields; custom ARC and virtual-collection training remain separate contracts.
+- Full regression: 253 tests passed in 303.18 seconds. All 42 focused training cases also passed, covering STDIO and authenticated HTTP, both training actions, exact request bodies, input/model guards, unconfirmed attribution, monitoring HTTP/parse failures, single submission and raw report metrics. Ruff lint/format, strict Basedpyright for source/tests/scripts, the programming-rule audit and skill validation passed. GitHub CI/publication remain pending.
+- Read-only MCP STDIO checks against ARC passed for model metrics, preserved checkpoint records and a caller-selected document/group report containing 72 visible task reports. The result explicitly retained caller-supplied attribution. No live training jobs were submitted, canceled or modified.
+- Fresh installation and a real 0.7.0-to-0.8.0 upgrade passed in temporary directories, preserving the complete URL/key/token/Books configuration, private backup and 0600 permissions, linked launcher and installed version. The isolated wheel advertised 103 tools and passed raw null/zero-metric reporting and accepted training after a monitoring failure with exactly one fixture POST. No service or live model was changed.
+- Package/server/installer metadata, training documentation, roadmap and bundled skill are updated. Actual STDIO discovery generated the catalogue/schema with 103 tools. Wheel, source distribution and WSL archive built; both new training modules are included. Outer and 18 inner hashes, normalized ownership and private-file exclusion passed.
 
 ### Next release
 
-Module 3: training and evaluation, target 0.8.0, after model management is verified and published.
+Module 4: transcriptions, target 0.9.0, after training and evaluation is verified and published.
