@@ -1,6 +1,6 @@
 # eScriptorium MCP tools
 
-Version 0.6.0: 96 tools.
+Version 0.7.0: 102 tools.
 
 | Tool | Description |
 |---|---|
@@ -50,6 +50,12 @@ Version 0.6.0: 96 tools.
 | `cancel_task` | Cancel a report with DOCUMENT-WIDE training/import cleanup side effects. Even with one task ID, the server also marks all document training models and imports canceled. Prefer dedicated model/import cancellation for those jobs. Requires document owner/staff; refresh reports afterward. |
 | `cancel_page_tasks` | Cancel pending processing for one page. |
 | `cancel_model_training` | Stop training an existing model using the dedicated cancel action. |
+| `update_model` | Rename or update an owned model's job type/storage-size metadata. job is 1 for segmentation or 2 for recognition. Omit unchanged fields; nulls and document association edits are unsupported. Job/size edits require stopped training. Changing job metadata does not convert weights. file_size is storage accounting; file replacement calculates it for you. |
+| `replace_model_file` | Replace an owned, idle model's weights from a local MCP-host file. Replaces the current file reference and size; this does not create a checkpoint backup. Download the current file first if it must be retained. Server file validation and permissions still apply. |
+| `delete_model` | Delete an owned, idle model and its server-managed relationships. This does not delete document transcriptions. Download files/checkpoints to retain them; upstream may remove stored model files when deleting. |
+| `list_model_versions` | List advertised checkpoints with revision IDs and available training metrics. File references do not prove bytes still exist. Use download_model with a revision to retrieve one; no checkpoint revert/delete REST action exists. |
+| `get_model_documents` | Read document associations; the audited REST API cannot bind/unbind them. Segmentation, transcription and training create associations as a side effect. Do not submit a processing job solely to edit this relationship. |
+| `download_model` | Save current model weights or one advertised checkpoint on the MCP host. Omit revision for the current file. Destination and .part must be new and outside the scan-only Books archive. Return byte count/SHA-256 only after transfer completion. Missing files remain errors; redirects are refused. |
 | `list_document_tasks` | List document task counts and last-start timestamps, following pagination. Name matches a substring. State selects documents with that state; counts still include their historical reports in every state. user_id is for staff only; nonstaff results follow the server's document ownership rules. |
 | `list_task_groups` | List all document job groups with state counts and affected-page counts. |
 | `get_task_group` | Read group state buckets, counts and timestamps; inspect every bucket. A bucket's done_at is its latest report finish, not proof the group succeeded. page_count counts associated pages, not completed pages. |

@@ -40,6 +40,8 @@ BUNDLE_FILES: Final = (
     "MODULE-ROADMAP.md",
     "IMPLEMENTATION-STATUS.md",
     "ONTOLOGY-COVERAGE.md",
+    "docs/MODEL-API.md",
+    "docs/RELEASING.md",
     "skills/escriptorium/SKILL.md",
     "skills/escriptorium/agents/openai.yaml",
 )

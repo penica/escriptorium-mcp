@@ -2376,7 +2376,37 @@
     "title": null,
     "description": "List models, job type (1 segmentation, 2 recognition), and training state.",
     "inputSchema": {
-      "properties": {},
+      "properties": {
+        "document_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document Id"
+        },
+        "job": {
+          "anyOf": [
+            {
+              "enum": [
+                1,
+                2
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job"
+        }
+      },
       "type": "object",
       "title": "list_modelsArguments"
     },
@@ -2431,7 +2461,7 @@
               "type": "string"
             },
             "name": {
-              "maxLength": 255,
+              "maxLength": 256,
               "minLength": 1,
               "pattern": "\\S",
               "title": "Name",
@@ -3221,6 +3251,355 @@
       "readOnlyHint": false,
       "destructiveHint": true,
       "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "update_model",
+    "title": null,
+    "description": "Rename or update an owned model's job type/storage-size metadata.\n\n        job is 1 for segmentation or 2 for recognition. Omit unchanged fields;\n        nulls and document association edits are unsupported. Job/size edits\n        require stopped training. Changing job metadata does not convert weights.\n        file_size is storage accounting; file replacement calculates it for you.\n        ",
+    "inputSchema": {
+      "properties": {
+        "model_id": {
+          "exclusiveMinimum": 0,
+          "title": "Model Id",
+          "type": "integer"
+        },
+        "changes": {
+          "$ref": "#/$defs/ModelUpdate"
+        }
+      },
+      "required": [
+        "model_id",
+        "changes"
+      ],
+      "type": "object",
+      "$defs": {
+        "ModelUpdate": {
+          "additionalProperties": false,
+          "description": "Omit unchanged fields; these metadata fields cannot be cleared with null.",
+          "properties": {
+            "name": {
+              "anyOf": [
+                {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "pattern": "\\S",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Name"
+            },
+            "job": {
+              "anyOf": [
+                {
+                  "enum": [
+                    1,
+                    2
+                  ],
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Job"
+            },
+            "file_size": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "File Size"
+            }
+          },
+          "title": "ModelUpdate",
+          "type": "object"
+        }
+      },
+      "title": "update_modelArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "update_modelOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "replace_model_file",
+    "title": null,
+    "description": "Replace an owned, idle model's weights from a local MCP-host file.\n\n        Replaces the current file reference and size; this does not create a\n        checkpoint backup. Download the current file first if it must be retained.\n        Server file validation and permissions still apply.\n        ",
+    "inputSchema": {
+      "properties": {
+        "model_id": {
+          "exclusiveMinimum": 0,
+          "title": "Model Id",
+          "type": "integer"
+        },
+        "file_path": {
+          "format": "file-path",
+          "title": "File Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id",
+        "file_path"
+      ],
+      "type": "object",
+      "title": "replace_model_fileArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "replace_model_fileOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "delete_model",
+    "title": null,
+    "description": "Delete an owned, idle model and its server-managed relationships.\n\n        This does not delete document transcriptions. Download files/checkpoints\n        to retain them; upstream may remove stored model files when deleting.\n        ",
+    "inputSchema": {
+      "properties": {
+        "model_id": {
+          "exclusiveMinimum": 0,
+          "title": "Model Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "type": "object",
+      "title": "delete_modelArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "delete_modelOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "list_model_versions",
+    "title": null,
+    "description": "List advertised checkpoints with revision IDs and available training metrics.\n\n        File references do not prove bytes still exist. Use download_model with\n        a revision to retrieve one; no checkpoint revert/delete REST action exists.\n        ",
+    "inputSchema": {
+      "properties": {
+        "model_id": {
+          "exclusiveMinimum": 0,
+          "title": "Model Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "type": "object",
+      "title": "list_model_versionsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "list_model_versionsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "get_model_documents",
+    "title": null,
+    "description": "Read document associations; the audited REST API cannot bind/unbind them.\n\n        Segmentation, transcription and training create associations as a side\n        effect. Do not submit a processing job solely to edit this relationship.\n        ",
+    "inputSchema": {
+      "properties": {
+        "model_id": {
+          "exclusiveMinimum": 0,
+          "title": "Model Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "type": "object",
+      "title": "get_model_documentsArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "get_model_documentsOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": null,
+      "openWorldHint": null
+    },
+    "_meta": null
+  },
+  {
+    "name": "download_model",
+    "title": null,
+    "description": "Save current model weights or one advertised checkpoint on the MCP host.\n\n        Omit revision for the current file. Destination and .part must be new and\n        outside the scan-only Books archive. Return byte count/SHA-256 only after\n        transfer completion. Missing files remain errors; redirects are refused.\n        ",
+    "inputSchema": {
+      "properties": {
+        "model_id": {
+          "exclusiveMinimum": 0,
+          "title": "Model Id",
+          "type": "integer"
+        },
+        "destination": {
+          "format": "path",
+          "title": "Destination",
+          "type": "string"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        }
+      },
+      "required": [
+        "model_id",
+        "destination"
+      ],
+      "type": "object",
+      "title": "download_modelArguments"
+    },
+    "execution": null,
+    "outputSchema": {
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/JsonValue"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "type": "object",
+      "$defs": {
+        "JsonValue": {}
+      },
+      "title": "download_modelOutput"
+    },
+    "icons": null,
+    "annotations": {
+      "title": null,
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
       "openWorldHint": null
     },
     "_meta": null

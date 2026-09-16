@@ -14,6 +14,7 @@ from escriptorium_mcp.job_models import (
     Segmentation,
     SegmentationTraining,
 )
+from escriptorium_mcp.model_models import ModelJob, job_label
 from escriptorium_mcp.task_monitoring import (
     TaskFilters,
     TaskOrdering,
@@ -26,14 +27,23 @@ def register_jobs(server: MCPServer) -> None:
     """Job actions enqueue work; a successful response is not task completion."""
 
     @server.tool(annotations=READ)
-    async def list_models() -> JsonValue:
+    async def list_models(
+        document_id: Identifier | None = None, job: ModelJob | None = None
+    ) -> JsonValue:
         """List models, job type (1 segmentation, 2 recognition), and training state."""
-        return await call(ApiRequest(method="GET", route="models/", paginate=True))
+        query = {
+            key: str(value)
+            for key, value in (("documents", document_id), ("job", job))
+            if value is not None
+        }
+        return await call(
+            ApiRequest(method="GET", route="models/", paginate=True, query=query)
+        )
 
     @server.tool(annotations=CREATE)
     async def upload_model(model: ModelUpload) -> JsonValue:
         """Register a local Kraken model for segmentation (1) or recognition (2)."""
-        metadata = ModelMetadata(name=model.name, job=model.job)
+        metadata = ModelMetadata(name=model.name, job=job_label(model.job))
         return await call(
             ApiRequest(
                 method="POST",

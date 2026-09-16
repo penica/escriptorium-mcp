@@ -52,7 +52,8 @@ def execute_api(client: EscriptoriumConnector, request: ApiRequest) -> str:
         ] + ["Undefined", "Orphan"]
     if request.file_path is not None:
         with request.file_path.open("rb") as uploaded:
-            response = client.http.post(
+            response = client.http.request(
+                request.method,
                 url,
                 data=body,
                 files={request.file_field: (request.file_path.name, uploaded)},

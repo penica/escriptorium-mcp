@@ -17,7 +17,7 @@ def test_model_upload_when_local_model_is_provided(tmp_path: Path) -> None:
             b'name="file"; filename="hand.mlmodel"',
             b"fixture-kraken-model",
             b'name="name"\r\n\r\nParish',
-            b'name="job"\r\n\r\n2',
+            b'name="job"\r\n\r\nRecognize',
         ),
     )
     with api_fixture() as fixture:

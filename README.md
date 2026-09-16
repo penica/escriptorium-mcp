@@ -1,6 +1,6 @@
 # eScriptorium MCP server
 
-Version 0.6.0 exposes **96 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
+Version 0.7.0 exposes **102 tools** for eScriptorium. It uses the published [escriptorium-connector](https://pypi.org/project/escriptorium-connector/) for authentication and existing reads, plus adapters for current API actions.
 
 ## Capabilities
 
@@ -11,12 +11,12 @@ Version 0.6.0 exposes **96 tools** for eScriptorium. It uses the published [escr
 | Transcriptions | Create/rename/delete layers; write/correct/delete line text |
 | Segmentation | Create/edit/delete line baselines and polygons or regions; reorder lines; run automatic segmentation |
 | Ontology and annotations | Manage types, components and taxonomies; edit image/text annotation instances; preview repairs/merges; portable schema snapshots; capability-gated native ontology files and project templates |
-| OCR and models | Upload a Kraken model; list/read models; run OCR/HTR; train recognition or segmentation models |
+| OCR and models | Filter/read/upload models; update owned models; replace/delete idle owned models; download weights/checkpoints; inspect document associations; run OCR/HTR and training |
 | Jobs | List/read task reports; cancel a task, page processing or model training |
 | Exports | Direct UTF-8 text/JSON export; native ALTO/PAGE XML/text export jobs; download a completed export link |
 | Scan acquisition | Download an entire available register directly to NAS with a checksum manifest |
 
-Verification results: [ontology-complete-verification.json](ontology-complete-verification.json).
+Release validation: [IMPLEMENTATION-STATUS.md](IMPLEMENTATION-STATUS.md).
 
 See **[TOOLS.md](TOOLS.md)** for all tool names and descriptions, or **[tool-schema.json](tool-schema.json)** for exact argument schemas.
 
@@ -47,7 +47,7 @@ For a standalone installation, from this directory:
 uv tool install --python 3.11 .
 ```
 
-Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.6.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
+Or install the supplied wheel using `uv tool install --python 3.11 /path/to/escriptorium_mcp-0.7.0-py3-none-any.whl`. Run `uv tool update-shell` and restart your client if the installed command is not on its PATH. The portable `mcp.json` uses that installed `escriptorium-mcp` command. If a desktop client does not inherit PATH, use the executable path reported by `uv tool dir --bin`; Windows uses `escriptorium-mcp.exe`.
 
 ## Credentials and paths
 
@@ -81,7 +81,7 @@ The supplied key remains in the ignored checkout `.env`; package and client exam
 
 ## Transport choice (checked 16 September 2026)
 
-**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 96 tools in either transport.
+**Use STDIO for a local desktop MCP client. Use Streamable HTTP when clients connect to a running service.** Both are current MCP transports. The official [remote-server guidance](https://modelcontextprotocol.io/registry/remote-servers) recommends Streamable HTTP for remote servers; the older standalone SSE transport is deprecated. This server uses MCP Python SDK 2.2 and retains the same 102 tools in either transport.
 
 STDIO is the default and needs no listening port. To run HTTP, first generate a separate service token:
 
@@ -127,6 +127,16 @@ The HTTP endpoint uses stateless requests; queued eScriptorium work remains moni
 **Cancellation scope:** the existing `cancel_task` endpoint has document-wide cleanup side effects: even with one task ID, upstream also marks all document training models and imports canceled. Prefer the dedicated model or import cancellation action for those jobs. Owner/staff permissions apply. Cancellation is not transactional; re-read status after errors or timeouts before retrying.
 
 See [CHANGELOG.md](CHANGELOG.md) for releases and [MODULE-ROADMAP.md](MODULE-ROADMAP.md) for the remaining modules.
+
+## Model management (0.7.0)
+
+- `list_models` accepts optional `document_id` and numeric `job` filters; no-argument calls retain their existing behavior. Job **1** means segmentation and **2** means recognition. Uploads and metadata writes translate these inputs to the API's required labels.
+- `update_model` changes an owned model's name, job or storage-size metadata. Omit unchanged fields; nulls and empty updates are rejected. Names support 256 characters. Renaming is allowed during training, but job/size changes require an explicitly idle model. Changing a job label does not convert model weights.
+- `replace_model_file` replaces an owned, idle model's weights using a file on the MCP host and updates its byte-size metadata. Replacement does not create a backup checkpoint. `delete_model` deletes an owned, idle model and its server-managed relationships; it does not delete document transcriptions. Download files first when they must be retained.
+- `list_model_versions` preserves advertised revision IDs and available server-specific metrics. `download_model` saves the current file, or the checkpoint selected by `revision`, to a new local `destination` and returns its bytes and SHA-256 after completion. Paths belong to the MCP host. Existing output/partial files and the scan-only Books archive are refused. Only advertised files on the configured origin are accepted; redirects and unsafe paths are rejected. A listed file can be missing, in which case download fails without claiming completion.
+- `get_model_documents` reads associated document IDs. The audited REST API has no bind/unbind operation; its `documents` field is read-only. Use the eScriptorium UI for unbinding, and do not submit processing jobs solely to create associations. Checkpoint revert/delete actions are also absent from the audited REST API.
+
+Ownership and idle-state checks occur before writes and are not an atomic server-side lock. Pause other writers when replacing/deleting files or changing job/size metadata. See [docs/MODEL-API.md](docs/MODEL-API.md) for the supported contract and limits, and [docs/RELEASING.md](docs/RELEASING.md) for package preparation.
 
 ## Ontology and annotations (0.5.0)
 
@@ -208,6 +218,6 @@ uv build
 
 Tests drive real MCP STDIO processes and Streamable HTTP and the real connector against isolated HTTP fixtures. They cover mutation paths/payloads, multipart uploads/imports, task requests, input validation, bodyless deletes, pagination, direct exports, overwrite refusal, and NAS acquisition success/partial failure. Modern adapter and test code is type-checked; legacy worker code is exercised through integration tests. The repository CI matrix runs Python 3.11 and 3.13 on macOS, Windows and Linux. Local execution was on macOS; native Windows/Linux results must be confirmed by that CI.
 
-Live checks use reads and a local transcription export only. No live records were edited/deleted and no live processing/training jobs were started. Actual OCR accuracy and training outcomes depend on installed server workers, models and training data. See `ontology-complete-verification.json` for the release verification summary.
+Live checks use reads and local downloads/exports only. Mutation paths are tested with isolated fixtures; no live processing/training jobs are started for release verification. Actual OCR accuracy and training outcomes depend on installed server workers, models and training data. See [IMPLEMENTATION-STATUS.md](IMPLEMENTATION-STATUS.md) for the validation completed for each release.
 
 API contracts are grounded in the live API and official [views](https://gitlab.com/scripta/escriptorium/-/blob/develop/app/apps/api/views.py), [serializers](https://gitlab.com/scripta/escriptorium/-/blob/develop/app/apps/api/serializers.py), and [import/export forms](https://gitlab.com/scripta/escriptorium/-/blob/develop/app/apps/imports/forms.py).

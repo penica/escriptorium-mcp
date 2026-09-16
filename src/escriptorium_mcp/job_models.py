@@ -6,6 +6,7 @@ from pydantic import Field, FilePath, model_validator
 
 from escriptorium_mcp.api import Input
 from escriptorium_mcp.bridge import Identifier, Name
+from escriptorium_mcp.model_models import JobLabel, ModelName
 
 MIN_TRAINING_IMAGES: Final = 2
 
@@ -80,12 +81,12 @@ class ModelUpload(Input):
     """Upload a local Kraken model: job 1 segments, job 2 recognizes text."""
 
     file_path: FilePath
-    name: Name
+    name: ModelName
     job: Literal[1, 2]
 
 
 class ModelMetadata(Input):
     """Model registration metadata sent with its binary file."""
 
-    name: Name
-    job: Literal[1, 2]
+    name: ModelName
+    job: JobLabel

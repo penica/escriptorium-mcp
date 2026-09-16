@@ -6,8 +6,8 @@ Implementation authorized on 2026-09-16. Ontology is complete for the audited AP
 
 | Priority | Status | Module | What needs adding |
 |---|---|---|---|
-| 1 | Implemented (0.6.0) | Tasks and job monitoring | Document task groups, document-level progress, filtering, import status/cancellation, and clearer completion/failure reporting. |
-| 2 | Pending | Model management | Rename/update/delete models, manage document associations, download model files and available checkpoints. Listing, uploading and basic inspection already exist. |
+| 1 | Released (0.6.0) | Tasks and job monitoring | Document task groups, document-level progress, filtering, import status/cancellation, and clearer completion/failure reporting. |
+| 2 | Implemented (0.7.0), release validation | Model management | Rename/update/delete models, manage document associations, download model files and available checkpoints. Listing, uploading and basic inspection already exist. |
 | 3 | Pending | Training and evaluation | Expose remaining server-supported training options, connect submissions to task groups, and provide consistent checkpoint/result reporting. |
 | 4 | Pending | Transcriptions | Bulk create/update/delete line text, transcription statistics and character counts. Character-to-page lookup requires newer eScriptorium. |
 | 5 | Pending | Segmentation | Bulk line operations, line merging, individual region/line retrieval, mask regeneration and automatic reading-order recalculation. Region locking requires newer support. |

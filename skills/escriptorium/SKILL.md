@@ -32,6 +32,14 @@ Apply changes within the user's authorized scope. Existing authorization carries
 - `list_tasks` supports document/group/date ordering and local state/exact-method filters. `get_import_status` reads import task history and messages; it cannot provide native import processed/total counts. No visible reports does not prove no import exists.
 - Prefer dedicated page, model or `cancel_document_import` actions for their respective jobs. **`cancel_task` has document-wide side effects:** even when given one report ID, the server also marks all document training models and imports canceled. `cancel_document_tasks` explicitly cancels all queued/running document work. The import action targets the latest import, not an arbitrary report. If a submission times out, inspect remote state before retrying: the original write may already have succeeded.
 
+## Manage model files
+
+- Filter `list_models` by document/job and inspect `get_model` before editing. `update_model` accepts name, numeric job or storage-size metadata; omit unchanged fields and do not pass nulls. Changing job metadata does not convert weights.
+- Model metadata/file/delete tools require ownership. Job/size edits, `replace_model_file` and `delete_model` require stopped training; renaming can proceed during training. These checks are observations, not locks against concurrent writers.
+- Use `list_model_versions` to find a checkpoint's exact revision, then `download_model` with that revision or omit it for current weights. Destination paths belong to the MCP host and must be new, outside the scan-only Books archive. A listed file may be missing; report a download as complete only after receiving its byte count and checksum.
+- Replacement does not create a checkpoint backup. When the user's request requires retaining the original, download it before replacement/deletion. Deleting a model does not delete document transcriptions.
+- `get_model_documents` reads associations only. The audited REST API cannot bind/unbind models or revert/delete checkpoints. Use the UI for unbinding; do not run processing jobs solely to manipulate associations.
+
 ## Export or archive
 
 Use `export_transcriptions` for direct text/JSON output in reading order. Use `request_server_export` for server-generated ALTO/PAGE XML/text archives, then `download_export` with the completed export URL. Submission alone does not provide the finished file; some eScriptorium installations deliver its link through a notification. Do not invent a download URL.
